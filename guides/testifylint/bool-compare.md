@@ -1,0 +1,28 @@
+# testifylint: bool-compare
+
+<instructions>
+Detects `assert.True(t, a == b)` or `assert.False(t, a != b)` where a dedicated equality assertion is more readable and produces better failure messages. Use `assert.Equal` for equality and `assert.NotEqual` for inequality. The dedicated assertions show both values in the output, making test failures easier to diagnose.
+</instructions>
+
+<examples>
+## Bad
+```go
+assert.True(t, result == expected)
+assert.False(t, result != expected)
+```
+
+## Good
+```go
+assert.Equal(t, expected, result)
+assert.Equal(t, expected, result)
+```
+</examples>
+
+<patterns>
+- `assert.True(t, x == y)` — use `assert.Equal(t, y, x)`
+- `assert.False(t, x == y)` — use `assert.NotEqual(t, y, x)`
+- `assert.True(t, x != y)` — use `assert.NotEqual(t, y, x)`
+</patterns>
+
+<related>
+compares, float-compare

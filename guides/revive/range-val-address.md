@@ -1,0 +1,34 @@
+# revive: range-val-address
+
+<instructions>
+Detects taking the address of a range loop variable (`&v` inside `for _, v := range`). Before Go 1.22, range loop variables were reused across iterations, so taking their address gave the same pointer every time — a subtle bug. Even with Go 1.22+ semantics, this pattern signals unclear intent.
+
+Assign the value to a new variable inside the loop before taking its address, or index directly into the slice to get a stable pointer.
+</instructions>
+
+<examples>
+## Bad
+```go
+for _, v := range items {
+    ptrs = append(ptrs, &v)
+}
+```
+
+## Good
+```go
+for i := range items {
+    ptrs = append(ptrs, &items[i])
+}
+```
+</examples>
+
+<patterns>
+- Taking `&v` where `v` is a range variable and appending to a slice
+- Passing `&v` to goroutines inside a range loop
+- Storing pointers to range variables in a map
+- Range over slice of values with address-of operations
+- Capturing `&v` in a closure that runs after the loop
+</patterns>
+
+<related>
+range-val-in-closure, datarace

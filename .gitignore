@@ -1,0 +1,31 @@
+# Go build artifacts
+golangci-lint-mcp
+golangcilint-mcp
+*.out
+*.test
+
+# Node
+node_modules/
+
+# Desloppify review outputs
+*_review.json
+*_review_result.json
+*_assessment.json
+
+# Temporary files
+tmp/
+
+# Planning workflow (internal)
+.planning/
+
+# Local config / generated
+opencode.json
+llms.txt
+scorecard.png
+AGENTS.md
+
+# Python (existing — desloppify dependency)
+.venv/
+.desloppify/
+*.pyc
+__pycache__/

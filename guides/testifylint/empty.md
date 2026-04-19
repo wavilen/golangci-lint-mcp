@@ -1,0 +1,28 @@
+# testifylint: empty
+
+<instructions>
+Detects `assert.Len(t, x, 0)` or `assert.Equal(t, 0, len(x))` used to check if a collection is empty. Use `assert.Empty(t, x)` or `assert.NotEmpty(t, x)` for semantic clarity. The `Empty` assertion works with slices, maps, channels, strings, and any type with a `Len()` method.
+</instructions>
+
+<examples>
+## Bad
+```go
+assert.Len(t, results, 0)
+assert.Equal(t, 0, len(items))
+```
+
+## Good
+```go
+assert.Empty(t, results)
+assert.Empty(t, items)
+```
+</examples>
+
+<patterns>
+- `assert.Len(t, x, 0)` — use `assert.Empty(t, x)`
+- `assert.Equal(t, 0, len(x))` — use `assert.Empty(t, x)`
+- `assert.NotEqual(t, 0, len(x))` — use `assert.NotEmpty(t, x)`
+</patterns>
+
+<related>
+len, nil-compare

@@ -1,0 +1,34 @@
+# gocritic: badSyncOnceFunc
+
+<instructions>
+Detects incorrect usage of `sync.OnceValue` or `sync.OnceValues`, introduced in Go 1.21. Common mistakes include calling `sync.OnceValue` inside a function on every invocation (defeating the memoization) or capturing the result incorrectly. The function returned by `sync.OnceValue` should be stored and reused.
+
+Store the result of `sync.OnceValue(fn)` in a package-level or struct-level variable and call that stored function, rather than wrapping on every call.
+</instructions>
+
+<examples>
+## Bad
+```go
+func getConfig() Config {
+    // Wraps every call — no memoization benefit
+    return sync.OnceValue(loadConfig)()
+}
+```
+
+## Good
+```go
+var getConfig = sync.OnceValue(loadConfig)
+
+// Usage: getConfig() — memoized after first call
+```
+</examples>
+
+<patterns>
+- Calling `sync.OnceValue(fn)()` inline on every invocation
+- Storing the result but never calling the wrapper
+- Using `sync.Once` manually when `sync.OnceValue` is cleaner
+</patterns>
+
+<related>
+badLock, unnecessaryDefer
+</related>

@@ -1,0 +1,34 @@
+# gocritic: stringsCompare
+
+<instructions>
+Detects uses of `strings.Compare` that can be replaced with simpler operators. `strings.Compare(a, b) == 0` is equivalent to `a == b`, and `strings.Compare(a, b) < 0` is equivalent to `a < b`. The `Compare` function exists for interop with other systems and should not be used for ordinary comparisons.
+
+Use the standard comparison operators `==`, `<`, `>` instead of `strings.Compare`.
+</instructions>
+
+<examples>
+## Bad
+```go
+if strings.Compare(a, b) == 0 {
+	return true
+}
+```
+
+## Good
+```go
+if a == b {
+	return true
+}
+```
+</examples>
+
+<patterns>
+- `strings.Compare(a, b) == 0` → `a == b`
+- `strings.Compare(a, b) < 0` → `a < b`
+- `strings.Compare(a, b) > 0` → `a > b`
+- `strings.Compare(a, b) != 0` → `a != b`
+</patterns>
+
+<related>
+stringConcatSimplify, emptyStringTest
+</related>

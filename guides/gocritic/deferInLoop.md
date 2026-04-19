@@ -1,0 +1,57 @@
+# gocritic: deferInLoop
+
+<instructions>
+Detects `defer` statements inside loops. Deferred functions only execute when the surrounding function returns, not at the end of each loop iteration. In a loop, this causes resources to accumulate until the function exits, leading to resource leaks or exhaustion.
+
+Move the loop body into a separate function so `defer` runs at the end of each iteration, or use explicit cleanup without `defer`.
+</instructions>
+
+<examples>
+## Bad
+```go
+func processFiles(paths []string) error {
+    for _, p := range paths {
+        f, err := os.Open(p)
+        if err != nil {
+            return err
+        }
+        defer f.Close() // all files close only when function returns
+        process(f)
+    }
+    return nil
+}
+```
+
+## Good
+```go
+func processFiles(paths []string) error {
+    for _, p := range paths {
+        if err := processOne(p); err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+func processOne(path string) error {
+    f, err := os.Open(path)
+    if err != nil {
+        return err
+    }
+    defer f.Close()
+    process(f)
+    return nil
+}
+```
+</examples>
+
+<patterns>
+- `defer f.Close()` inside `for` loops
+- `defer mu.Unlock()` inside loop iterations
+- `defer rows.Close()` in database query loops
+- Any deferred cleanup inside `range` or `for` blocks
+</patterns>
+
+<related>
+unnecessaryDefer, exitAfterDefer, badLock
+</related>

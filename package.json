@@ -1,0 +1,30 @@
+{
+  "name": "golangci-lint-guide",
+  "version": "1.0.0",
+  "description": "OpenCode skill for fixing golangci-lint issues using MCP tool guidance",
+  "bin": {
+    "golangci-lint-guide": "./bin/install.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "opencode",
+    "skill",
+    "golangci-lint",
+    "mcp",
+    "linter",
+    "go"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wavilen/golangci-lint-mcp"
+  },
+  "devDependencies": {
+    "desloppify": "^1.0.1"
+  }
+}

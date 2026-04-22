@@ -29,10 +29,10 @@ data, _ := io.ReadAll(resp.Body)
 </examples>
 
 <patterns>
-- Forgetting `defer resp.Body.Close()` after http.Client requests
-- Early returns before the body close statement
-- Only closing the body in error branches, not the success path
-- Using http.Get/Post without a deferred close on the response body
+- Always `defer resp.Body.Close()` immediately after `http.Client.Do()` requests
+- Ensure body close runs before any early return — place `defer` before conditional logic
+- Close the response body in all code paths, not just error branches
+- Add `defer resp.Body.Close()` after every `http.Get`/`http.Post` call
 </patterns>
 
 <related>

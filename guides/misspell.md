@@ -15,16 +15,16 @@ var succesfully = "occured"
 
 ## Good
 ```go
-// This is a separated list of received values
+// This is a separated list of received values.
 var successfully = "occurred"
 ```
 </examples>
 
 <patterns>
-- Common typos in comments: "seperate", "recieve", "occured"
-- Misspellings in string literals visible to users
-- Regional spelling differences: "color" vs "colour" (configure locale)
-- Documentation typos in exported symbol comments
+- Fix common comment typos: "seperate" → "separate", "recieve" → "receive", "occured" → "occurred"
+- Correct misspellings in user-facing string literals
+- Set the locale configuration for regional spelling differences ("color" vs "colour")
+- Check exported symbol comments for documentation typos
 </patterns>
 
 <related>

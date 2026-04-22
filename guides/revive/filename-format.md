@@ -23,11 +23,11 @@ Rename files to follow the configured naming convention. Use `go fmt`-compatible
 </examples>
 
 <patterns>
-- Files using PascalCase or camelCase instead of snake_case
-- Files containing spaces or hyphens in the name
-- Files with inconsistent naming patterns within a package
-- Test files not following the `*_test.go` convention
-- Platform-specific files with wrong naming (e.g., `linux_amd64.go`)
+- Rename files using PascalCase or camelCase to snake_case
+- Remove spaces or hyphens from file names — use underscores instead
+- Use a consistent snake_case naming pattern across all files in a package
+- Rename test files following the `*_test.go` convention
+- Use platform-specific naming for build-constraint files (e.g., `_linux_amd64.go`)
 </patterns>
 
 <related>

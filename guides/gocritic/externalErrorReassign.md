@@ -31,10 +31,10 @@ func (s *Service) Do(ctx context.Context) error {
 </examples>
 
 <patterns>
-- `err = errors.New(...)` overwriting an external error
-- `err = fmt.Errorf(...)` without wrapping — use `errors.Wrap` instead
-- Reassigning error parameters passed into the function
-- Returning a new error that discards the original cause
+- Avoid overwriting external errors with `errors.New()` — wrap or return the original
+- Wrap errors with `fmt.Errorf("context: %w", err)` instead of discarding the cause
+- Avoid reassigning error parameters — use a new variable or return the original
+- Propagate the original error — avoid discarding the cause with a new error
 </patterns>
 
 <related>

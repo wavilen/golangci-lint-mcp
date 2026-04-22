@@ -29,10 +29,10 @@ import (
 </examples>
 
 <patterns>
-- Database driver blank imports in repository or data-layer packages
-- Image format decoder registrations in utility packages
-- Plugin or metric handler registrations in shared libraries
-- Profiling or debugging tool blank imports left in production code
+- Move database driver blank imports from repository packages to `main` or test files
+- Move image format decoder registrations from utility packages to the application entry point
+- Import plugin or metric handlers in `main` rather than shared libraries
+- Remove profiling or debugging tool blank imports from production code
 </patterns>
 
 <related>

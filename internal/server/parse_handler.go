@@ -32,15 +32,69 @@ type diagnostic struct {
 }
 
 func extractRule(text string) string {
-	idx := strings.Index(text, ": ")
-	if idx == -1 {
+	before, _, found := strings.Cut(text, ": ")
+	if !found {
 		return ""
 	}
-	return strings.TrimSpace(text[:idx])
+	return strings.TrimSpace(before)
 }
 
-func makeParseHandler(store *guides.Store, opts Options) func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func deduplicateIssues(issues []lintIssue) []lintIssue {
+	seen := make(map[diagnostic]bool)
+	var unique []lintIssue
+	for _, issue := range issues {
+		rule := extractRule(issue.Text)
+		key := diagnostic{linter: issue.FromLinter, rule: rule}
+		if !seen[key] {
+			seen[key] = true
+			unique = append(unique, issue)
+		}
+	}
+	return unique
+}
+
+const largeOutputThreshold = 10
+
+func buildStrategy(totalCount int) (string, string) {
+	if totalCount > largeOutputThreshold {
+		return "B", ">10 diagnostics — summarize first"
+	}
+	return "A", "≤10 diagnostics — present inline"
+}
+
+func buildLinterBreakdown(unique []lintIssue) string {
+	linterCounts := make(map[string]int)
+	for _, issue := range unique {
+		linterCounts[issue.FromLinter]++
+	}
+
+	type linterEntry struct {
+		name  string
+		count int
+	}
+	var sortedEntries = make([]linterEntry, 0, len(linterCounts))
+	for name, count := range linterCounts {
+		sortedEntries = append(sortedEntries, linterEntry{name, count})
+	}
+	sort.Slice(sortedEntries, func(left, right int) bool {
+		if sortedEntries[left].count != sortedEntries[right].count {
+			return sortedEntries[left].count > sortedEntries[right].count
+		}
+		return sortedEntries[left].name < sortedEntries[right].name
+	})
+
+	parts := make([]string, 0, len(sortedEntries))
+	for _, entry := range sortedEntries {
+		parts = append(parts, fmt.Sprintf("%s (%d)", entry.name, entry.count))
+	}
+	return strings.Join(parts, ", ")
+}
+
+func makeParseHandler(
+	store *guides.Store,
+	opts Options,
+) func(_ context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	return func(_ context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		output, err := req.RequireString("output")
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("missing required parameter 'output': %v", err)), nil
@@ -50,12 +104,13 @@ func makeParseHandler(store *guides.Store, opts Options) func(ctx context.Contex
 			return mcp.NewToolResultError("parameter 'output' must not be empty"), nil
 		}
 
-		var result lintJSONResult
 		firstLine := output
-		if idx := strings.Index(output, "\n"); idx != -1 {
-			firstLine = output[:idx]
+		if before, _, found := strings.Cut(output, "\n"); found {
+			firstLine = before
 		}
-		if err := json.Unmarshal([]byte(firstLine), &result); err != nil {
+		var result lintJSONResult
+		err = json.Unmarshal([]byte(firstLine), &result)
+		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("invalid JSON: %v", err)), nil
 		}
 
@@ -63,66 +118,62 @@ func makeParseHandler(store *guides.Store, opts Options) func(ctx context.Contex
 			return mcp.NewToolResultText("No issues found in the golangci-lint output."), nil
 		}
 
-		seen := make(map[diagnostic]bool)
-		var unique []lintIssue
-		for _, issue := range result.Issues {
-			rule := extractRule(issue.Text)
-			key := diagnostic{linter: issue.FromLinter, rule: rule}
-			if !seen[key] {
-				seen[key] = true
-				unique = append(unique, issue)
+		unique := deduplicateIssues(result.Issues)
+		strategy, strategyReason := buildStrategy(len(unique))
+
+		var builder strings.Builder
+		fmt.Fprintf(
+			&builder,
+			"## Summary\n\n- Unique diagnostics: %d\n- Strategy: %s (%s)\n- Breakdown: %s\n\n---\n\n",
+			len(unique),
+			strategy,
+			strategyReason,
+			buildLinterBreakdown(unique),
+		)
+
+		for idx, issue := range unique {
+			if idx > 0 {
+				builder.WriteString("\n---\n\n")
 			}
+			writeGuideForIssue(&builder, store, opts, issue)
 		}
 
-		var sb strings.Builder
-		for i, issue := range unique {
-			if i > 0 {
-				sb.WriteString("\n---\n\n")
-			}
-
-			linter := issue.FromLinter
-			rule := extractRule(issue.Text)
-
-			if rule != "" {
-				guide, found := store.Lookup(linter, rule)
-				if found {
-					fmt.Fprintf(&sb, "## %s: %s\n\n", linter, rule)
-					body := guide.RawBody
-					if opts.GosecAI && linter == "gosec" {
-						body += gosecAISection
-					}
-					sb.WriteString(body)
-					continue
-				}
-			}
-
-			guide, found := store.Lookup(linter, "")
-			if found {
-			fmt.Fprintf(&sb, "## %s\n\n", linter)
-				body := guide.RawBody
-				if opts.GosecAI && linter == "gosec" {
-					body += gosecAISection
-				}
-				sb.WriteString(body)
-				continue
-			}
-
-			rules := store.ListRules(linter)
-			if len(rules) > 0 {
-				sort.Strings(rules)
-				fmt.Fprintf(&sb, "## %s: %s\n\nNo guide found for rule %q of linter %q. Available rules: %s",
-					linter, rule, rule, linter, strings.Join(rules, ", "))
-				continue
-			}
-
-			suggestion := store.Suggest(linter)
-			msg := fmt.Sprintf("## %s\n\nUnknown linter %q.", linter, linter)
-			if suggestion != "" {
-				msg = fmt.Sprintf("## %s\n\nUnknown linter %q. Did you mean %q?", linter, linter, suggestion)
-			}
-			sb.WriteString(msg)
-		}
-
-		return mcp.NewToolResultText(sb.String()), nil
+		return mcp.NewToolResultText(builder.String()), nil
 	}
+}
+
+func writeGuideForIssue(builder *strings.Builder, store *guides.Store, opts Options, issue lintIssue) {
+	linter := issue.FromLinter
+	rule := extractRule(issue.Text)
+
+	if rule != "" {
+		guide, found := store.Lookup(linter, rule)
+		if found {
+			fmt.Fprintf(builder, "## %s: %s\n\n", linter, rule)
+			builder.WriteString(maybeAppendGosecAI(guide.RawBody, opts, linter))
+			return
+		}
+	}
+
+	guide, found := store.Lookup(linter, "")
+	if found {
+		fmt.Fprintf(builder, "## %s\n\n", linter)
+		builder.WriteString(maybeAppendGosecAI(guide.RawBody, opts, linter))
+		return
+	}
+
+	rules := store.ListRules(linter)
+	if len(rules) > 0 {
+		sort.Strings(rules)
+		fmt.Fprintf(builder, "## %s: %s\n\nNo guide found for rule %q of linter %q. Available rules: %s",
+			linter, rule, rule, linter, strings.Join(rules, ", "))
+		return
+	}
+
+	msg := fmt.Sprintf("## %s\n\nUnknown linter %q.", linter, linter)
+	suggestion := store.Suggest(linter)
+	if suggestion != "" {
+		msg = fmt.Sprintf("## %s\n\nUnknown linter %q. Did you mean %q?", linter, linter, suggestion)
+	}
+	builder.WriteString(msg)
 }

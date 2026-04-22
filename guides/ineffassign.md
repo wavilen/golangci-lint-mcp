@@ -26,10 +26,10 @@ func calc(a, b int) int {
 </examples>
 
 <patterns>
-- Variable reassigned before the previous value is read
-- Error assigned but never checked: `x, err = f(); x, err = g()`
-- Loop variables overwritten each iteration without using the previous value
-- Assignment in `if` init statement where the value is unused in body
+- Remove variable reassignments where the previous value is never read before being overwritten
+- Check error assignments that are silently discarded: `x, err = f(); x, err = g()`
+- Eliminate loop variables overwritten each iteration without using the previous value
+- Remove assignments in `if` init statements where the value is unused in the body
 </patterns>
 
 <related>

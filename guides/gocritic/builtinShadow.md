@@ -29,10 +29,10 @@ func process(length int) error {
 </examples>
 
 <patterns>
-- Function parameter named `len`, `cap`, `copy`, or `new`
-- Local variable named `true`, `false`, or `nil`
-- Receiver named `error` or `recover`
-- Loop variable shadowing `iota` or `append`
+- Rename parameters that shadow builtins — avoid `len`, `cap`, `copy`, `new` as parameter names
+- Avoid `true`, `false`, `nil` as local variable names
+- Rename receivers that shadow builtins — avoid `error` or `recover` as receiver names
+- Avoid loop variables named `iota` or `append` — they shadow predeclared identifiers
 </patterns>
 
 <related>

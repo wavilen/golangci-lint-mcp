@@ -26,10 +26,10 @@ func ParseConfig(path string) (*Config, error) {
 </examples>
 
 <patterns>
-- Exported functions without any doc comment
-- Doc comments that don't start with the function or type name
-- Exported types and constants missing documentation
-- Packages without a package-level doc comment
+- Add doc comments to all exported functions
+- Start doc comments with the name of the function or type they describe
+- Add doc comments to all exported types and constants
+- Add a package-level doc comment to every package
 </patterns>
 
 <related>

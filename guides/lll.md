@@ -29,9 +29,9 @@ func main() {
 </examples>
 
 <patterns>
-- Long string literals that should be split or extracted into constants
-- Chained method calls that should be formatted with line breaks between calls
-- Function signatures with many parameters that need multi-line formatting
+- Split long string literals across multiple lines or extract them into constants
+- Break chained method calls with line breaks between each call
+- Format function signatures with many parameters across multiple lines
 </patterns>
 
 <related>

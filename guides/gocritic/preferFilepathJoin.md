@@ -20,9 +20,9 @@ path := filepath.Join(dir, filename)
 </examples>
 
 <patterns>
-- `dir + "/" + file` → `filepath.Join(dir, file)`
-- `fmt.Sprintf("%s/%s", ...)` for paths → `filepath.Join(...)`
-- `base + "\\" + name` on Windows → `filepath.Join(base, name)`
+- Replace `dir + "/" + file` with `filepath.Join(dir, file)`
+- Replace `fmt.Sprintf("%s/%s", ...)` path construction with `filepath.Join(...)`
+- Replace `base + "\\" + name` with `filepath.Join(base, name)` for cross-platform support
 </patterns>
 
 <related>

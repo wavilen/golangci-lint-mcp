@@ -23,10 +23,10 @@ data := string(bytes)
 </examples>
 
 <patterns>
-- `slice[:]` → `slice`
-- `string(b[:])` → `string(b)` when `b` is `[]byte`
-- `append(s[:], ...)` → `append(s, ...)`
-- Redundant reslice of full-length slice
+- Replace `slice[:]` with `slice` — full-length reslice is redundant
+- Replace `string(b[:])` with `string(b)` when `b` is `[]byte`
+- Replace `append(s[:], ...)` with `append(s, ...)` — remove redundant reslice
+- Remove redundant reslices of full-length slices
 </patterns>
 
 <related>

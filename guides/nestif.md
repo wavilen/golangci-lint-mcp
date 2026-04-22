@@ -35,10 +35,10 @@ func grant(user *User, res *Resource) bool {
 </examples>
 
 <patterns>
-- Nested null/nil checks that can be combined with early returns
-- Deeply nested permission or authorization logic
-- Multi-level conditionals in data processing pipelines
-- Callback-based code where nesting accumulates across async boundaries
+- Flatten nested nil checks using early returns to reduce indentation
+- Simplify nested permission logic with guard clauses and early returns
+- Flatten multi-level conditionals in pipelines using early returns or helper functions
+- Extract nested callback logic into named functions to reduce indentation
 </patterns>
 
 <related>

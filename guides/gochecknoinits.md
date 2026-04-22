@@ -27,10 +27,10 @@ func NewApp() (*App, error) {
 </examples>
 
 <patterns>
-- Database or cache connections established in `init()`
-- Global flag parsing inside `init()`
-- Registration patterns using `init()` to register handlers
-- Configuration loading triggered implicitly at import time
+- Replace `init()` with an explicit setup function called from `main()` or a constructor
+- Move flag parsing into `main()` instead of global `init()`
+- Use explicit registration functions instead of `init()` handler registration
+- Load configuration in a constructor rather than implicitly at import time
 </patterns>
 
 <related>

@@ -24,9 +24,9 @@ var getConfig = sync.OnceValue(loadConfig)
 </examples>
 
 <patterns>
-- Calling `sync.OnceValue(fn)()` inline on every invocation
-- Storing the result but never calling the wrapper
-- Using `sync.Once` manually when `sync.OnceValue` is cleaner
+- Assign `sync.OnceValue(fn)` to a package-level variable — avoid inline calls on every invocation
+- Ensure the `OnceValue` wrapper is actually called after storing it
+- Replace manual `sync.Once`+flag patterns with `sync.OnceValue` or `sync.OnceValues`
 </patterns>
 
 <related>

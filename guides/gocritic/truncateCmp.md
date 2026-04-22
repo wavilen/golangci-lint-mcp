@@ -27,10 +27,10 @@ if x == int64(y) {
 </examples>
 
 <patterns>
-- Comparing `int32(x)` with an `int32` when `x` is `int64`
-- Implicit truncation in comparisons between different integer widths
-- `int8`/`int16` comparisons that silently wrap
-- Casting to narrower type before comparison
+- Convert to the wider type before comparing — avoid truncating `int64` to `int32`
+- Use same-width integer types for comparisons to avoid implicit truncation
+- Avoid `int8`/`int16` comparisons that silently wrap — widen the type first
+- Avoid narrowing casts before comparison — compare in the original type
 </patterns>
 
 <related>

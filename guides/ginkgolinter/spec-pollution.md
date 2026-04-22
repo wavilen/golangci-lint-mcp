@@ -36,9 +36,9 @@ var _ = Describe("cache", func() {
 </examples>
 
 <patterns>
-- Package-level `var` modified in `BeforeEach` — use local `var` in `Describe`
-- Shared state not reset in `AfterEach` — add cleanup
-- `BeforeEach` depending on previous spec's state — isolate each spec
+- Use local `var` in `Describe` instead of package-level `var` modified in `BeforeEach`
+- Add cleanup in `AfterEach` for any shared state modified during specs
+- Separate each spec — avoid `BeforeEach` depending on previous spec's state
 </patterns>
 
 <related>

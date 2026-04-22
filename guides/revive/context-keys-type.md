@@ -24,11 +24,11 @@ ctx = context.WithValue(ctx, requestIDKey, "abc-123")
 </examples>
 
 <patterns>
-- Using string literals directly as context keys
-- Using `int` or other built-in types as keys
-- Keys defined in one package potentially colliding with keys in another
-- Tests using `context.WithValue` with plain string keys for convenience
-- Missing type safety when retrieving values from context
+- Define a custom type for context keys instead of using string literals directly
+- Define an unexported key type instead of using `int` or built-in types
+- Avoid cross-package key collisions by wrapping each key in a package-specific type
+- Use typed context keys in tests instead of plain string keys for convenience
+- Ensure type safety when storing and retrieving values from context
 </patterns>
 
 <related>

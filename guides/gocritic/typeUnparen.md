@@ -27,10 +27,10 @@ var data map[string]int
 </examples>
 
 <patterns>
-- `func() (int)` → `func() int`
-- `[](int)` → `[]int`
-- `map[string](int)` → `map[string]int`
-- `*(int)` → `*int`
+- Remove unnecessary parentheses: `func() (int)` → `func() int`
+- Remove unnecessary parentheses: `[](int)` → `[]int`
+- Remove unnecessary parentheses: `map[string](int)` → `map[string]int`
+- Remove unnecessary parentheses: `*(int)` → `*int`
 </patterns>
 
 <related>

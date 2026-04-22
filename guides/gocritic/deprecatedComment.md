@@ -21,11 +21,11 @@ func OldClient() *Client { ... }
 </examples>
 
 <patterns>
-- `// deprecated` without capital P
-- `// Deprecated` without colon separator
-- `// DEPRECATED` all-caps variant
-- `// @deprecated` JSDoc-style annotation
-- Missing deprecation reason or replacement suggestion
+- Replace `// deprecated` with `// Deprecated` — capitalize the P
+- Add colon separator — use `// Deprecated: reason`
+- Replace `// DEPRECATED` all-caps with standard `// Deprecated:`
+- Replace `// @deprecated` JSDoc-style with `// Deprecated:`
+- Add a deprecation reason and replacement suggestion after the colon
 </patterns>
 
 <related>

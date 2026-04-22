@@ -25,9 +25,9 @@ TEXT ·correct(SB), NOSPLIT, $16
 </examples>
 
 <patterns>
-- Overwriting BP register without saving the old frame pointer
-- Assembly function missing frame pointer setup
-- Incorrect frame size for frame pointer storage
+- Save the old frame pointer before modifying the BP register in assembly functions
+- Add frame pointer setup (`MOVQ`/`LEAQ` BP) in all assembly functions
+- Allocate the correct frame size to accommodate frame pointer storage
 </patterns>
 
 <related>

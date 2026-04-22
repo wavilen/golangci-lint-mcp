@@ -21,10 +21,10 @@ clear(s)  // Go 1.21+: zeroes elements, keeps length/capacity
 </examples>
 
 <patterns>
-- Clearing slices with `s = s[:0]` when element zeroing is needed for GC
-- Reassigning slices to `nil` or `make([]T, 0)` to reset them
-- Resetting buffers or pools where old data should not be retained
-- Loop iterations that "clear" a slice inefficiently between passes
+- Use `clear(s)` or `for i := range s { s[i] = zero }` when GC needs zeroed elements — not `s = s[:0]`
+- Use `s = s[:0]` or `clear(s)` instead of reassigning to `nil` or `make([]T, 0)`
+- Use `clear(s)` when resetting buffers or pools where old data should not be retained
+- Replace inefficient per-element clearing in loops with `clear(s)`
 </patterns>
 
 <related>

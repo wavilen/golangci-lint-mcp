@@ -31,11 +31,11 @@ case "user":
 </examples>
 
 <patterns>
-- Switch cases with identical bodies that should use multi-value syntax
-- Copy-paste errors where a case body was not updated for a new value
-- Enum or status handling with identical behavior for different values
-- Type switch cases with identical handling for multiple types
-- Default and a specific case having identical implementations
+- Combine switch cases with identical bodies using Go's multi-value case syntax `case "a", "b":`
+- Replace copy-paste errors where a case body was not updated for a new value
+- Combine enum or status cases with identical behavior into a single multi-value case
+- Combine type switch cases with identical handling for multiple types
+- Remove default cases that duplicate a specific case's implementation
 </patterns>
 
 <related>

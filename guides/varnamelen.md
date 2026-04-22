@@ -31,9 +31,9 @@ func process(reader io.Reader) ([]byte, error) {
 </examples>
 
 <patterns>
-- Single-letter variable names for function parameters or return values
-- Short names for variables with long lifetimes (function scope or wider)
-- Abbreviations like `c`, `r`, `p` for configuration, request, or processor objects
+- Rename single-letter parameters and return values to descriptive names
+- Expand short variable names to descriptive names for variables with long lifetimes
+- Replace abbreviations like `c`, `r`, `p` with full descriptive names (e.g., `cfg`, `req`, `proc`)
 </patterns>
 
 <related>

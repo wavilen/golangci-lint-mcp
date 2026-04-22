@@ -21,9 +21,9 @@ slices.SortFunc(users, func(a, b User) int {
 </examples>
 
 <patterns>
-- `sort.Slice(x, func(i, j) bool { return x[i].Field < x[j].Field })` — use `slices.SortFunc`
-- `sort.SliceStable` with custom comparator — use `slices.SortStableFunc`
-- Multi-field sort with `sort.Slice` — use `cmp.Or` chain in `SortFunc`
+- Use `slices.SortFunc` instead of `sort.Slice(x, func(i, j) bool { return x[i].Field < x[j].Field })`
+- Use `slices.SortStableFunc` instead of `sort.SliceStable` with custom comparators
+- Use `cmp.Or` chain in `SortFunc` instead of multi-field `sort.Slice`
 </patterns>
 
 <related>

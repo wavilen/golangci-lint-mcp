@@ -21,9 +21,9 @@ result := x >> 63 // shifting by less than word size
 </examples>
 
 <patterns>
-- Shifting by 32 or more on a 32-bit type
-- Shifting by 64 or more on a 64-bit type
-- Variable shift amount that could exceed word size
+- Use shift amounts under 32 for 32-bit types — mask or bounds-check the value
+- Use shift amounts under 64 for 64-bit types — mask or bounds-check the value
+- Validate or mask variable shift amounts to stay within the integer type width
 </patterns>
 
 <related>

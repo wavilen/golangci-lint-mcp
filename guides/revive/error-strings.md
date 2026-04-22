@@ -23,11 +23,11 @@ return errors.Wrap(err, "invalid input")
 </examples>
 
 <patterns>
-- Error messages starting with uppercase (often copied from user-facing messages)
-- Error messages ending with periods or other punctuation
-- Error messages that are full sentences with proper capitalization
-- Wrapped errors with punctuation before `%w`
-- Error messages using title case like "Not Found"
+- Use lowercase for error messages — avoid uppercase at the start
+- Remove trailing periods or punctuation from error messages
+- Use phrases for error messages — avoid full sentences with capitalization
+- Ensure wrapped errors don't include punctuation before the `%w` verb
+- Use lowercase for error messages — avoid title case like "Not Found"
 </patterns>
 
 <related>

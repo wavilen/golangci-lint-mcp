@@ -28,11 +28,11 @@ func (_ *Server) Version() string {
 </examples>
 
 <patterns>
-- Methods that return constants unrelated to the receiver
-- Interface implementations where the method logic doesn't access receiver state
-- Methods added for future use with placeholder bodies
-- Utility methods attached to a type for namespace reasons only
-- Factory methods on a type that create unrelated objects
+- Convert methods returning constants unrelated to the receiver into package-level functions
+- Move interface implementation methods that don't access receiver state to standalone functions, or prefix the receiver with `_`
+- Implement placeholder methods properly or prefix receiver with `_` until ready
+- Convert utility methods attached to a type only for namespace into package-level functions
+- Move factory methods that create unrelated objects to package-level functions
 </patterns>
 
 <related>

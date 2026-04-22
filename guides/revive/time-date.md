@@ -19,11 +19,11 @@ now := time.Now().Truncate(24 * time.Hour)
 </examples>
 
 <patterns>
-- Constructing the current date/time manually via `time.Date`
-- Using `time.Date` with `time.Now()` components instead of calling `time.Now()` directly
-- Complex date arithmetic that could use `time.Now().Add` or `Truncate`
-- Building timestamps from individual fields parsed from the current time
-- Using `time.Date` for date-only values when `time.Now().Date()` suffices
+- Use `time.Now()` instead of constructing the current time manually via `time.Date`
+- Replace `time.Date` with `time.Now()` components by calling `time.Now()` directly
+- Simplify date arithmetic with `time.Now().Add` or `Truncate` instead of `time.Date`
+- Use `time.Parse` to build timestamps from strings instead of assembling individual fields
+- Use `time.Now().Date()` for date-only values instead of `time.Date`
 </patterns>
 
 <related>

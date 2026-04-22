@@ -21,10 +21,10 @@ s := name // no conversion needed
 </examples>
 
 <patterns>
-- `fmt.Sprintf("%d", x)` → use `strconv.Itoa` or `strconv.FormatInt`
-- `fmt.Sprintf("%s", s)` → use the string directly
-- `fmt.Sprintf("%t", b)` → use `strconv.FormatBool`
-- `fmt.Sprintf("%v", x)` → use `strconv.FormatX` or `fmt.Sprint`
+- Replace `fmt.Sprintf("%d", x)` with `strconv.Itoa` or `strconv.FormatInt`
+- Use the string directly instead of `fmt.Sprintf("%s", s)`
+- Replace `fmt.Sprintf("%t", b)` with `strconv.FormatBool`
+- Use `strconv.FormatX` or `fmt.Sprint` instead of `fmt.Sprintf("%v", x)`
 </patterns>
 
 <related>

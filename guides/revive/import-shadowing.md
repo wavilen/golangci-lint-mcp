@@ -31,11 +31,11 @@ func log() {
 </examples>
 
 <patterns>
-- Variables named after imported packages (e.g., `json := ...`)
-- Function parameters with names matching import aliases
-- Local variables in inner scopes shadowing imports
-- Receiver names matching import package names
-- Loop variables or short variable declarations shadowing imports
+- Rename variables that shadow imported package names (e.g., rename `json` to `jsonData`)
+- Avoid function parameter names that match import aliases
+- Use distinct names for local variables in inner scopes that would shadow imports
+- Use receiver names that differ from imported package names
+- Rename loop variables or short variable declarations that shadow import names
 </patterns>
 
 <related>

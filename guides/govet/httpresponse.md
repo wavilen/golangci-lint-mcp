@@ -31,9 +31,9 @@ return nil
 </examples>
 
 <patterns>
-- `http.Get`/`http.Post`/`http.Do` without `defer resp.Body.Close()`
-- Closing body before reading it
-- Returning without closing the response body on error paths
+- Add `defer resp.Body.Close()` immediately after checking `http.Get`/`http.Post`/`http.Do` errors
+- Ensure the response body is fully read before closing — never close then read
+- Close the response body on all error paths — use `defer` after the nil-error check
 </patterns>
 
 <related>

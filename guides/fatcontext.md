@@ -27,10 +27,10 @@ for _, item := range items {
 </examples>
 
 <patterns>
-- Reassigning `ctx` inside a for loop with WithTimeout/WithDeadline
-- Shadowing the outer ctx variable in a range loop
-- Accumulating context values by reusing the same ctx variable name
-- Using `ctx = context.WithValue(ctx, ...)` in a loop
+- Assign derived contexts to a new variable instead of reassigning `ctx` in loops
+- Use `taskCtx` or `loopCtx` to avoid shadowing the outer `ctx` variable
+- Avoid accumulating context values by reusing the same variable name across iterations
+- Set derived contexts on a new variable: `loopCtx := context.WithValue(ctx, ...)`
 </patterns>
 
 <related>

@@ -19,11 +19,11 @@ strings.ReplaceAll(s, "-", "_")
 </examples>
 
 <patterns>
-- `strings.Replace(s, old, old, n)` — same old and new
-- `strings.Trim(s, s)` — same string and cutset
-- `copy(a, a)` — source and destination identical
-- `fmt.Sprintf("%d %d", x, x)` — same value for different format verbs
-- `math.Max(a, a)` — comparing a value with itself
+- Replace `strings.Replace` duplicate old/new arguments — pass distinct values
+- Replace `strings.Trim(s, s)` — use a separate cutset, not the string itself
+- Replace `copy(a, a)` — pass distinct source and destination slices
+- Replace `fmt.Sprintf` duplicate values for different format verbs — pass correct arguments
+- Replace `math.Max(a, a)` — pass distinct values to compare
 </patterns>
 
 <related>

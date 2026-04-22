@@ -22,9 +22,9 @@ q := unsafe.Pointer(uintptr(p) + 16) // single expression — safe
 </examples>
 
 <patterns>
-- Storing `uintptr` in a variable then converting back to `unsafe.Pointer`
-- Using arithmetic on `unsafe.Pointer` directly
-- Converting `reflect.Value.Pointer()` result back to `unsafe.Pointer`
+- Convert `uintptr` to `unsafe.Pointer` in the same expression — never store intermediate `uintptr` values
+- Use `uintptr` for pointer arithmetic then immediately convert back — never compute on `unsafe.Pointer` directly
+- Avoid converting `reflect.Value.Pointer()` results to `unsafe.Pointer` — use the reflect API instead
 </patterns>
 
 <related>

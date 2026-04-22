@@ -19,9 +19,9 @@ slices.Sort(nums)
 </examples>
 
 <patterns>
-- `sort.Slice(s, func(i, j int) bool { return s[i] < s[j] })` on ordered types — use `slices.Sort`
-- `sort.SliceStable(s, ...)` with simple less function — use `slices.SortStableFunc`
-- Sorting with `sort.Float64s`, `sort.Ints`, `sort.Strings` — use `slices.Sort`
+- Use `slices.Sort` instead of `sort.Slice(s, func(i, j int) bool { return s[i] < s[j] })` on ordered types
+- Use `slices.SortStableFunc` instead of `sort.SliceStable(s, ...)` with simple less functions
+- Use `slices.Sort` instead of `sort.Float64s`, `sort.Ints`, `sort.Strings`
 </patterns>
 
 <related>

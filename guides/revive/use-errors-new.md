@@ -25,11 +25,11 @@ return errors.Wrap(err, "query")
 </examples>
 
 <patterns>
-- `fmt.Errorf` called with a plain string and no arguments
-- Static error messages wrapped in `fmt.Errorf` unnecessarily
-- Error creation where `errors.New` is clearer about intent
-- Consistent use of `fmt.Errorf` across a codebase even for static strings
-- Migration from older code where `fmt.Errorf` was used habitually
+- Replace `fmt.Errorf` with `errors.New` for static messages with no format arguments
+- Use `errors.New` for static error messages instead of wrapping in `fmt.Errorf`
+- Use `errors.New` for error creation where no formatting is needed — it signals intent clearly
+- Use on `errors.New` for static strings and `fmt.Errorf` for formatted messages
+- Convert habitual `fmt.Errorf` usage for static strings to `errors.New`
 </patterns>
 
 <related>

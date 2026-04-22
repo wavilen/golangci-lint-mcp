@@ -27,8 +27,12 @@ if err != nil {
 </examples>
 
 <patterns>
-- File operations: always check `os.Open`, `os.Create`, `io.ReadAll` errors
-- Map access: use `v, ok := m[key]` two-value form for concurrent safety
-- Type assertions: use `v, ok := val.(T)` comma-ok pattern
-- Channel receive: use `v, ok := <-ch` to detect closed channels
+- Always check errors from `os.Open`, `os.Create`, `io.ReadAll` for file operations
+- Use `v, ok := m[key]` two-value form for safe map access
+- Use `v, ok := val.(T)` comma-ok pattern for type assertions
+- Use `v, ok := <-ch` to detect closed channels on receive
 </patterns>
+
+<related>
+err113, errname, wrapcheck, govet
+</related>

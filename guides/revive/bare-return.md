@@ -27,10 +27,10 @@ func divmod(a, b int) (quotient, remainder int) {
 </examples>
 
 <patterns>
-- Short helper functions using named returns with bare return
-- Functions with multiple return paths mixing bare and explicit returns
-- Deferred functions modifying named return values with bare return
-- Refactored functions that gained named returns but kept bare returns
+- Replace bare `return` with explicit return values in short helper functions using named returns
+- Use explicit return values consistently when functions mix bare and explicit returns
+- Return explicit named values in deferred functions that modify named return values
+- Replace bare returns with explicit returns when refactoring adds named return values
 </patterns>
 
 <related>

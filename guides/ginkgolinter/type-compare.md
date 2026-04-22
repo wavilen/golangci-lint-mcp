@@ -22,9 +22,9 @@ Expect(result).To(BeAssignableToTypeOf(MyType{}))
 </examples>
 
 <patterns>
-- `BeAssignableToTypeOf` with zero-value struct — sometimes unavoidable but check alternatives
-- Type comparison with `reflect.TypeOf` — use Gomega matchers
-- Checking interface implementation — use type assertion or `Satisfy`
+- Use `BeAssignableToTypeOf` only when no more specific matcher exists — check alternatives first
+- Replace `reflect.TypeOf` comparisons with Gomega matchers for readability
+- Use type assertion or `Satisfy` for checking interface implementation
 </patterns>
 
 <related>

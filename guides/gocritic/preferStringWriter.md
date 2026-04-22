@@ -21,10 +21,10 @@ buf.WriteString("hello world")
 </examples>
 
 <patterns>
-- Writing string constants or variables via `w.Write([]byte(s))` to a `bytes.Buffer`
-- HTTP response writes using `rw.Write([]byte(str))` where `WriteString` avoids allocation
-- `bufio.Writer.Write([]byte(s))` when the writer supports `io.StringWriter`
-- Any `Write([]byte(stringValue))` pattern where the argument originates as a string
+- Replace `w.Write([]byte(s))` with `w.WriteString(s)` when writing strings to `bytes.Buffer`
+- Replace `rw.Write([]byte(str))` with `io.WriteString(rw, str)` for HTTP responses
+- Replace `bufio.Writer.Write([]byte(s))` with `w.WriteString(s)` when the writer supports `io.StringWriter`
+- Use `WriteString` for any `Write([]byte(stringValue))` pattern to avoid allocation
 </patterns>
 
 <related>

@@ -23,9 +23,9 @@ doWork(ctx)
 </examples>
 
 <patterns>
-- Discarding cancel function with blank identifier `_`
-- Storing cancel in a variable but never calling it
-- Conditional cancel that skips the cancel path
+- Store and `defer cancel()` immediately — never discard with `_`
+- Call the cancel function before exiting — never store it without invoking
+- Ensure `cancel()` runs on all code paths — avoid conditional skips
 </patterns>
 
 <related>

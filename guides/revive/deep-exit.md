@@ -31,11 +31,11 @@ func processFile(path string) error {
 </examples>
 
 <patterns>
-- `log.Fatal` or `log.Fatalf` in library or utility functions
-- `os.Exit` in helper functions instead of returning errors
-- `fmt.Fprintf(os.Stderr, ...); os.Exit(1)` patterns in packages other than main
-- Test helper functions calling `t.FailNow` when they should return errors
-- CLI flag parsing logic that exits on unknown flags
+- Return errors from library functions instead of calling `log.Fatal` or `log.Fatalf`
+- Propagate errors up the call stack instead of calling `os.Exit` in helper functions
+- Replace `fmt.Fprintf(os.Stderr, ...); os.Exit(1)` patterns with error returns
+- Return errors from test helper functions instead of calling `t.FailNow`
+- Handle flag parsing errors with error returns rather than exiting directly
 </patterns>
 
 <related>

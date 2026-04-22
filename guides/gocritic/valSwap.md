@@ -21,9 +21,8 @@ a, b = b, a
 </examples>
 
 <patterns>
-- Three-line swap with `tmp := a; a = b; b = tmp`
-- Swap in sorting or reversal algorithms
-- Any pair exchange that could use parallel assignment
+- Replace three-line swap `tmp := a; a = b; b = tmp` with parallel assignment `a, b = b, a`
+- Use parallel assignment `a, b = b, a` for swaps in sorting or reversal algorithms
 </patterns>
 
 <related>

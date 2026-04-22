@@ -28,10 +28,10 @@ func (m *MyModifier) Modify() error {
 </examples>
 
 <patterns>
-- Interface methods that take the interface type itself as a parameter
-- Circular interface satisfaction: `*T` needed but only `T` provided
-- Interface embedding that creates impossible-to-satisfy method sets
-- Pointer receiver in interface method on the implementing type
+- Avoid interface methods that accept the interface type itself as a parameter
+- Resolve circular satisfaction by using value receivers or accepting concrete types
+- Simplify interface embedding to avoid impossible-to-satisfy method sets
+- Replace pointer receiver parameters in interface methods with value receivers or concrete types
 </patterns>
 
 <related>

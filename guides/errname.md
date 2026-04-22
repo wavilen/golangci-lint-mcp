@@ -27,9 +27,9 @@ var ErrNotFound = errors.New("not found")
 </examples>
 
 <patterns>
-- Error types named without the `Error` suffix (e.g., `type NotFound`)
-- Sentinel errors not prefixed with `Err` (e.g., `ErrorNotFound`)
-- Inconsistent error naming within a package
+- Add `Error` suffix to error type names (e.g., `NotFound` → `NotFoundError`)
+- Rename sentinel error variables to start with `Err` (e.g., `ErrorNotFound` → `ErrNotFound`)
+- Use consistent `Err` prefix for sentinel errors and `Error` suffix for error types across the package
 </patterns>
 
 <related>

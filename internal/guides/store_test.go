@@ -10,109 +10,115 @@ import (
 
 func makeTestFS() fstest.MapFS {
 	return fstest.MapFS{
-		"guides/testlinter.md": &fstest.MapFile{
-			Data: []byte("# testlinter\n\n<instructions>Test instructions for simple linter</instructions>\n\n<examples>Some example code</examples>\n"),
+		"guides/testlinter.md": {
+			Data: []byte(
+				"# testlinter\n\n<instructions>Test instructions for simple linter</instructions>\n\n<examples>Some example code</examples>\n",
+			),
 		},
-		"guides/testcompound/rule1.md": &fstest.MapFile{
-			Data: []byte("# testcompound: rule1\n\n<instructions>Compound rule one</instructions>\n\n<examples>Code here</examples>\n"),
+		"guides/testcompound/rule1.md": {
+			Data: []byte(
+				"# testcompound: rule1\n\n<instructions>Compound rule one</instructions>\n\n<examples>Code here</examples>\n",
+			),
 		},
-		"guides/testcompound/rule2.md": &fstest.MapFile{
+		"guides/testcompound/rule2.md": {
 			Data: []byte("# testcompound: rule2\n\n<instructions>Compound rule two</instructions>\n"),
 		},
-		"guides/another.md": &fstest.MapFile{
-			Data: []byte("# another\n\n<instructions>Another linter guide</instructions>\n\n<patterns>Pattern info</patterns>\n"),
+		"guides/another.md": {
+			Data: []byte(
+				"# another\n\n<instructions>Another linter guide</instructions>\n\n<patterns>Pattern info</patterns>\n",
+			),
 		},
 	}
 }
 
 func TestNewStore(t *testing.T) {
-	s, err := NewStore(makeTestFS())
+	store, err := NewStore(makeTestFS())
 	require.NoError(t, err)
-	require.NotNil(t, s)
+	require.NotNil(t, store)
 }
 
 func TestLookup(t *testing.T) {
-	s, err := NewStore(makeTestFS())
+	store, err := NewStore(makeTestFS())
 	require.NoError(t, err)
 
 	t.Run("simple linter lookup", func(t *testing.T) {
-		g, ok := s.Lookup("testlinter", "")
+		guide, ok := store.Lookup("testlinter", "")
 		require.True(t, ok)
-		require.NotNil(t, g)
-		assert.Equal(t, "testlinter", g.Linter)
-		assert.Equal(t, "", g.Rule)
-		assert.Contains(t, g.Instructions, "Test instructions for simple linter")
+		require.NotNil(t, guide)
+		assert.Equal(t, "testlinter", guide.Linter)
+		assert.Empty(t, guide.Rule)
+		assert.Contains(t, guide.Instructions, "Test instructions for simple linter")
 	})
 
 	t.Run("compound linter rule lookup", func(t *testing.T) {
-		g, ok := s.Lookup("testcompound", "rule1")
+		guide, ok := store.Lookup("testcompound", "rule1")
 		require.True(t, ok)
-		require.NotNil(t, g)
-		assert.Equal(t, "testcompound", g.Linter)
-		assert.Equal(t, "rule1", g.Rule)
-		assert.Contains(t, g.Instructions, "Compound rule one")
+		require.NotNil(t, guide)
+		assert.Equal(t, "testcompound", guide.Linter)
+		assert.Equal(t, "rule1", guide.Rule)
+		assert.Contains(t, guide.Instructions, "Compound rule one")
 	})
 
 	t.Run("nonexistent linter returns nil false", func(t *testing.T) {
-		g, ok := s.Lookup("nonexistent", "")
-		assert.Nil(t, g)
+		guide, ok := store.Lookup("nonexistent", "")
+		assert.Nil(t, guide)
 		assert.False(t, ok)
 	})
 
 	t.Run("nonexistent rule returns nil false", func(t *testing.T) {
-		g, ok := s.Lookup("testcompound", "nonexistent")
-		assert.Nil(t, g)
+		guide, ok := store.Lookup("testcompound", "nonexistent")
+		assert.Nil(t, guide)
 		assert.False(t, ok)
 	})
 }
 
 func TestSuggest(t *testing.T) {
-	s, err := NewStore(makeTestFS())
+	store, err := NewStore(makeTestFS())
 	require.NoError(t, err)
 
 	t.Run("fuzzy match for misspelling", func(t *testing.T) {
-		suggestion := s.Suggest("testlintr")
+		suggestion := store.Suggest("testlintr")
 		assert.Equal(t, "testlinter", suggestion)
 	})
 
 	t.Run("fuzzy match for partial name", func(t *testing.T) {
-		suggestion := s.Suggest("testlnter")
+		suggestion := store.Suggest("testlnter")
 		assert.Equal(t, "testlinter", suggestion)
 	})
 
 	t.Run("no match for completely different name", func(t *testing.T) {
-		suggestion := s.Suggest("zzzzzzzz")
-		assert.Equal(t, "", suggestion)
+		suggestion := store.Suggest("zzzzzzzz")
+		assert.Empty(t, suggestion)
 	})
 }
 
 func TestListRules(t *testing.T) {
-	s, err := NewStore(makeTestFS())
+	store, err := NewStore(makeTestFS())
 	require.NoError(t, err)
 
 	t.Run("compound linter returns rules", func(t *testing.T) {
-		rules := s.ListRules("testcompound")
+		rules := store.ListRules("testcompound")
 		assert.Contains(t, rules, "rule1")
 		assert.Contains(t, rules, "rule2")
 		assert.Len(t, rules, 2)
 	})
 
 	t.Run("simple linter returns empty slice", func(t *testing.T) {
-		rules := s.ListRules("testlinter")
+		rules := store.ListRules("testlinter")
 		assert.Empty(t, rules)
 	})
 
 	t.Run("unknown linter returns empty slice", func(t *testing.T) {
-		rules := s.ListRules("nonexistent")
+		rules := store.ListRules("nonexistent")
 		assert.Empty(t, rules)
 	})
 }
 
 func TestLinterNames(t *testing.T) {
-	s, err := NewStore(makeTestFS())
+	store, err := NewStore(makeTestFS())
 	require.NoError(t, err)
 
-	names := s.LinterNames()
+	names := store.LinterNames()
 	assert.Contains(t, names, "testlinter")
 	assert.Contains(t, names, "testcompound")
 	assert.Contains(t, names, "another")

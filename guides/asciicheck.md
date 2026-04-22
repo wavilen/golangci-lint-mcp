@@ -25,10 +25,10 @@ func calculateTotal(price float64) float64 {
 </examples>
 
 <patterns>
-- Function or variable names with accented characters (résumé, café, naïve)
-- Greek letters used as identifiers (π, Δ, α)
-- CJK characters in variable or function names
-- Non-ASCII whitespace in identifier boundaries
+- Rename identifiers with accented characters to ASCII equivalents (e.g., résumé → resume)
+- Replace Greek letter identifiers with descriptive ASCII names (e.g., π → pi)
+- Rename CJK character identifiers to English equivalents
+- Replace non-ASCII whitespace with standard spaces or underscores
 </patterns>
 
 <related>

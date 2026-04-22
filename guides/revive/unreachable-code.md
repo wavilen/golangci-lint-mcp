@@ -25,11 +25,11 @@ func load() ([]byte, error) {
 </examples>
 
 <patterns>
-- Code after `return` in a function or branch
-- Statements after `break` or `continue` in a loop
-- Code following `panic()` that would never execute
-- Fallthrough code in the final case of a type switch
-- Dead code after `log.Fatal` or `os.Exit` calls
+- Remove code placed after `return` in a function or branch
+- Remove statements after `break` or `continue` in a loop — they never execute
+- Remove code following `panic()` that would never run
+- Eliminate fallthrough code in the final case of a type switch
+- Remove dead code after `log.Fatal` or `os.Exit` calls
 </patterns>
 
 <related>

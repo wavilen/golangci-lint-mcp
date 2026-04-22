@@ -23,9 +23,9 @@ func greet(name string) {
 </examples>
 
 <patterns>
-- Pointer parameter only dereferenced for reading
-- Value receiver on methods that don't mutate state
-- `*T` parameter passed to functions that never write through it
+- Replace pointer parameters used only for reading with value parameters
+- Replace value receivers on non-mutating methods with pointer receivers only when needed
+- Replace `*T` parameters with `T` when the function never writes through the pointer
 </patterns>
 
 <related>

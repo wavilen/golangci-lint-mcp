@@ -21,9 +21,9 @@ func (s *MySuite) TestFoo() {
 </examples>
 
 <patterns>
-- `func (s *Suite) TestXxx(t *testing.T)` — remove the parameter
-- `func (s *Suite) TestXxx(ctx context.Context)` — remove the parameter
-- Any suite method accepting parameters — suite methods must have zero params
+- Remove the `t *testing.T` parameter from `func (s *Suite) TestXxx(t *testing.T)`
+- Remove the `ctx context.Context` parameter from `func (s *Suite) TestXxx(ctx context.Context)`
+- Ensure suite methods have zero parameters — use `s.T()` to access `*testing.T`
 </patterns>
 
 <related>

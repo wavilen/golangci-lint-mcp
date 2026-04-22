@@ -25,11 +25,11 @@ doWork()
 </examples>
 
 <patterns>
-- `if true { ... }` wrapping code that always executes
-- `if false { ... }` dead code blocks
-- If/else with identical bodies in both branches
-- Conditions that are always true/false due to type constraints
-- Redundant boolean comparisons like `if flag == true`
+- Remove `if true { ... }` wrappers around code that always executes
+- Remove `if false { ... }` dead code blocks entirely
+- Combine if/else branches with identical bodies into a single code path
+- Remove conditions that are always true or false due to type constraints
+- Simplify `if flag == true` to `if flag`
 </patterns>
 
 <related>

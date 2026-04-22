@@ -24,10 +24,10 @@ func greet(name string) string {
 </examples>
 
 <patterns>
-- Function parameters that are never referenced in the function body
-- Boolean parameters always passed as `true` or `false` by every caller
-- Interface method parameters unused in specific implementations
-- Context parameters accepted but never propagated
+- Remove unused function parameters or replace with blank identifier `_`
+- Remove boolean parameters that always receive the same constant value
+- Eliminate unused interface method parameters or provide a narrower interface
+- Propagate `context.Context` to downstream calls or remove it from the signature
 </patterns>
 
 <related>

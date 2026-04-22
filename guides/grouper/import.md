@@ -24,9 +24,9 @@ import (
 </examples>
 
 <patterns>
-- Multiple `import "x"` statements — group into `import ( ... )`
-- Two or more import blocks at the top of a file — merge into one
-- Single import can remain ungrouped, but multiple should be grouped
+- Group multiple `import "x"` statements into a single `import ( ... )` block
+- Merge two or more import blocks at the top of a file into one
+- Group imports when there are multiple — single imports can remain ungrouped
 </patterns>
 
 <related>

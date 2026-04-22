@@ -31,9 +31,9 @@ func process() error {
 </examples>
 
 <patterns>
-- `if err != nil { return nil }` — returns nil instead of the checked error
-- `if err == nil { return err }` — returns nil error incorrectly
-- Confusing error variable names leading to returning the wrong one
+- Return the checked error in `if err != nil` branches instead of returning `nil`
+- Return `nil` explicitly in `if err == nil` branches when no error occurred
+- Rename error variables clearly to avoid returning the wrong error in conditional branches
 </patterns>
 
 <related>

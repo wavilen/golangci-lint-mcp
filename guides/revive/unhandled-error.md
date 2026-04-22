@@ -28,11 +28,11 @@ if err != nil {
 </examples>
 
 <patterns>
-- Using blank identifier `_` to discard error returns
-- Calling `fmt.Fprint`/`fmt.Fprintf` on an `io.Writer` without checking the error
-- Ignoring errors from `os` operations like `Chmod`, `Mkdir`, `Remove`
-- Discarding `io.Closer.Close()` errors in defer statements
-- Ignoring errors from `encoding/json` marshal/unmarshal operations
+- Check error returns instead of discarding them with the blank identifier `_`
+- Use and check errors from `fmt.Fprint`/`fmt.Fprintf` calls on `io.Writer`
+- Handle errors from `os` operations like `Chmod`, `Mkdir`, and `Remove`
+- Use and handle `io.Closer.Close()` errors in defer statements
+- Check errors from `encoding/json` marshal/unmarshal operations
 </patterns>
 
 <related>

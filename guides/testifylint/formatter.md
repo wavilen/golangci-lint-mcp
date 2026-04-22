@@ -17,9 +17,9 @@ assert.Equalf(t, expected, actual, "item %d failed", i)
 </examples>
 
 <patterns>
-- `assert.Xxx(t, ..., fmt.Sprintf(...))` — use `assert.Xxxf` with format args
-- `fmt.Sprintf` in assertion message parameter — pass format string and args directly
-- Building complex message strings for assertions — use formatted assertion variant
+- Use `assert.Xxxf` with format args instead of `assert.Xxx(t, ..., fmt.Sprintf(...))`
+- Pass format string and args directly instead of `fmt.Sprintf` in assertion message parameters
+- Use formatted assertion variants for building complex message strings
 </patterns>
 
 <related>

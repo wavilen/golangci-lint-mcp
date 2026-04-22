@@ -21,11 +21,11 @@ package user
 </examples>
 
 <patterns>
-- Package declarations without any preceding comment
-- Packages with comments that don't start with "Package {name}"
-- Generated packages missing doc comments
-- Main packages that skip documentation
-- Packages with only TODO comments above the declaration
+- Add a comment preceding the `package` declaration in every package
+- Add a comment starting with "Package {name}" to every package
+- Add doc comments to generated packages
+- Document `main` packages with a comment explaining the command's purpose
+- Replace TODO-only comments above package declarations with proper doc comments
 </patterns>
 
 <related>

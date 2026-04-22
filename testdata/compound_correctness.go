@@ -10,7 +10,7 @@ package testdata
 
 import (
 	"fmt"
-	"io/ioutil" //nolint:staticcheck // SA1019: deprecated since Go 1.16
+	"io/ioutil"
 	"os"
 	"sync"
 )

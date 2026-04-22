@@ -33,11 +33,11 @@ default:
 </examples>
 
 <patterns>
-- `fallthrough` in the final `case` or `default` clause
-- `fallthrough` to a case that would be better combined with comma syntax
-- Fallthrough chains where each case does the same thing
-- Using `fallthrough` as a substitute for proper case grouping
-- Fallthrough in type switches (which is not allowed in Go)
+- Remove `fallthrough` from the final `case` or `default` clause — there is no next case to fall into
+- Combine cases with comma syntax instead of using `fallthrough` to a case with identical logic
+- Replace fallthrough chains where each case does the same thing with multi-value case labels
+- Use comma-separated case labels instead of `fallthrough` for proper case grouping
+- Remove `fallthrough` from type switches — it is not allowed in Go
 </patterns>
 
 <related>

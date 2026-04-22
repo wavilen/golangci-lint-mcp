@@ -28,11 +28,11 @@ for _, item := range items {
 </examples>
 
 <patterns>
-- Goroutines launched inside range loops that close over the iteration variable
-- Deferred function calls inside range loops referencing loop variables
-- Closures stored in a slice inside a range loop
-- Anonymous functions passed to `sync.Once` or similar inside loops
-- WaitGroup callbacks capturing range variables
+- Use the iteration variable before launching goroutines inside range loops — use `item := item` or pass as parameter
+- Use a local copy of loop variables in deferred function calls inside range loops
+- Use loop values by copy before storing closures in a slice inside a range loop
+- Pass loop variables as arguments to anonymous functions instead of closing over them
+- Use range variables before passing to WaitGroup callbacks
 </patterns>
 
 <related>

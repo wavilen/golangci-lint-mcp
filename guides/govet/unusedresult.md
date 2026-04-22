@@ -21,10 +21,10 @@ if strings.HasPrefix(name, "test_") {
 </examples>
 
 <patterns>
-- Discarding return value of `copy()` — indicates copy count not checked
-- Ignoring result of `strings.HasPrefix`/`strings.Contains`
-- Not using the error value from `errors.New`
-- Discarding `fmt.Sprintf` result
+- Check the return value of `copy()` to verify the number of bytes copied
+- Use the return value of string predicates (`strings.HasPrefix`, `strings.Contains`) — never discard
+- Use the error value from `errors.New` — assign or check the result
+- Use the return value of `fmt.Sprintf` — assign it to a variable
 </patterns>
 
 <related>

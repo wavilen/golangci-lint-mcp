@@ -23,11 +23,11 @@ errMsg := "something went wrong"
 </examples>
 
 <patterns>
-- Variables named `true`, `false`, or `nil` in tests or generated code
-- Function parameters shadowing builtins like `close` or `copy`
-- Local variables named `error` instead of `err`
-- Loop variables named `copy` or `append`
-- Type aliases named after builtins in generated protobuf code
+- Rename variables named `true`, `false`, or `nil` in tests or generated code
+- Avoid function parameter names that shadow builtins like `close` or `copy`
+- Use `err` instead of `error` for local error variables
+- Rename loop variables named `copy` or `append` to descriptive alternatives
+- Add a prefix to type aliases that collide with builtins in generated protobuf code
 </patterns>
 
 <related>

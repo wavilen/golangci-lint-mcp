@@ -21,11 +21,11 @@ msg := "hello"
 </examples>
 
 <patterns>
-- `fmt.Sprintf` with a single `%s` verb and one string argument
-- `fmt.Sprintf` with no format verbs at all (just a plain string)
-- `fmt.Sprintf("%v", x)` when `fmt.Sprint(x)` would suffice
-- Using `fmt.Sprintf` for simple string concatenation instead of `+`
-- Format calls where the result is identical to one of the arguments
+- Use the string directly instead of `fmt.Sprintf("%s", str)`
+- Replace `fmt.Sprintf` with no format verbs with a plain string literal
+- Use `fmt.Sprint(x)` instead of `fmt.Sprintf("%v", x)`
+- Replace `fmt.Sprintf` for simple concatenation with the `+` operator
+- Use the argument directly when the format call result is identical to one of the arguments
 </patterns>
 
 <related>

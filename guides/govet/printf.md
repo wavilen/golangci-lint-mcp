@@ -23,10 +23,10 @@ fmt.Printf("Name: %s, Age: %d\n", name, age) // correct verbs
 </examples>
 
 <patterns>
-- Wrong format verb for argument type (`%d` for string, `%s` for int)
-- More arguments than format specifiers
-- Fewer arguments than format specifiers
-- `%` at end of format string (truncated verb)
+- Match format verbs to argument types (`%s` for string, `%d` for int, `%v` as fallback)
+- Add format specifiers for every argument — remove extra arguments
+- Add arguments for every format specifier — provide all values
+- Complete truncated format verbs — never end a format string with `%`
 </patterns>
 
 <related>

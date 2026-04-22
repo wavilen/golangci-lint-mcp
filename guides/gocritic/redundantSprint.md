@@ -21,9 +21,9 @@ name := s
 </examples>
 
 <patterns>
-- `fmt.Sprintf("%v", x)` → `fmt.Sprint(x)` or direct use
-- `fmt.Sprint(s)` where `s` is already a string → `s`
-- `fmt.Sprintf("%s", str)` → `str`
+- Replace `fmt.Sprintf("%v", x)` with `fmt.Sprint(x)` or use `x` directly
+- Replace `fmt.Sprint(s)` with `s` when `s` is already a string
+- Replace `fmt.Sprintf("%s", str)` with `str` directly
 </patterns>
 
 <related>

@@ -17,9 +17,9 @@ Expect(items).Should(HaveLen(5))
 </examples>
 
 <patterns>
-- `Expect(len(x)).Should(Equal(n))` — use `Expect(x).Should(HaveLen(n))`
-- `Expect(len(x)).To(BeNumerically(">", 0))` — use `Expect(x).ToNot(BeEmpty())`
-- `Expect(len(x)).To(Equal(0))` — use `Expect(x).To(BeEmpty())`
+- Use `Expect(x).Should(HaveLen(n))` instead of `Expect(len(x)).Should(Equal(n))`
+- Use `Expect(x).ToNot(BeEmpty())` instead of `Expect(len(x)).To(BeNumerically(">", 0))`
+- Use `Expect(x).To(BeEmpty())` instead of `Expect(len(x)).To(Equal(0))`
 </patterns>
 
 <related>

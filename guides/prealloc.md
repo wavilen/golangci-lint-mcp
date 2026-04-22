@@ -25,10 +25,10 @@ for _, item := range items {
 </examples>
 
 <patterns>
-- `var s []T` followed by `append` in a loop where the length is knowable
-- Map declared without size hint then populated in a loop
-- Slice built from another collection without pre-allocation
-- `append` chains in loops that trigger repeated growth allocations
+- Preallocate slices with `make([]T, 0, n)` when the final size is knowable
+- Preallocate maps with `make(map[K]V, n)` when populating from a known-size loop
+- Use `make([]T, 0, len(src))` when building a slice from another collection
+- Avoid `append` chains in loops without pre-allocation — they trigger repeated growth
 </patterns>
 
 <related>

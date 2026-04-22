@@ -93,12 +93,12 @@ func membershipDiscount(c Customer) float64 {
 </examples>
 
 <patterns>
-- Business rule functions with accumulated special cases — split into focused rule functions
-- Pricing or discount logic mixing multiple rule categories (loyalty, season, bulk)
-- Approval workflows combining validation, authorization, and notification in one body
-- God functions where nesting arises from interleaved unrelated responsibilities
-- Add new discount rules without modifying the calculator (OCP)
-- Define small DiscountRule interface instead of monolithic pricing struct (ISP)
+- Separate business rule functions with accumulated special cases into focused rule functions
+- Separate pricing or discount logic into individual functions per rule category (loyalty, season, bulk)
+- Decompose approval workflows into distinct validation, authorization, and notification steps
+- Flatten up god functions by extracting interleaved responsibilities into helper functions
+- Define granular interfaces instead of monolithic structs to keep each function focused (ISP)
+- Define granular interfaces instead of monolithic structs to keep each function focused (ISP)
 </patterns>
 
 <related>

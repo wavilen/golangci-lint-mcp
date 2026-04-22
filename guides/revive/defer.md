@@ -46,11 +46,11 @@ func processFile(path string) error {
 </examples>
 
 <patterns>
-- `defer` inside `for` loops accumulating deferred calls
-- Defer capturing loop variable by reference
-- Deferred close/mutex unlock in hot-path functions
-- Defer in `main` where direct cleanup would suffice
-- Named return values interacting unexpectedly with deferred functions
+- Move `defer` out of loops into a helper function to prevent deferred calls from accumulating
+- Extract loop body into a separate function when defer captures a loop variable by reference
+- Call cleanup directly instead of deferring in hot-path functions
+- Use direct cleanup in `main` where defer adds unnecessary overhead
+- Ensure deferred functions that modify named return values use explicit returns
 </patterns>
 
 <related>

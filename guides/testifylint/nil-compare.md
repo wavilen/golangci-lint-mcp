@@ -19,9 +19,9 @@ assert.Empty(t, []int{})
 </examples>
 
 <patterns>
-- `assert.Nil(t, err)` — use `assert.NoError(t, err)`
-- `assert.Nil(t, emptySlice)` — use `assert.Empty(t, slice)`
-- `assert.NotNil(t, err)` — use `assert.Error(t, err)`
+- Use `assert.NoError(t, err)` instead of `assert.Nil(t, err)`
+- Use `assert.Empty(t, slice)` instead of `assert.Nil(t, emptySlice)`
+- Use `assert.Error(t, err)` instead of `assert.NotNil(t, err)`
 </patterns>
 
 <related>

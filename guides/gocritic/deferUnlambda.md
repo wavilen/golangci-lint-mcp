@@ -21,9 +21,9 @@ defer conn.Close()
 </examples>
 
 <patterns>
-- `defer func() { f() }()` with no arguments → `defer f()`
-- `defer func() { obj.Method() }()` → `defer obj.Method()`
-- Wrapping a simple call that has no parameters needing deferred evaluation
+- Replace `defer func() { f() }()` with `defer f()` when no arguments need deferred evaluation
+- Replace `defer func() { obj.Method() }()` with `defer obj.Method()`
+- Remove unnecessary lambda wrappers around calls with no parameters needing deferred evaluation
 </patterns>
 
 <related>

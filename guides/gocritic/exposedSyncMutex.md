@@ -31,10 +31,10 @@ func (s *Server) Increment() {
 </examples>
 
 <patterns>
-- Exported `sync.Mutex` field: `Mu sync.Mutex`
-- Exported `sync.RWMutex` field: `Lock sync.RWMutex`
-- Exported `sync.WaitGroup` field: `Wg sync.WaitGroup`
-- Pointer to mutex exported: `Mu *sync.Mutex`
+- Unexport `sync.Mutex` fields — rename `Mu sync.Mutex` to `mu sync.Mutex`
+- Unexport `sync.RWMutex` fields — rename `Lock sync.RWMutex` to `lock sync.RWMutex`
+- Unexport `sync.WaitGroup` fields — rename `Wg sync.WaitGroup` to `wg sync.WaitGroup`
+- Unexport pointer-to-mutex fields — rename `Mu *sync.Mutex` to `mu *sync.Mutex`
 </patterns>
 
 <related>

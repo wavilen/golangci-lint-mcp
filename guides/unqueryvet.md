@@ -33,10 +33,10 @@ if err != nil {
 </examples>
 
 <patterns>
-- `Query()` method returns values but callers ignore the error
-- Incorrect `Query()` signature not matching `url.Queryer`
-- Missing error return in `Query()` implementation
-- Calling `Encode()` on values from `Query()` without checking error
+- Handle the error return value from `Query()` method calls
+- Match the `url.Queryer` interface signature exactly: `Query() (url.Values, error)`
+- Return an error from `Query()` implementations instead of only returning values
+- Check the error before calling `Encode()` on values returned by `Query()`
 </patterns>
 
 <related>

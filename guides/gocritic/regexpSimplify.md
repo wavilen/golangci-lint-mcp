@@ -21,10 +21,10 @@ re := regexp.MustCompile(`a?b`)
 </examples>
 
 <patterns>
-- `[0-9]` → `\d`
-- `[a-zA-Z0-9_]` → `\w`
-- `{0,1}` → `?`, `{1,}` → `+`, `{0,}` → `*`
-- `[0-9a-fA-F]` → `[0-9a-fA-F]` (some can't simplify further)
+- Replace `[0-9]` with `\d`
+- Replace `[a-zA-Z0-9_]` with `\w`
+- Replace `{0,1}` with `?`, `{1,}` with `+`, `{0,}` with `*`
+- Simplify character classes where possible — some like `[0-9a-fA-F]` may not simplify further
 </patterns>
 
 <related>

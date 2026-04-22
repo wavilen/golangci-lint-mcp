@@ -21,10 +21,10 @@ msg := userInput
 </examples>
 
 <patterns>
-- Format string from user input or external data
-- Variable format string in `fmt.Printf` family
-- Template strings constructed at runtime
-- Config-driven format strings passed to `fmt.Sprintf`
+- Avoid passing user input or external data as format strings — use `%s` placeholder instead
+- Replace variable format strings in `fmt.Printf` with constant format + arguments
+- Avoid constructing format strings at runtime — use constant formats with parameters
+- Replace config-driven format strings with static formats and dynamic arguments
 </patterns>
 
 <related>

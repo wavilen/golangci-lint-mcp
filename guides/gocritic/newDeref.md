@@ -22,9 +22,9 @@ config := http.Client{}
 </examples>
 
 <patterns>
-- `*new(int)` → `var x int` or `0`
-- `*new(MyStruct)` → `MyStruct{}`
-- `*new([]byte)` → `var b []byte`
+- Replace `*new(int)` with `var x int` or the zero value `0`
+- Replace `*new(MyStruct)` with `MyStruct{}`
+- Replace `*new([]byte)` with `var b []byte`
 </patterns>
 
 <related>

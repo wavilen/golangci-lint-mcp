@@ -24,9 +24,9 @@ for _, item := range items {
 </examples>
 
 <patterns>
-- `val := val` or `item := item` shadow copies inside range loops
-- Closure capture workarounds that are obsolete since Go 1.22
-- Goroutine launches with copied loop variables no longer needed
+- Remove `val := val` shadow copies inside range loops (unnecessary since Go 1.22)
+- Eliminate closure capture workarounds like local copies in goroutine launches
+- Use the loop variable directly in closures launched inside `for range`
 </patterns>
 
 <related>

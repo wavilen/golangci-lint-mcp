@@ -19,10 +19,10 @@ t.Format("2006-01-02") // Go reference time format
 </examples>
 
 <patterns>
-- Using `YYYY` instead of `2006` for year
-- Using `MM` instead of `01` for month
-- Using `DD` instead of `02` for day
-- Using `HH:mm:ss` instead of `15:04:05`
+- Use `2006` for year in `time.Format`, not `YYYY`
+- Use `01` for month in `time.Format`, not `MM`
+- Use `02` for day in `time.Format`, not `DD`
+- Use `15:04:05` for time in `time.Format`, not `HH:mm:ss`
 </patterns>
 
 <related>

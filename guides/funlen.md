@@ -38,9 +38,9 @@ func ProcessOrder(o Order) error {
 </examples>
 
 <patterns>
-- God functions handling validation, business logic, and persistence in one body
-- Request handlers that do routing, auth, and response formatting
-- Setup functions with sequential configuration blocks
+- Decompose god functions handling validation, business logic, and persistence into separate named functions
+- Split request handlers that do routing, auth, and response formatting into focused handlers
+- Extract setup functions with sequential configuration blocks into smaller, composable setup steps
 </patterns>
 
 <related>

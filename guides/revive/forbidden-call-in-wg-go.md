@@ -31,11 +31,11 @@ wg.Wait()
 </examples>
 
 <patterns>
-- `runtime.Goexit()` inside a goroutine without deferred `wg.Done()`
-- `os.Exit()` or `log.Fatal()` in a WaitGroup goroutine
-- Panic without recovery preventing `wg.Done()` from executing
-- `wg.Done()` placed after a call that might block forever
-- Forgetting to defer `wg.Done()` when adding error handling paths
+- Use `defer wg.Done()` immediately in goroutines to ensure it runs even after `runtime.Goexit()`
+- Avoid `os.Exit()` or `log.Fatal()` in WaitGroup goroutines — they prevent `wg.Done()` from running
+- Add recovery from panics in WaitGroup goroutines to ensure `wg.Done()` executes
+- Move `wg.Done()` before any call that might block forever
+- Use `defer wg.Done()` as the first statement when adding error handling paths to goroutines
 </patterns>
 
 <related>

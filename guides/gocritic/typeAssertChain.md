@@ -32,9 +32,9 @@ case bool:
 </examples>
 
 <patterns>
-- Sequential `if _, ok := x.(T); ok` patterns
-- Multiple comma-ok type assertions on the same expression
-- Type dispatch spread across multiple `if` blocks
+- Replace sequential `if _, ok := x.(T); ok` with a type switch
+- Replace multiple comma-ok type assertions on the same expression with a type switch
+- Replace type dispatch spread across `if` blocks with a single `switch x.(type)`
 </patterns>
 
 <related>

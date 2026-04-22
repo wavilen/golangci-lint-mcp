@@ -21,10 +21,10 @@ file, _ := os.Open("config.yaml")
 </examples>
 
 <patterns>
-- Bare `//nolint` without specifying linter names
-- `//nolint` directives that suppress no actual warnings
-- Missing explanation comment after `//nolint` directive
-- File-level `//nolint` comments suppressing everything
+- Specify linter names in `//nolint:lintername` instead of bare `//nolint`
+- Remove unused `//nolint` directives that suppress no actual warnings
+- Add an explanation comment after every `//nolint` directive
+- Avoid file-level `//nolint` comments — scope suppressions to specific lines
 </patterns>
 
 <related>

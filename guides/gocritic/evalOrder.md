@@ -23,10 +23,10 @@ i = i + 1
 </examples>
 
 <patterns>
-- Multi-assignment where same variable is written twice
-- Slice indexing with side-effecting index updates
-- Map access with concurrent read/write on same line
-- Complex assignments like `x, y = y, x` (fine) vs `x, x = 1, 2` (bug)
+- Separate multi-assignments where the same variable is written twice into distinct statements
+- Avoid slice indexing with side-effecting index updates in the same expression
+- Avoid concurrent map read/write on the same line — separate into sequential operations
+- Replace `x, x = 1, 2` (bug) with distinct variables; keep `x, y = y, x` (correct swap)
 </patterns>
 
 <related>

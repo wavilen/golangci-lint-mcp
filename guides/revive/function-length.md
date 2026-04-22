@@ -32,11 +32,11 @@ func ProcessOrder(o Order) error {
 </examples>
 
 <patterns>
-- Functions mixing validation, business logic, and I/O
-- Long switch-case functions where each case is substantial
-- Handler functions with inline parsing, validation, and response building
-- Functions that grew over time as edge cases were added
-- Test helper functions that set up complex state inline
+- Extract validation, business logic, and I/O into separate helper functions
+- Move each substantial switch case into its own function
+- Separate handler functions into parsing, validation, and response building helpers
+- Decompose functions that grew over time by extracting edge cases into focused functions
+- Extract inline state setup from test helper functions into dedicated setup functions
 </patterns>
 
 <related>

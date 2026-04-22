@@ -38,10 +38,10 @@ func process(data []byte) error {
 </examples>
 
 <patterns>
-- `if` inside `if` inside `for` — three or more levels deep
-- Happy path buried inside nested blocks
-- Error handling nested instead of early return
-- Guard clauses that could flatten the function body
+- Flatten `if`-inside-`if`-inside-`for` — use guard clauses to reduce nesting
+- Move the happy path to the top — use early returns for error conditions
+- Replace nested error handling with early `return err` to flatten the function body
+- Extract guard clauses to reduce nesting levels
 </patterns>
 
 <related>

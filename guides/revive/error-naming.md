@@ -21,11 +21,11 @@ var ErrPermissionDenied = errors.New("permission denied")
 </examples>
 
 <patterns>
-- Sentinel errors named with `Error` suffix instead of `Err` prefix
-- Exported error variables not following `ErrXxx` naming convention
-- Local error variables using non-standard names
-- Error type names not ending in `Error` (custom error types)
-- Inconsistent naming between error variables and error types
+- Use `Err` prefix for sentinel error variables (e.g., `ErrNotFound`) instead of `Error` suffix
+- Use `ErrXxx` naming convention for exported error variables consistently
+- Use standard naming conventions for local error variables
+- Add `Error` suffix to custom error type names (e.g., `NotFoundError`)
+- Use consistent naming between error variables and error types
 </patterns>
 
 <related>

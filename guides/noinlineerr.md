@@ -31,9 +31,9 @@ func load() (err error) {
 </examples>
 
 <patterns>
-- Inline `return errors.Wrap(...)` in error paths
-- Unnamed error returns preventing defers from inspecting the value
-- Multiple return paths where a named return would simplify cleanup
+- Use named return values and assign errors in conditional blocks rather than inline `return errors.Wrap(...)`
+- Declare named error returns when defers need to inspect or modify the error value
+- Use named returns to simplify cleanup across multiple return paths
 </patterns>
 
 <related>

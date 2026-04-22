@@ -31,9 +31,9 @@ C.store((**C.void)(p)) // C-allocated memory is safe
 </examples>
 
 <patterns>
-- Passing Go pointer to C function that retains it
-- Passing `**C.type` where inner pointer is Go-allocated
-- Using `unsafe.Pointer` to circumvent cgo pointer checks
+- Avoid passing Go pointers to C functions that retain them after the call returns
+- Avoid passing `**C.type` where the inner pointer is Go-allocated — use `C.malloc` instead
+- Avoid using `unsafe.Pointer` to bypass cgo pointer rules — allocate C-side memory
 </patterns>
 
 <related>

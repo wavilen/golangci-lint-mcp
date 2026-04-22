@@ -29,11 +29,11 @@ if !t.IsZero() {
 </examples>
 
 <patterns>
-- Comparing two `time.Time` values with `==` or `!=`
-- Checking if a time is the zero value with `t == time.Time{}`
-- Using `==` to compare times from different time zones
-- Comparing time values returned from different sources (clock vs parsed)
-- Testing time equality in table-driven tests
+- Use `t1.Equal(t2)` instead of `==` or `!=` to compare `time.Time` values
+- Check for zero time with `t.IsZero()` instead of `t == time.Time{}`
+- Use `Equal` when comparing times from different time zones
+- Use `Equal` for times from different sources rather than `==`
+- Use `Equal` for time comparisons in table-driven tests
 </patterns>
 
 <related>

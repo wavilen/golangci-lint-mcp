@@ -30,11 +30,11 @@ func get(name string) string {
 </examples>
 
 <patterns>
-- `if/else` where the `if` branch returns, panics, or calls `log.Fatal`
-- `else if` chains where earlier branches all terminate
-- Nested if-else where the else is a simple continuation after a return
-- Error-check blocks followed by else with the main logic
-- Guard clause patterns obscured by unnecessary else blocks
+- Remove `else` after an `if` branch that returns, panics, or calls `log.Fatal`
+- Remove indentation from continuation code after early-returning `else if` chains
+- Remove `else` when the `if` block returns — the code below runs unconditionally
+- Move main logic out of `else` blocks following error-check `if` statements
+- Replace guard clause patterns obscured by `else` with direct continuation code
 </patterns>
 
 <related>

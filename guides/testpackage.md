@@ -36,10 +36,10 @@ func TestPublic(t *testing.T) {
 </examples>
 
 <patterns>
-- Test files in the same package accessing unexported functions
-- Dot imports of the package under test: `import . "my/pkg"`
-- Tests that rely on internal state not visible to callers
-- Integration tests that need internal access (may warrant `//nolint:testpackage`)
+- Move tests to an external `xxx_test` package to test only exported symbols
+- Replace dot imports (`import . "my/pkg"`) with normal imports in test files
+- Test through the public API rather than relying on unexported internal state
+- Add `//nolint:testpackage` for integration tests that genuinely need internal access
 </patterns>
 
 <related>

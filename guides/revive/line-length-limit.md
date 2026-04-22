@@ -26,11 +26,11 @@ result, err := someService.DoSomethingVeryComplex(
 </examples>
 
 <patterns>
-- Long function call chains on a single line
-- Complex boolean expressions spanning past the margin
-- URL or path string literals exceeding the limit
-- Long type definitions or struct literals on one line
-- Chained method calls without line breaks
+- Flatten long function call chains across multiple lines at natural points
+- Separate complex boolean expressions across lines before logical operators
+- Flatten URL or path string literals that exceed the limit into concatenated segments
+- Separate long type definitions or struct literals across multiple lines
+- Add line breaks between chained method calls to stay within the limit
 </patterns>
 
 <related>

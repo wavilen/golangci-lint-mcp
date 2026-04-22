@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+	"time"
 
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
 
@@ -14,29 +15,63 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func testMapFile(data string) *fstest.MapFile {
+	return &fstest.MapFile{
+		Data:    []byte(data),
+		Mode:    0,
+		ModTime: time.Time{},
+		Sys:     nil,
+	}
+}
+
+func testGuideCall(toolName string, args map[string]any) mcp.CallToolRequest {
+	return mcp.CallToolRequest{
+		Request: mcp.Request{
+			Method: "",
+			Params: mcp.RequestParams{Meta: nil},
+		},
+		Header: nil,
+		Params: mcp.CallToolParams{
+			Name:      toolName,
+			Arguments: args,
+			Meta:      nil,
+			Task:      nil,
+		},
+	}
+}
+
+func testAIOptions() Options {
+	return Options{
+		GosecAI:         true,
+		GosecAIProvider: "",
+		GosecAIKey:      "",
+		GosecAIBaseURL:  "",
+		GosecAISkipSSL:  false,
+	}
+}
+
 func setupTestServer(t *testing.T, opts ...Options) (*mcptest.Server, context.Context) {
 	t.Helper()
 
-	// Create a test FS with sample guides
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
-			Data: []byte("# errcheck\n\n<instructions>Errcheck detects unchecked errors</instructions>\n\n<examples>```go\nfile, _ := os.Open(\"f\")\n```</examples>"),
-		},
-		"guides/gocritic/badcall.md": &fstest.MapFile{
-			Data: []byte("# gocritic: badCall\n\n<instructions>Detects suspicious function calls</instructions>"),
-		},
-		"guides/gocritic/appendassign.md": &fstest.MapFile{
-			Data: []byte("# gocritic: appendAssign\n\n<instructions>Detects append result misassignment</instructions>"),
-		},
-		"guides/gocritic/commentedoutcode.md": &fstest.MapFile{
-			Data: []byte("# gocritic: commentedOutCode\n\n<instructions>Detects commented-out code</instructions>"),
-		},
-		"guides/gosec/G101.md": &fstest.MapFile{
-			Data: []byte("# G101\n\n<instructions>Detects hardcoded credentials</instructions>\n\n<examples>```go\npassword := \"secret123\"\n```</examples>"),
-		},
-		"guides/gosec/G201.md": &fstest.MapFile{
-			Data: []byte("# G201\n\n<instructions>Detects SQL injection via string format</instructions>\n\n<examples>```go\nquery := fmt.Sprintf(\"SELECT * FROM users WHERE id = %s\", input)\n```</examples>"),
-		},
+		"guides/errcheck.md": testMapFile(
+			"# errcheck\n\n<instructions>Errcheck detects unchecked errors</instructions>\n\n<examples>```go\nfile, _ := os.Open(\"f\")\n```</examples>",
+		),
+		"guides/gocritic/badcall.md": testMapFile(
+			"# gocritic: badCall\n\n<instructions>Detects suspicious function calls</instructions>",
+		),
+		"guides/gocritic/appendassign.md": testMapFile(
+			"# gocritic: appendAssign\n\n<instructions>Detects append result misassignment</instructions>",
+		),
+		"guides/gocritic/commentedoutcode.md": testMapFile(
+			"# gocritic: commentedOutCode\n\n<instructions>Detects commented-out code</instructions>",
+		),
+		"guides/gosec/G101.md": testMapFile(
+			"# G101\n\n<instructions>Detects hardcoded credentials</instructions>\n\n<examples>```go\npassword := \"secret123\"\n```</examples>",
+		),
+		"guides/gosec/G201.md": testMapFile(
+			"# G201\n\n<instructions>Detects SQL injection via string format</instructions>\n\n<examples>```go\nquery := fmt.Sprintf(\"SELECT id, name FROM users WHERE id = %s\", input)\n```</examples>",
+		),
 	}
 
 	store, err := guides.NewStore(testFS)
@@ -68,16 +103,12 @@ func setupTestServer(t *testing.T, opts ...Options) (*mcptest.Server, context.Co
 	return mcpServer, ctx
 }
 
-// Test 1: Known simple linter → returns guide text
+// Test 1: Known simple linter returns guide text.
 func TestHandler_SimpleLinter(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "errcheck"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck"}))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
@@ -85,16 +116,12 @@ func TestHandler_SimpleLinter(t *testing.T) {
 	assert.Contains(t, text, "Errcheck detects unchecked errors")
 }
 
-// Test 2: Known compound rule → returns guide text
+// Test 2: Known compound rule returns guide text.
 func TestHandler_CompoundRule(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "gocritic", "rule": "badcall"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "badcall"}))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
@@ -102,16 +129,11 @@ func TestHandler_CompoundRule(t *testing.T) {
 	assert.Contains(t, text, "suspicious function calls")
 }
 
-// Test 3: Unknown linter → error with suggestion
+// Test 3: Unknown linter returns error with suggestion.
 func TestHandler_UnknownLinter(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "errchek"}, // close misspelling of "errcheck"
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errchek"}))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
@@ -122,38 +144,28 @@ func TestHandler_UnknownLinter(t *testing.T) {
 	assert.Contains(t, text, "errcheck")
 }
 
-// Test 4: Compound linter without rule → lists rules
+// Test 4: Compound linter without rule lists rules.
 func TestHandler_CompoundNoRule(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "gocritic"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic"}))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "gocritic")
 	assert.Contains(t, text, "rule")
-	// Should list available rules
 	assert.Contains(t, text, "appendassign")
 	assert.Contains(t, text, "badcall")
 	assert.Contains(t, text, "commentedoutcode")
 }
 
-// Test 5: Missing linter parameter → error about missing parameter
+// Test 5: Missing linter parameter returns error about missing parameter.
 func TestHandler_MissingLinter(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{}))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
@@ -162,16 +174,12 @@ func TestHandler_MissingLinter(t *testing.T) {
 	assert.Contains(t, strings.ToLower(text), "linter")
 }
 
-// Test 6: Simple linter with rule → error "does not have sub-rules"
+// Test 6: Simple linter with rule returns error about no sub-rules.
 func TestHandler_SimpleWithRule(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "errcheck", "rule": "anything"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck", "rule": "anything"}))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
@@ -180,16 +188,12 @@ func TestHandler_SimpleWithRule(t *testing.T) {
 	assert.Contains(t, strings.ToLower(text), "does not have sub-rules")
 }
 
-// Test 7: Gosec guide without --gosec-ai flag → no autofix section
+// Test 7: Gosec guide without gosec-ai flag has no autofix section.
 func TestHandler_GosecWithoutAIFlag(t *testing.T) {
 	srv, ctx := setupTestServer(t) // default: no options
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "gosec", "rule": "G101"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gosec", "rule": "G101"}))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
@@ -199,16 +203,12 @@ func TestHandler_GosecWithoutAIFlag(t *testing.T) {
 	assert.NotContains(t, text, "-ai-api-provider")
 }
 
-// Test 8: Gosec guide with --gosec-ai flag → autofix section with MCP tool pointer
+// Test 8: Gosec guide with gosec-ai flag has autofix section with MCP tool pointer.
 func TestHandler_GosecWithAIFlag(t *testing.T) {
-	srv, ctx := setupTestServer(t, Options{GosecAI: true})
+	srv, ctx := setupTestServer(t, testAIOptions())
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "gosec", "rule": "G101"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gosec", "rule": "G101"}))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
@@ -221,16 +221,12 @@ func TestHandler_GosecWithAIFlag(t *testing.T) {
 	assert.NotContains(t, text, "YOUR_KEY")
 }
 
-// Test 9: Non-gosec linter with --gosec-ai flag → no autofix section
+// Test 9: Non-gosec linter with gosec-ai flag has no autofix section.
 func TestHandler_NonGosecWithAIFlag(t *testing.T) {
-	srv, ctx := setupTestServer(t, Options{GosecAI: true})
+	srv, ctx := setupTestServer(t, testAIOptions())
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "gocritic", "rule": "badcall"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "badcall"}))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
@@ -239,16 +235,12 @@ func TestHandler_NonGosecWithAIFlag(t *testing.T) {
 	assert.NotContains(t, text, "<autofix>")
 }
 
-// Test 10: Unknown rule for known compound linter → error listing available rules
+// Test 10: Unknown rule for known compound linter returns error listing available rules.
 func TestHandler_UnknownRuleForCompound(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "gocritic", "rule": "nonexistent"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "nonexistent"}))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 

@@ -27,10 +27,10 @@ func process(format string) {
 </examples>
 
 <patterns>
-- Function parameter shadows an import: `func (fmt string)`
-- Loop variable shadows an import: `for path := range paths`
-- Local variable declaration shadows an import
-- Type parameter name collides with a package name
+- Rename parameters that shadow imports — avoid `func (fmt string)`
+- Rename loop variables that shadow imports — avoid `for path := range paths` when `path` is a package
+- Rename local variables that shadow imported package names
+- Rename type parameters that collide with package names
 </patterns>
 
 <related>

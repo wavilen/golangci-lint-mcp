@@ -8,6 +8,11 @@
   "files": [
     "bin/",
     "skills/",
+    "commands/",
+    "hooks/",
+    "rules/",
+    "shared/",
+    "plugins/",
     "README.md",
     "LICENSE"
   ],

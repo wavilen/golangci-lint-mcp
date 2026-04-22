@@ -23,10 +23,10 @@ sorted := slices.Sort(nums)
 </examples>
 
 <patterns>
-- Using `golang.org/x/exp/slices` instead of `slices` (Go 1.21+)
-- Using `golang.org/x/exp/maps` instead of `maps` (Go 1.21+)
-- Using third-party string utilities duplicated by `strings` or `strconv`
-- Using deprecated third-party packages with stdlib equivalents
+- Replace `golang.org/x/exp/slices` with `slices` (stdlib since Go 1.21)
+- Replace `golang.org/x/exp/maps` with `maps` (stdlib since Go 1.21)
+- Use `strings` or `strconv` equivalents instead of third-party string utilities
+- Switch deprecated third-party packages to their standard library equivalents
 </patterns>
 
 <related>

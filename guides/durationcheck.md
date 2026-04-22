@@ -21,9 +21,9 @@ delay := time.Second * time.Duration(count)
 </examples>
 
 <patterns>
-- Multiplying two `time.Duration` values: `time.Second * time.Minute`
-- Duration × Duration in retry backoff calculations
-- Expressions like `timeout * multiplier` where both are `time.Duration`
+- Avoid multiplying two `time.Duration` values — the result is in nanoseconds²
+- Convert one operand to a plain number before multiplying durations in backoff calculations
+- Use `time.Duration(float64(a) * float64(b))` or extract seconds before multiplying
 </patterns>
 
 <related>

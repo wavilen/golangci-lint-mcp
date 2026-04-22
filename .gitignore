@@ -1,8 +1,19 @@
 # Go build artifacts
-golangci-lint-mcp
-golangcilint-mcp
+/golangci-lint-mcp
+/golangcilint-mcp
+/crosscheck
 *.out
 *.test
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # Node
 node_modules/

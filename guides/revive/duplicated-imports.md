@@ -24,11 +24,11 @@ import (
 </examples>
 
 <patterns>
-- Merging branches that both added the same import with different aliases
-- Renaming an import alias but forgetting to remove the old one
-- Helper functions copied from another file bringing duplicate imports
-- IDE auto-import adding a second copy of an already-imported package
-- Refactoring that moved code between files without cleaning imports
+- Remove duplicate imports that appear when merging branches with different aliases
+- Remove the old alias when renaming an import — keep only the new one
+- Remove duplicate imports brought in by copied helper functions
+- Set IDE auto-import to detect and skip already-imported packages
+- Remove duplicate imports when moving code between files
 </patterns>
 
 <related>

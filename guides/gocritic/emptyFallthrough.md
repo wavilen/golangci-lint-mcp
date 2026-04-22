@@ -27,9 +27,9 @@ case 1, 2:
 </examples>
 
 <patterns>
-- Case containing only `fallthrough`
-- Empty case body followed by `fallthrough`
-- Sequential cases all falling through with empty bodies
+- Replace empty `fallthrough` with merged case bodies or explicit logic
+- Remove empty case bodies that only contain `fallthrough`
+- Combine sequential empty fallthrough cases into a single case body
 </patterns>
 
 <related>

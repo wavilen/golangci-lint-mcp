@@ -23,9 +23,9 @@ for _, item := range items {
 </examples>
 
 <patterns>
-- Ranging over `*slice` with nil check — range over value directly (nil slices range zero times)
-- Unnecessary pointer dereference inside loop — simplify binding
-- Nested range where outer has single iteration — flatten the loop
+- Simplify by ranging over slice values directly instead of `*slice` with nil check (nil slices range zero times)
+- Simplify binding by removing unnecessary pointer dereferences inside loops
+- Flatten nested range loops where the outer loop has a single iteration
 </patterns>
 
 <related>

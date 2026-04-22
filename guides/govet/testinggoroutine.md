@@ -39,9 +39,9 @@ func TestParallel(t *testing.T) {
 </examples>
 
 <patterns>
-- `t.Fatal`/`t.Fatalf` called from goroutine
-- `t.Skip`/`t.Skipf` called from goroutine
-- `t.Log`/`t.Errorf` used in goroutine-launched closure
+- Call `t.Fatal`/`t.Fatalf` only from the test goroutine — use channels to report failures from goroutines
+- Call `t.Skip`/`t.Skipf` only from the test goroutine — never from spawned goroutines
+- Avoid `t.Log`/`t.Errorf` from goroutine closures — send results via channels to the test goroutine
 </patterns>
 
 <related>

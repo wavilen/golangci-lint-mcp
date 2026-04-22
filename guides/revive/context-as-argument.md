@@ -31,11 +31,11 @@ func Handle(ctx context.Context) error {
 </examples>
 
 <patterns>
-- `context.Context` appearing as the second or later parameter
-- Custom context wrapper types used instead of `context.Context`
-- Methods with context as a non-first parameter
-- Functions that take a context but pass it deeper without using it
-- HTTP handlers storing context in a struct field instead of passing it
+- Move `context.Context` to the first parameter position in function signatures
+- Use `context.Context` directly instead of custom wrapper types
+- Ensure methods place context as the first parameter after the receiver
+- Pass `context.Context` through the call chain rather than storing it in a struct field
+- Pass context as the first argument in HTTP handlers instead of storing it in struct fields
 </patterns>
 
 <related>

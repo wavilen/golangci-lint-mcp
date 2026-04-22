@@ -34,11 +34,11 @@ func NewClient(c Config) *Client {
 </examples>
 
 <patterns>
-- Exported types without doc comments
-- Exported functions missing documentation
-- Doc comments not starting with the identifier name
-- Exported constants or variables without comments
-- Package-level comments missing or malformed
+- Add doc comments to all exported types
+- Document exported functions with comments starting with the function name
+- Use the identifier name at the start of doc comments — e.g., `// Name does X.`
+- Add comments to exported constants and variables
+- Add a package-level comment starting with "Package {name}" for every package
 </patterns>
 
 <related>

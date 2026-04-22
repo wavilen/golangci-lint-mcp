@@ -21,9 +21,9 @@ p := Point{X: 1, Y: 2} // keyed: safe and readable
 </examples>
 
 <patterns>
-- Struct literal without field names
-- Return statement returning unkeyed struct literal
-- Nested unkeyed struct literals in composite literals
+- Use keyed struct literals with field names (`T{A: 1}`) instead of positional (`T{1}`)
+- Use keyed fields in return struct literals — never return unkeyed composites
+- Use keyed fields for nested struct literals in composite expressions
 </patterns>
 
 <related>

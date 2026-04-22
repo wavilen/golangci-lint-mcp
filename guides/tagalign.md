@@ -27,10 +27,10 @@ type User struct {
 </examples>
 
 <patterns>
-- Struct tags with inconsistent spacing between fields
-- Multiple tag keys not aligned across struct fields
-- Missing tags on some fields causing alignment gaps
-- Long field names pushing tags far right with no alignment
+- Align struct tags with consistent spacing across fields
+- Align each tag key (`json`, `yaml`, `db`) to the same column across fields
+- Add missing struct tags to maintain consistent alignment
+- Wrap or shorten long field names to keep tag columns aligned
 </patterns>
 
 <related>

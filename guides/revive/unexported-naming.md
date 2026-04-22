@@ -21,11 +21,11 @@ const maxRetries = 3      // camelCase for unexported
 </examples>
 
 <patterns>
-- Snake_case constant or variable names at package level
-- Unexported types with names that suggest public API usage
-- Inconsistent casing in unexported names (e.g., `httpHandler` vs `HTTPHandler`)
-- Package-level names using ALL_CAPS as if they were C constants
-- Mixed naming styles within the same package
+- Use camelCase for unexported constants and variables at package level instead of snake_case
+- Rename unexported types that suggest public API usage to reflect their internal purpose
+- Use consistent casing in unexported names — e.g., `httpHandler` consistently, not mixed with `HTTPHandler`
+- Replace ALL_CAPS package-level names with Go-style camelCase for unexported constants
+- Use naming style for unexported names within the same package
 </patterns>
 
 <related>

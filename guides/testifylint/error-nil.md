@@ -19,9 +19,9 @@ assert.Error(t, err)
 </examples>
 
 <patterns>
-- `assert.Nil(t, err)` — use `assert.NoError(t, err)`
-- `assert.NotNil(t, err)` — use `assert.Error(t, err)`
-- `require.Nil(t, err)` — use `require.NoError(t, err)`
+- Use `assert.NoError(t, err)` instead of `assert.Nil(t, err)`
+- Use `assert.Error(t, err)` instead of `assert.NotNil(t, err)`
+- Use `require.NoError(t, err)` instead of `require.Nil(t, err)`
 </patterns>
 
 <related>

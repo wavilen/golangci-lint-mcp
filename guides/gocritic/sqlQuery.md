@@ -20,10 +20,10 @@ _, err := db.Exec("DELETE FROM users WHERE active = false")
 </examples>
 
 <patterns>
-- Using `db.Query()` for INSERT/UPDATE/DELETE statements
-- Calling `db.Query()` without iterating `rows.Next()`
-- Forgetting `defer rows.Close()` after `db.Query()`
-- Discarding the `*sql.Rows` return value
+- Use `db.Exec()` for INSERT/UPDATE/DELETE — reserve `db.Query()` for SELECT
+- Always iterate `rows.Next()` after `db.Query()` — or use `db.QueryRow()` for single rows
+- Add `defer rows.Close()` immediately after `db.Query()`
+- Always capture and close the `*sql.Rows` return value from `db.Query()`
 </patterns>
 
 <related>

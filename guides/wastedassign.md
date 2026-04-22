@@ -30,9 +30,9 @@ func compute(n int) int {
 </examples>
 
 <patterns>
-- Variable reassigned in conditional branches where some paths waste the initial value
-- Assignment in a loop body overwritten each iteration without being read
-- Error variable reassigned without checking the previous value
+- Restructure conditional branches to use the assigned value or assign only when needed
+- Move loop-body assignments to after the loop or consume the value within the iteration
+- Check or handle each error assignment before reassigning the error variable
 </patterns>
 
 <related>

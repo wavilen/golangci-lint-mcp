@@ -33,11 +33,11 @@ type Server struct {
 </examples>
 
 <patterns>
-- Anonymous struct types embedded directly as fields
-- Nested struct definitions for config or options objects
-- Inline struct definitions in API request/response types
-- One-off anonymous structs used instead of reusable named types
-- Deeply nested struct literals that are hard to construct
+- Extract anonymous struct types embedded as fields into named top-level types
+- Move nested config or options struct definitions to package-level named types
+- Define named types for inline struct definitions in API request/response types
+- Replace one-off anonymous structs with reusable named types
+- Flatten deeply nested struct literals into composed named types
 </patterns>
 
 <related>

@@ -21,9 +21,9 @@ signal.Notify(ch, syscall.SIGTERM)
 </examples>
 
 <patterns>
-- `make(chan os.Signal)` passed to `signal.Notify`
-- Unbuffered signal channel that can lose notifications
-- Signal handler using blocking channel send
+- Use a buffered channel (`make(chan os.Signal, 1)`) with `signal.Notify`
+- Create buffered signal channels to avoid losing notifications
+- Use non-blocking or buffered sends in signal handlers
 </patterns>
 
 <related>

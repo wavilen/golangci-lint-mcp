@@ -20,9 +20,9 @@ Eventually(func() int { return counter.Load() }).
 </examples>
 
 <patterns>
-- `Eventually(fn).Should(...)` without timeout — add `WithTimeout`
-- Missing `WithPolling` interval — add explicit polling interval
-- `Consistently` without timeout — add `WithTimeout` for clarity
+- Add `WithTimeout` to `Eventually(fn).Should(...)` calls that lack an explicit timeout
+- Add explicit `WithPolling` interval to `Eventually` assertions for predictable timing
+- Add `WithTimeout` to `Consistently` assertions for clarity on maximum duration
 </patterns>
 
 <related>

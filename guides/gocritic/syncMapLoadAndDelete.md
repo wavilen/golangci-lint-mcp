@@ -24,10 +24,10 @@ if v, loaded := m.LoadAndDelete(key); loaded {
 </examples>
 
 <patterns>
-- `sync.Map.Load` + `sync.Map.Delete` on same key
-- `sync.Map.LoadOrStore` when `LoadAndDelete` is intended
-- Separate check-and-delete patterns on `sync.Map`
-- Race conditions between read and remove operations
+- Replace `sync.Map.Load` + `sync.Map.Delete` on the same key with `sync.Map.LoadAndDelete`
+- Use `sync.Map.LoadAndDelete` instead of `LoadOrStore` when deletion is intended
+- Replace separate check-and-delete patterns on `sync.Map` with atomic `LoadAndDelete`
+- Use `LoadAndDelete` to avoid race conditions between read and remove operations
 </patterns>
 
 <related>

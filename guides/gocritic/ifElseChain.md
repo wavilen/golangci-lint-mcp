@@ -36,9 +36,9 @@ default:
 </examples>
 
 <patterns>
-- 3+ `else if` branches checking the same variable
-- Multiple `if`/`else if` comparing against constants
-- Sequential equality checks that map to `switch` cases
+- Replace 3+ `else if` branches on the same variable with a `switch` statement
+- Replace multiple `if`/`else if` constant comparisons with `switch` cases
+- Convert sequential equality checks to a `switch` for readability
 </patterns>
 
 <related>

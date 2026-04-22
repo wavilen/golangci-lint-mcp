@@ -27,11 +27,11 @@ for i := range users {
 </examples>
 
 <patterns>
-- Variable names using snake_case (e.g., `user_name`)
-- Loop variables with overly long names (e.g., `userIndex` instead of `i`)
-- Stuttering names like `userServiceService` or `httpHTTPHandler`
-- Single-letter names at package scope where a descriptive name is needed
-- ALL_CAPS variable names mimicking constants from other languages
+- Use camelCase for variable names instead of snake_case (e.g., `userName` not `user_name`)
+- Use short names like `i` for loop variables instead of overly long names like `userIndex`
+- Avoid stuttering names like `userServiceService` — simplify to `service`
+- Use descriptive names at package scope instead of single-letter names
+- Use camelCase for variables instead of ALL_CAPS (which is for constants in other languages)
 </patterns>
 
 <related>

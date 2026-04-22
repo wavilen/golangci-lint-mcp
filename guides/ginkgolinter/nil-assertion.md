@@ -19,9 +19,9 @@ Expect(x).To(BeNil())
 </examples>
 
 <patterns>
-- `Expect(x == nil).Should(BeTrue())` — use `Expect(x).To(BeNil())`
-- `Expect(x != nil).Should(BeTrue())` — use `Expect(x).ToNot(BeNil())`
-- `Expect(err).Should(BeNil())` — use `Expect(err).ShouldNot(HaveOccurred())`
+- Use `Expect(x).To(BeNil())` instead of `Expect(x == nil).Should(BeTrue())`
+- Use `Expect(x).ToNot(BeNil())` instead of `Expect(x != nil).Should(BeTrue())`
+- Use `Expect(err).ShouldNot(HaveOccurred())` instead of `Expect(err).Should(BeNil())`
 </patterns>
 
 <related>

@@ -32,9 +32,9 @@ func (s *Service) Query(ctx context.Context) (*sql.Rows, error) {
 </examples>
 
 <patterns>
-- HTTP handlers that store request context on a struct instead of passing it through
-- Service objects that capture context in a constructor
-- Background workers that embed context as a field rather than accepting it per operation
+- Pass `context.Context` as the first function argument instead of storing it on a struct
+- Pass `context.Context` as the first method argument rather than capturing it in a constructor
+- Pass `context.Context` per operation in background workers rather than embedding it as a struct field
 </patterns>
 
 <related>

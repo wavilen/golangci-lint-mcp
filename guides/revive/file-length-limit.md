@@ -23,11 +23,11 @@ Split the file into smaller, focused files. Group related types and functions by
 </examples>
 
 <patterns>
-- God files accumulating all related functionality in one place
-- Single files containing multiple unrelated types or services
-- Utility files growing over time with no clear organization principle
-- Generated code files exceeding reasonable size limits
-- Test files with many test cases that could be split by feature
+- Separate god files into separate files grouped by responsibility
+- Separate unrelated types or services into their own files
+- Organize utility files by a clear principle — or split them by domain
+- Separate generated code files that exceed size limits into smaller units
+- Separate large test files by feature into separate test files
 </patterns>
 
 <related>

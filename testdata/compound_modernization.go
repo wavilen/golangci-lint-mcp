@@ -84,7 +84,7 @@ func errorlintAssertsExample(err error, target error) bool {
 // errorlint comparison: use errors.Is() for error comparison.
 func errorlintComparisonExample(err error) bool {
 	// comparison: should use errors.Is(err, io.EOF) instead of ==
-	return err == io.EOF //nolint:errorlint // synthetic example
+	return err == io.EOF
 }
 
 // --- grouper issues ---

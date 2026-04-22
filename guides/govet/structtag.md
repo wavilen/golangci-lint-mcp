@@ -25,10 +25,10 @@ type User struct {
 </examples>
 
 <patterns>
-- Duplicate keys in struct tags (`json:"x" json:"y"`)
-- Invalid option syntax (spaces in options)
-- Missing value in tag (`json:""`)
-- Mismatched quotes in tag string
+- Remove duplicate keys in struct tags — use one `json` or `yaml` key per field
+- Remove spaces from struct tag option values — use `json:"name,omitempty"` not `json:"name, omitempty"`
+- Provide non-empty values for all struct tag keys — never `json:""`
+- Fix mismatched quotes in struct tag strings — use backtick-delimited valid key-value pairs
 </patterns>
 
 <related>

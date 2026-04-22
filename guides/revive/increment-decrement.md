@@ -21,11 +21,11 @@ count--
 </examples>
 
 <patterns>
-- Developers coming from languages where `++` is discouraged (e.g., Go style guides)
-- Auto-generated code using `+= 1` instead of `++`
-- Code formatted by tools that expand increment operators
-- Consistent use of `+= n` even when `n` is always 1
-- Manual loop counter increments using verbose form
+- Use `i++` instead of `i += 1` for single increments
+- Replace `i -= 1` with `i--` for single decrements
+- Simplify auto-generated `+= 1` to the `++` operator
+- Replace verbose `+= n` with `++` when `n` is always 1
+- Use `++` for loop counter increments instead of the verbose form
 </patterns>
 
 <related>

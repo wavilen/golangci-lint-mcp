@@ -23,10 +23,10 @@ if isEnabled {
 </examples>
 
 <patterns>
-- Comparing boolean to `true` or `false` (`x == true`, `x != false`)
-- Redundant logical AND of same expression (`x && x`)
-- Double negation (`!!x`)
-- Tautological boolean expression (always true/false)
+- Remove explicit boolean comparisons — use `x` instead of `x == true`, `!x` instead of `x == false`
+- Remove redundant boolean operations (`x && x` → `x`)
+- Remove double negation (`!!x` → `x`)
+- Simplify always-true/false boolean expressions to their constant value
 </patterns>
 
 <related>

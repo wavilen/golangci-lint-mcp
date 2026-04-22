@@ -24,9 +24,9 @@ for i := 0; i < n; i++ {
 </examples>
 
 <patterns>
-- Labels on single loops with no nested break/continue targeting them
-- Labels on `switch` statements (rarely needed)
-- Leftover labels from refactored code
+- Remove labels on single loops with no nested break/continue targeting them
+- Remove labels on `switch` statements — rarely needed
+- Remove leftover labels from refactored code
 </patterns>
 
 <related>

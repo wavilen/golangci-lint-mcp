@@ -24,9 +24,9 @@ import (
 </examples>
 
 <patterns>
-- Same package imported twice without alias
-- Same package imported with and without alias: `"os"` and `os "os"`
-- Multiple import blocks containing the same package
+- Remove duplicate imports of the same package — keep one declaration
+- Remove aliased and non-aliased duplicates of the same package
+- Combine multiple import blocks containing the same package into one
 </patterns>
 
 <related>

@@ -27,11 +27,11 @@ import (
 </examples>
 
 <patterns>
-- Unnecessary aliases that duplicate the package name
-- Aliases with underscores or mixed case
-- Aliases that shadow standard library names
-- Long aliases that are less readable than the original package path
-- Inconsistent alias styles across the codebase
+- Remove unnecessary aliases that duplicate the package name
+- Use lowercase aliases without underscores for import aliases
+- Avoid aliases that shadow standard library package names
+- Simplify verbose aliases that are less readable than the original package path
+- Use a consistent alias style across the codebase
 </patterns>
 
 <related>

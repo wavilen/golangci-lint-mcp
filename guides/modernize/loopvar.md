@@ -26,9 +26,9 @@ for _, v := range values {
 </examples>
 
 <patterns>
-- Closure capturing loop variable — copy with `v := v` if pre-Go 1.22
-- Goroutine launched inside loop using loop variable — pass as argument or copy
-- `go func()` referencing `i` or `v` from range — per-iteration copy or Go 1.22+
+- Use `v := v` to copy loop variables before closures capture them (pre-Go 1.22)
+- Pass loop variables as goroutine arguments instead of capturing them directly
+- Use Go 1.22+ range semantics or add per-iteration copies for `go func()` referencing `i` or `v`
 </patterns>
 
 <related>

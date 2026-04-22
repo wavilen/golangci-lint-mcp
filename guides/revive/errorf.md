@@ -21,11 +21,11 @@ return errors.Wrap(err, "lookup failed")
 </examples>
 
 <patterns>
-- `errors.New(fmt.Sprintf(...))` instead of `fmt.Errorf(...)`
-- Using `errors.Wrap` from `github.com/pkg/errors` for error wrapping
-- Using `fmt.Sprintf` to build a string passed to `errors.New`
-- Converting formatted errors from other languages' patterns
-- Error construction in generated code using verbose form
+- Replace `errors.New(fmt.Sprintf(...))` with `fmt.Errorf(...)`
+- Use `fmt.Errorf` with `%w` for error wrapping instead of `errors.Wrap` from `pkg/errors`
+- Replace `errors.New(fmt.Sprintf(...))` with `fmt.Errorf(...)` for formatted error messages
+- Use `fmt.Errorf` directly instead of building strings with `fmt.Sprintf` for error messages
+- Simplify verbose error construction patterns from other languages to `fmt.Errorf`
 </patterns>
 
 <related>

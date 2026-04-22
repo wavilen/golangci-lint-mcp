@@ -24,10 +24,10 @@ import (
 </examples>
 
 <patterns>
-- Importing deprecated standard library packages like `io/ioutil`
-- Using disallowed third-party packages that violate project dependency policy
-- Direct database driver imports when a data access layer is mandated
-- Importing packages that duplicate functionality available in the standard library
+- Replace deprecated standard library packages (e.g., `io/ioutil`) with their current equivalents
+- Remove disallowed third-party packages and use approved alternatives per project policy
+- Replace direct database driver imports with calls through the mandated data access layer
+- Replace third-party imports that duplicate standard library functionality
 </patterns>
 
 <related>

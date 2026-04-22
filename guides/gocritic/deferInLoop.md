@@ -46,10 +46,10 @@ func processOne(path string) error {
 </examples>
 
 <patterns>
-- `defer f.Close()` inside `for` loops
-- `defer mu.Unlock()` inside loop iterations
-- `defer rows.Close()` in database query loops
-- Any deferred cleanup inside `range` or `for` blocks
+- Move `defer f.Close()` outside loops — wrap loop body in a helper function
+- Move `defer mu.Unlock()` outside loop iterations — use a helper or anonymous function
+- Move `defer rows.Close()` into a per-iteration helper function for database loops
+- Wrap deferred cleanup in a per-iteration function to avoid accumulation in `range`/`for` blocks
 </patterns>
 
 <related>

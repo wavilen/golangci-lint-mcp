@@ -29,10 +29,10 @@ case http.Created:
 </examples>
 
 <patterns>
-- Copy-pasted case values in long switch statements
-- Duplicate constant expressions across cases
-- Type switch with same type appearing twice
-- Integer literal duplicates in enum-based switches
+- Remove copy-pasted duplicate case values in switch statements
+- Remove duplicate constant expressions across cases
+- Remove duplicate type entries in type switches
+- Remove duplicate integer literals in enum-based switches
 </patterns>
 
 <related>

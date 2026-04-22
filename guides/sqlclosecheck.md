@@ -32,10 +32,10 @@ for rows.Next() {
 </examples>
 
 <patterns>
-- `db.Query`/`db.QueryContext` without deferred `rows.Close()`
-- `db.Prepare` without deferred `stmt.Close()`
-- Reassigning rows variable before closing previous result
-- Returning rows from function (transfers close responsibility)
+- Add `defer rows.Close()` immediately after `db.Query` or `db.QueryContext`
+- Add `defer stmt.Close()` immediately after `db.Prepare` or `db.PrepareContext`
+- Close the previous `*sql.Rows` before reassigning the variable to a new query result
+- Avoid returning `*sql.Rows` from functions — process data inside and close rows locally
 </patterns>
 
 <related>

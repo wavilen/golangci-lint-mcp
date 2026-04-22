@@ -23,10 +23,10 @@ Start every `//` comment with `// ` (double-slash followed by a single space). K
 </examples>
 
 <patterns>
-- `//text` without space after slashes
-- `//  text` with more than one space
-- `/*text*/` without space inside delimiters
-- Missing space in `//nolint` directives
+- Add space after `//` — replace `//text` with `// text`
+- Replace `//  text` with `// text` — use exactly one space
+- Add spaces inside `/* */` delimiters — replace `/*text*/` with `/* text */`
+- Add space in `//nolint` directives — use `// nolint`
 </patterns>
 
 <related>

@@ -23,11 +23,11 @@ package auth
 </examples>
 
 <patterns>
-- Package names containing underscores or hyphens
-- Mixed-case or CamelCase package names
-- Generic names like `common`, `util`, `helpers`, `misc`
-- Package names that stutter with exported symbols (e.g., `package http` with `type HTTPServer`)
-- Names longer than one word when a single word suffices
+- Use lowercase single-word package names without underscores or hyphens
+- Rename mixed-case or CamelCase packages to lowercase
+- Replace generic names like `common`, `util`, `helpers`, `misc` with specific domain names
+- Avoid package names that stutter with exported symbols (e.g., rename package `http` when it exports `HTTPServer`)
+- Simplify multi-word package names to a single descriptive word
 </patterns>
 
 <related>

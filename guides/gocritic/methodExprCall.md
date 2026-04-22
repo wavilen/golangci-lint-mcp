@@ -19,9 +19,9 @@ myHandler.ServeHTTP(w, r)
 </examples>
 
 <patterns>
-- `Type.Method(instance, args)` → `instance.Method(args)`
-- Using method expressions when the receiver is available as a value
-- `(*Type).Method(ptr, args)` → `ptr.Method(args)`
+- Replace `Type.Method(instance, args)` with `instance.Method(args)`
+- Replace method expressions with method calls when the receiver is available as a value
+- Replace `(*Type).Method(ptr, args)` with `ptr.Method(args)`
 </patterns>
 
 <related>

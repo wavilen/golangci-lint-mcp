@@ -30,11 +30,11 @@ if isPriority {
 </examples>
 
 <patterns>
-- Copy-paste if-else blocks where one branch was not updated
-- Switch cases with identical implementations that should be merged
-- Refactoring leftovers where one branch became identical to another
-- Feature flag checks where both branches accidentally do the same thing
-- Error handling with identical recovery logic in different branches
+- Replace copy-paste if-else blocks where one branch was not updated with its intended logic
+- Combine switch cases with identical implementations using multi-value case syntax
+- Remove refactoring leftovers where one branch became identical to another
+- Replace feature flag checks where both branches accidentally do the same thing
+- Combine identical error recovery logic in different branches into a shared handler
 </patterns>
 
 <related>

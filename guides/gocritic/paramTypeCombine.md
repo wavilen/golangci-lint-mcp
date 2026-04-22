@@ -21,9 +21,9 @@ func copy(dst, src []byte) int { return 0 }
 </examples>
 
 <patterns>
-- `x int, y int` → `x, y int`
-- `a string, b string, c string` → `a, b, c string`
-- `src []byte, dst []byte` → `src, dst []byte`
+- Combine `x int, y int` into `x, y int`
+- Combine `a string, b string, c string` into `a, b, c string`
+- Combine `src []byte, dst []byte` into `src, dst []byte`
 </patterns>
 
 <related>

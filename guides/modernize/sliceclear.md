@@ -19,9 +19,9 @@ clear(buf)
 </examples>
 
 <patterns>
-- Loop that zeroes every element — use `clear(s)`
-- `s = s[:0]` to truncate without releasing memory — use `clear(s)` if zeroing is also needed
-- Manual nil-ing of slice elements before release — use `clear(s)`
+- Use `clear(s)` instead of a loop that zeroes every element
+- Use `clear(s)` for zeroing instead of `s = s[:0]` truncation without releasing memory
+- Use `clear(s)` instead of manually nil-ing slice elements before release
 </patterns>
 
 <related>

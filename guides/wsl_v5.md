@@ -40,10 +40,10 @@ func process(data []byte) error {
 </examples>
 
 <patterns>
-- Missing blank line before `if`, `for`, `switch` statements after assignments
-- Unnecessary blank lines between `if` and its `else` clause
-- Blank lines inside block bodies at start or end
-- Multiple statements in a block without proper separation
+- Add blank lines before `if`, `for`, `switch` statements that follow assignments
+- Remove blank lines between `if` and its `else` or `else if` clause
+- Remove blank lines at the start or end of block bodies
+- Separate statements within blocks with blank lines when required by the style config
 </patterns>
 
 <related>

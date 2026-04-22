@@ -30,10 +30,10 @@ func getResource() (*Resource, error) {
 </examples>
 
 <patterns>
-- Returning typed nil pointer when no error occurred
-- Returning nil struct pointer as interface value
-- Helper functions returning `(SomeType, error)` where type is nil
-- Factory methods that conditionally return nil concrete values
+- Avoid returning typed nil pointer when no error occurred — return an explicitly initialized value
+- Avoid returning nil struct pointer as interface value — return a concrete non-nil value
+- Initialize helper function return types properly — avoid nil `(SomeType, error)` where type is nil
+- Initialize factory method return values — avoid conditionally returning nil concrete values
 </patterns>
 
 <related>

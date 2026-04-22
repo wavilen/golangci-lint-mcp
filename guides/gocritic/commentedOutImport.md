@@ -26,9 +26,8 @@ import (
 </examples>
 
 <patterns>
-- Single commented-out import line inside an import block
-- Entire import group commented out with `//` prefix
-- Import with alias commented out: `// uuid "github.com/..."`
+- Remove commented-out single import lines inside import blocks
+- Remove entire commented-out import groups — delete them or move to tool directives
 </patterns>
 
 <related>

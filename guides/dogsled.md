@@ -20,10 +20,10 @@ result, err := parseConfig(data)
 </examples>
 
 <patterns>
-- Multi-return functions where only the error is used
-- Parsing functions returning many optional fields
-- Legacy APIs with large return tuples
-- Swallowed return values from type assertion or map operations
+- Replace excessive blank identifiers with a struct return type or named variables
+- Wrap parsing function returns in a result struct instead of discarding with `_`
+- Extract legacy API returns into a dedicated struct to avoid long `_` runs
+- Capture type assertion or map operation results explicitly instead of discarding
 </patterns>
 
 <related>

@@ -12,7 +12,9 @@ import (
 
 const gosecAutofixTimeout = 60 * time.Second
 
-func makeGosecAutofixHandler(opts Options) func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func makeGosecAutofixHandler(
+	opts Options,
+) func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		path, err := req.RequireString("path")
 		if err != nil {

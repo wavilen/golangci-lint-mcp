@@ -23,10 +23,10 @@ os.Open(os.DevNull)
 </examples>
 
 <patterns>
-- HTTP status codes: `200` → `http.StatusOK`, `404` → `http.StatusNotFound`
-- HTTP methods: `"GET"` → `http.MethodGet`
-- OS paths: `"/dev/null"` → `os.DevNull`
-- Time layouts: `"2006-01-02"` → `time.DateOnly`
+- Replace hardcoded HTTP status codes with `http.Status*` constants
+- Replace string HTTP methods with `http.Method*` constants
+- Replace hardcoded OS paths with `os.*` constants
+- Replace hardcoded time layout strings with `time.*` constants
 </patterns>
 
 <related>

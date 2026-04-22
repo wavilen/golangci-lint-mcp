@@ -23,10 +23,10 @@ func add(a, b int) int {
 </examples>
 
 <patterns>
-- `int(x)` where `x` is already `int`
-- `string(b)` where `b` is already `string`
-- `[]byte(s)` when converting from `[]byte` to `[]byte`
-- Converting between identical types in return statements
+- Remove `int(x)` when `x` is already `int`
+- Remove `string(b)` when `b` is already `string`
+- Remove `[]byte(s)` when converting between identical types
+- Remove redundant type conversions in return statements
 </patterns>
 
 <related>

@@ -24,10 +24,10 @@ lines := strings.Split(string(data), "\n")
 </examples>
 
 <patterns>
-- Blank identifier `_` assigned to errors
-- Multi-assignment where error is not checked before using other values
-- Proceeding with nil/zero values after a potentially failed call
-- Using `fmt.Fprintln` or `log.Println` instead of returning errors
+- Check all returned errors — avoid blank identifier `_` for error values
+- Check error before using other return values from multi-assignment calls
+- Return or handle errors from potentially failed calls — avoid proceeding with nil/zero values
+- Return errors from failed calls — avoid logging with `fmt.Fprintln` instead of propagating
 </patterns>
 
 <related>

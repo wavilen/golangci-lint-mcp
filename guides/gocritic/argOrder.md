@@ -20,11 +20,11 @@ n := copy(dst, src)
 </examples>
 
 <patterns>
-- `copy(src, dst)` where the first argument should be the destination
-- `strings.Replace(old, new, ...)` with swapped old/new arguments
-- Multi-argument calls with same-typed params where names suggest wrong order
-- `append(dst, src...)` vs `append(src, dst...)` confusion
-- `io.Copy(src, dst)` instead of `io.Copy(dst, src)`
+- Swap `copy()` arguments to `copy(dst, src)` — destination comes first
+- Check `strings.Replace` argument order — use `strings.Replace(s, old, new, n)`
+- Reorder same-typed parameters when variable names suggest wrong order
+- Swap `append` arguments — use `append(dst, src...)` not `append(src, dst...)`
+- Swap `io.Copy` arguments — use `io.Copy(dst, src)` not `io.Copy(src, dst)`
 </patterns>
 
 <related>

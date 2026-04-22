@@ -27,9 +27,9 @@ func (s *MySuite) helperMethod() {
 </examples>
 
 <patterns>
-- `s.T().Helper()` at the top of test methods — remove, not needed
-- Missing `Helper()` in custom suite helper methods — add it for correct line reporting
-- Calling `Helper()` in `SetupSuite`/`TearDownSuite` — unnecessary
+- Remove `s.T().Helper()` from test methods — not needed in suite test functions
+- Add `s.T().Helper()` in custom suite helper methods for correct line reporting
+- Remove `Helper()` calls from `SetupSuite`/`TearDownSuite` — unnecessary there
 </patterns>
 
 <related>

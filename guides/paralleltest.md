@@ -31,10 +31,10 @@ for _, tt := range tests {
 </examples>
 
 <patterns>
-- Range variable captured in parallel subtest closure (pre-Go 1.22)
-- Missing `t.Parallel()` in subtests of a parallel parent
-- `t.Parallel()` called after test assertions (must be first)
-- Table-driven tests where only some cases call `t.Parallel()`
+- Capture range variables before the closure in parallel subtests (pre-Go 1.22)
+- Add `t.Parallel()` to all subtests within a parallel parent test
+- Call `t.Parallel()` before any test assertions, not after
+- Mark all table-driven test cases with `t.Parallel()` consistently
 </patterns>
 
 <related>

@@ -21,11 +21,11 @@ fmt.Printf("Count: %d\n", n)
 </examples>
 
 <patterns>
-- `fmt.Println(fmt.Sprintf(...))` instead of `fmt.Printf`
-- `fmt.Print` with string concatenation instead of `fmt.Printf` with verbs
-- `fmt.Println` for debug logging where `log.Printf` would be better
-- `fmt.Sprint` followed by `fmt.Println` for simple values
-- Mixing `Print` family calls when a single `Printf` suffices
+- Replace `fmt.Println(fmt.Sprintf(...))` with `fmt.Printf`
+- Use `fmt.Printf` with format verbs instead of `fmt.Print` with string concatenation
+- Use `log.Printf` for debug logging instead of `fmt.Println`
+- Simplify `fmt.Sprint` followed by `fmt.Println` to a direct `fmt.Printf` or `fmt.Println`
+- Combine multiple `Print` family calls into a single `Printf` when possible
 </patterns>
 
 <related>

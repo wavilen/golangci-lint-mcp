@@ -31,11 +31,11 @@ func (c *Counter) Increment() {
 </examples>
 
 <patterns>
-- Value receiver methods that set fields, expecting the caller to see changes
-- Methods that increment counters or append to slices on a value receiver
-- Builder-pattern methods on value receivers that should chain on the original
-- Copy-paste from pointer receiver methods where the `*` was dropped
-- Methods that only sometimes modify — should consistently use pointer receiver
+- Switch to a pointer receiver `*T` when the method needs to modify fields visible to the caller
+- Switch to pointer receiver when methods increment counters or append to slices
+- Use pointer receiver for builder-pattern methods that must chain on the original instance
+- Add the `*` to receiver declarations copied from pointer receiver methods
+- Use pointer receiver consistently for types where any method modifies the receiver
 </patterns>
 
 <related>

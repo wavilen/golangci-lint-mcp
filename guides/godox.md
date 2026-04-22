@@ -29,9 +29,9 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 </examples>
 
 <patterns>
-- TODO comments added during prototyping that were never revisited
-- FIXME markers for known bugs left unfixed across releases
-- HACK or XXX comments indicating workarounds that need proper solutions
+- Resolve TODO comments from prototyping or track them as issues instead of leaving in code
+- Fix bugs marked with FIXME rather than carrying them across releases
+- Replace HACK/XXX workarounds with proper implementations
 </patterns>
 
 <related>

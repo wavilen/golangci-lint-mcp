@@ -35,9 +35,9 @@ func calc(p Price, qty int, discount, taxRate float64) float64 {
 </examples>
 
 <patterns>
-- Functions mixing business rules, calculations, and discount layers
-- Financial or data-processing functions with multiple conditional modifiers
-- Functions with both high complexity and many operators
+- Extract business rules, calculations, and discount logic into separate functions
+- Simplify data-processing functions by extracting each conditional modifier into its own function
+- Reduce complexity by replacing inline operator chains with named helper functions
 </patterns>
 
 <related>

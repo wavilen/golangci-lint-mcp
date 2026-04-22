@@ -23,11 +23,11 @@ if x > 5 {
 </examples>
 
 <patterns>
-- Redundant range checks: `x > 5 && x > 3`
-- Tautological comparisons: `x == x` or `x != x`
-- Double negation: `!!cond`
-- Overlapping conditions in if-else chains
-- Contradictory conditions: `x > 10 && x < 5`
+- Simplify redundant range checks like `x > 5 && x > 3` to just `x > 5`
+- Eliminate tautological comparisons like `x == x` or `x != x`
+- Eliminate double negation `!!cond` — use `cond` directly
+- Eliminate overlapping conditions in if-else chains
+- Replace contradictory conditions like `x > 10 && x < 5` — always false
 </patterns>
 
 <related>

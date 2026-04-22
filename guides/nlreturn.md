@@ -31,10 +31,10 @@ func resolve(cfg Config) (string, error) {
 </examples>
 
 <patterns>
-- Return statements immediately following logic without a blank line separator
-- Early returns in guard clauses lacking visual separation
-- Multiple return paths in switch/case blocks
-- Returns at the end of nested if-else chains
+- Add a blank line before `return` statements that immediately follow logic without visual separation
+- Insert blank lines before early returns in guard clauses for readability
+- Separate multiple return paths in `switch`/`case` blocks with blank lines
+- Add blank lines before returns at the end of nested `if`-`else` chains
 </patterns>
 
 <related>

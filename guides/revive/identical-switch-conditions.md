@@ -29,11 +29,11 @@ case 410:
 </examples>
 
 <patterns>
-- Copy-paste errors duplicating a case value
-- Constants that alias the same value used in different cases
-- Enum values mapped to the same integer used in separate cases
-- Variable-based switch where two expressions evaluate identically
-- Generated switch code with duplicate constant values
+- Remove duplicate case expressions caused by copy-paste errors
+- Remove constant alias conflicts where different names resolve to the same value in separate cases
+- Remove duplicate enum values mapped to the same integer across separate switch cases
+- Simplify variable-based switch expressions that evaluate identically
+- Replace generated switch code that produces duplicate constant values
 </patterns>
 
 <related>

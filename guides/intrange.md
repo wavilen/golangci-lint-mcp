@@ -23,10 +23,10 @@ for i := range items {
 </examples>
 
 <patterns>
-- Classic three-clause for loops where index starts at 0 and steps by 1
-- `for i := 0; i < n; i++` patterns that can use range-over-int
-- Iterating with an index variable that only increments by 1
-- Using `for i := 0; i < len(slice); i++` instead of range
+- Replace `for i := 0; i < n; i++` with `for i := range n` when the index starts at 0 and steps by 1
+- Use `for i := range n` for simple integer iteration (Go 1.22+)
+- Convert `for i := 0; i < len(slice); i++` to `for i := range slice` for collection iteration
+- Prefer range-over-int over three-clause loops that only increment by 1
 </patterns>
 
 <related>

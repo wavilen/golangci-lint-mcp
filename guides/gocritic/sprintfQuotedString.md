@@ -21,10 +21,10 @@ msg := fmt.Sprintf("%q not found", name)
 </examples>
 
 <patterns>
-- `fmt.Sprintf("'%s'", s)` for single-quote wrapping
-- `fmt.Sprintf("\"%s\"", s)` for double-quote wrapping
-- `"` + s + `"` string concatenation for quoting
-- Manual escape sequences instead of `%q`
+- Replace `fmt.Sprintf("'%s'", s)` with `fmt.Sprintf("%q", s)` or use `strconv.Quote`
+- Replace `fmt.Sprintf("\"%s\"", s)` with `fmt.Sprintf("%q", s)`
+- Replace `"` + s + `"` concatenation with `fmt.Sprintf("%q", s)` for proper quoting
+- Use `%q` format verb for quoted strings — handles escape sequences correctly
 </patterns>
 
 <related>

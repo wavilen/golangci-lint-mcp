@@ -19,9 +19,9 @@ assert.Empty(t, items)
 </examples>
 
 <patterns>
-- `assert.Len(t, x, 0)` — use `assert.Empty(t, x)`
-- `assert.Equal(t, 0, len(x))` — use `assert.Empty(t, x)`
-- `assert.NotEqual(t, 0, len(x))` — use `assert.NotEmpty(t, x)`
+- Use `assert.Empty(t, x)` instead of `assert.Len(t, x, 0)`
+- Use `assert.Empty(t, x)` instead of `assert.Equal(t, 0, len(x))`
+- Use `assert.NotEmpty(t, x)` instead of `assert.NotEqual(t, 0, len(x))`
 </patterns>
 
 <related>

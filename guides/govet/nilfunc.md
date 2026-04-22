@@ -25,9 +25,9 @@ if fn == nil { // fn is actually nil — valid check
 </examples>
 
 <patterns>
-- Comparing a non-nil function variable with nil
-- Comparing a method value with nil
-- Function nil check that is always true or always false
+- Remove nil comparisons on non-nil function variables — the check is always false
+- Remove nil comparisons on method values — methods with value receivers are never nil
+- Remove tautological function nil checks — use a function pointer that can actually be nil
 </patterns>
 
 <related>

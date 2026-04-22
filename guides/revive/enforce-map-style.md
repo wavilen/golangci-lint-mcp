@@ -24,10 +24,10 @@ m := map[string]int{}
 </examples>
 
 <patterns>
-- Mixed map initialization styles within the same package
-- Inconsistent code review standards for map creation
-- Auto-generated code using a different style than hand-written code
-- Files authored by different team members with different habits
+- Use either `make` or map literals consistently within the same package
+- Ensure code review standards agree on a single map creation style
+- Ensure auto-generated code to the same map style used by hand-written code
+- Use the prevailing convention in files by different authors
 </patterns>
 
 <related>

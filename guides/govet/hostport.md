@@ -21,9 +21,9 @@ addr := net.JoinHostPort("example.com", "443")
 </examples>
 
 <patterns>
-- Passing `host:port` string as host argument to `net.JoinHostPort`
-- Joining an already-combined network address
-- Hardcoded host strings that include port numbers
+- Split `host:port` strings before passing the host to `net.JoinHostPort`
+- Avoid calling `net.JoinHostPort` on already-combined network addresses
+- Separate host and port from hardcoded address strings before calling `JoinHostPort`
 </patterns>
 
 <related>

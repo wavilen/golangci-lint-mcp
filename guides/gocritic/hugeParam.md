@@ -31,10 +31,10 @@ func Process(cfg *BigConfig) error {
 </examples>
 
 <patterns>
-- Large structs passed by value as function parameters or method receivers
-- Config or option structs exceeding ~80 bytes passed by value
-- Value receivers on large structs that only read data
-- Functions accepting large arrays by value instead of pointer or slice
+- Pass large structs by pointer instead of value as function parameters or method receivers
+- Pass config or option structs exceeding ~80 bytes by pointer
+- Use pointer receivers on large structs that only read data
+- Replace large array value parameters with pointer or slice parameters
 </patterns>
 
 <related>

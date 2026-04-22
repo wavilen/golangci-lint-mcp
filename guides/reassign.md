@@ -26,9 +26,9 @@ var MaxRetries = 3 //nolint:reassign // configurable via config file
 </examples>
 
 <patterns>
-- Package-level config variables reassigned in `init()` or tests
-- Magic numbers stored in `var` that should be `const`
-- Global state mutated unexpectedly across packages
+- Convert package-level config variables to `const` if never meant to change
+- Replace `var` with `const` for magic numbers that are known at compile time
+- Guard global state from accidental mutation across packages with unexported fields
 </patterns>
 
 <related>

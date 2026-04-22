@@ -21,10 +21,10 @@ buf.WriteByte('\n')
 </examples>
 
 <patterns>
-- Writing single delimiter or separator bytes via `Write([]byte{','})`
-- Flushing newline or space characters through a `bytes.Buffer`
-- Byte-by-byte writing in serialization loops using `Write([]byte{b})`
-- Any writer known to implement `io.ByteWriter` receiving single-byte slices
+- Replace `Write([]byte{','})` with `WriteByte(',')` for single-byte writes
+- Replace `Write([]byte{'\n'})` with `WriteByte('\n')` for flushing newline/separator bytes
+- Replace byte-by-byte `Write([]byte{b})` in serialization loops with `WriteByte(b)`
+- Use `WriteByte` for any single-byte write to a writer implementing `io.ByteWriter`
 </patterns>
 
 <related>

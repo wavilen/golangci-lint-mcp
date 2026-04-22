@@ -29,11 +29,11 @@ func processBatch(items []Item) {
 </examples>
 
 <patterns>
-- Calling `runtime.GC()` after processing each item in a loop
-- Periodic GC calls in long-running goroutines
-- Manual GC triggers in finalizers or cleanup functions
-- Benchmark setup code forcing GC before measurements
-- Attempting to free memory before returning large data structures
+- Remove `runtime.GC()` calls from loops and let the garbage collector run naturally
+- Eliminate periodic GC calls in long-running goroutines
+- Replace manual GC triggers in finalizers with normal GC pacing
+- Use `testing.B.ReportAllocs` instead of forcing GC in benchmarks
+- Remove `runtime.GC()` calls that attempt to free memory before returning large data structures — let the GC handle it
 </patterns>
 
 <related>

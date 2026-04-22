@@ -23,10 +23,10 @@ if a == b {
 </examples>
 
 <patterns>
-- `strings.Compare(a, b) == 0` → `a == b`
-- `strings.Compare(a, b) < 0` → `a < b`
-- `strings.Compare(a, b) > 0` → `a > b`
-- `strings.Compare(a, b) != 0` → `a != b`
+- Replace `strings.Compare(a, b) == 0` with `a == b`
+- Replace `strings.Compare(a, b) < 0` with `a < b`
+- Replace `strings.Compare(a, b) > 0` with `a > b`
+- Replace `strings.Compare(a, b) != 0` with `a != b`
 </patterns>
 
 <related>

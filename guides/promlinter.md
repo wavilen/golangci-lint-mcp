@@ -23,10 +23,10 @@ var httpRequestDuration = prometheus.NewHistogram(prometheus.HistogramOpts{
 </examples>
 
 <patterns>
-- Missing unit suffix: `duration` instead of `duration_seconds`
-- CamelCase metric or label names instead of snake_case
-- Colons in metric names (reserved for recording rules)
-- Non-lowercase characters in metric or label names
+- Add unit suffixes to metric names: `duration` → `duration_seconds`
+- Rename CamelCase metric and label names to `snake_case`
+- Avoid colons in metric names — reserve them for recording rules
+- Use lowercase only for metric and label names
 </patterns>
 
 <related>

@@ -27,10 +27,10 @@ func readConfig(path string) ([]byte, error) {
 </examples>
 
 <patterns>
-- Deprecated standard library packages replaced by newer equivalents
-- Internal packages that should not be used outside their module
-- Known problematic or insecure third-party libraries
-- Test-only packages imported in production code
+- Replace deprecated standard library packages with their newer equivalents
+- Remove internal packages imported outside their intended module boundary
+- Replace known problematic or insecure third-party libraries with safe alternatives
+- Move test-only package imports out of production code
 </patterns>
 
 <related>

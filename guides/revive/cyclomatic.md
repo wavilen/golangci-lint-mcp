@@ -47,11 +47,11 @@ func classify(x int) string {
 </examples>
 
 <patterns>
-- Functions with many if-else branches handling different cases
-- Complex switch statements with many case branches
-- Functions combining validation, transformation, and error handling
-- Legacy code that accumulated edge cases over time
-- Business rule functions with many conditional outcomes
+- Flatten functions with many if-else branches into smaller functions per case
+- Extract complex switch statements with many branches into a dispatch table or helper methods
+- Separate validation, transformation, and error handling into distinct functions
+- Extract edge cases from legacy code into focused helper functions
+- Separate business rule functions with many conditional outcomes into rule-specific functions
 </patterns>
 
 <related>

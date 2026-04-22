@@ -32,9 +32,9 @@ func read() ([]byte, error) {
 </examples>
 
 <patterns>
-- Using error-returning values before checking the error
-- Dereferencing a pointer before checking if it is nil
-- Accessing slice/map data before validating the error
+- Check the error before using the value returned alongside it
+- Check for nil before dereferencing a pointer returned with an error
+- Validate the error before accessing slice or map data from the same call
 </patterns>
 
 <related>

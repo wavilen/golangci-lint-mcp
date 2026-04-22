@@ -27,11 +27,11 @@ func process() {
 </examples>
 
 <patterns>
-- `var x = value` inside functions where `:=` would work
-- Declarations with explicit type and immediate assignment (`var s string = "hello"`)
-- Package-level `var` with complex initialization that could be a function
-- Multiple `var` declarations in a block that could use individual `:=`
-- Generated code using `var` consistently instead of `:=`
+- Use `:=` instead of `var x = value` inside functions
+- Replace `var s string = "hello"` with `s := "hello"` for declarations with immediate assignment
+- Extract complex package-level `var` initialization into an `init()` or dedicated function
+- Replace multiple `var` declarations in a block with individual `:=` assignments
+- Use `:=` in generated code instead of `var` for consistency
 </patterns>
 
 <related>

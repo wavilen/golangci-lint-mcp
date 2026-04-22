@@ -23,10 +23,10 @@ func worker(wg *sync.WaitGroup) { // pointer — shared counter
 </examples>
 
 <patterns>
-- Value receiver on function accepting `sync.WaitGroup`
-- Passing `sync.WaitGroup` by value to goroutine closure
-- `wg.Add(1)` called inside goroutine instead of before `go` statement
-- Copying `sync.WaitGroup` into struct by value
+- Use pointer parameters for functions accepting `sync.WaitGroup` — never value receivers
+- Pass `*sync.WaitGroup` to goroutine closures — never copy by value
+- Call `wg.Add(1)` before the `go` statement, not inside the goroutine
+- Store `*sync.WaitGroup` in structs instead of copying `sync.WaitGroup` by value
 </patterns>
 
 <related>

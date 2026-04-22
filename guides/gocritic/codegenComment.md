@@ -28,10 +28,10 @@ func main() {
 </examples>
 
 <patterns>
-- `// Code generated` comments in hand-written files
-- Partially generated files with codegen headers
-- Custom generator comments that don't follow the standard format
-- Copy-pasted codegen comments from generated files
+- Remove `// Code generated` comments from hand-written files
+- Remove or update partial codegen headers in mixed-source files
+- Rewrite custom generator comments to follow the standard `// Code generated` pattern
+- Remove copy-pasted codegen comments that don't match the file's origin
 </patterns>
 
 <related>

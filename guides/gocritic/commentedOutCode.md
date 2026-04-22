@@ -21,3 +21,13 @@ Remove commented-out code. If code might be needed later, rely on git history.
 // Git preserves the history if you need it back.
 ```
 </examples>
+
+<patterns>
+- Delete commented-out code blocks instead of keeping them for "future reference"
+- Rely on git history to retrieve deleted code — version control preserves all changes
+- Remove commented functions, imports, and logic blocks to improve code clarity
+</patterns>
+
+<related>
+godot
+</related>

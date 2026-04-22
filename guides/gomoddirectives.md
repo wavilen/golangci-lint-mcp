@@ -29,10 +29,10 @@ require example.com/lib v1.2.3
 </examples>
 
 <patterns>
-- Local `replace` directives pointing to relative paths (breaks consumers)
-- `replace` directives for upstream bugs that have since been fixed
-- `exclude` directives that mask version conflicts instead of resolving them
-- `retract` directives missing rationale comments
+- Remove local `replace` directives that point to relative paths
+- Remove `replace` directives for upstream bugs that are now fixed
+- Resolve version conflicts directly instead of using `exclude` directives
+- Add rationale comments to `retract` directives
 </patterns>
 
 <related>

@@ -21,9 +21,9 @@ addr := "localhost:" + strconv.Itoa(port) // produces "localhost:8080"
 </examples>
 
 <patterns>
-- `string(intVar)` producing a rune instead of decimal string
-- `string(int(expr))` conversion for display purposes
-- Converting integer constants to strings without `strconv`
+- Use `strconv.Itoa` or `fmt.Sprintf` to convert integers to strings — never `string(intVar)`
+- Replace `string(int(...))` with `strconv.Itoa` for display output
+- Use `strconv` functions instead of `string()` for int-to-string conversion
 </patterns>
 
 <related>

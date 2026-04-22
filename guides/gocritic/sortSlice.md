@@ -23,10 +23,10 @@ sort.Slice(names, func(i, j int) bool {
 </examples>
 
 <patterns>
-- Comparing indices `i < j` instead of `slice[i] < slice[j]`
-- Capturing outer variable instead of using indexed elements
-- Using `sort.Slice` on `[]string` when `sort.Strings` suffices
-- Using `sort.Slice` on `[]int` when `sort.Ints` suffices
+- Use `slice[i] < slice[j]` not `i < j` in `sort.Slice` comparators
+- Use indexed elements `slice[i]` in the comparator — avoid capturing outer variables
+- Replace `sort.Slice` on `[]string` with `sort.Strings(slice)`
+- Replace `sort.Slice` on `[]int` with `sort.Ints(slice)`
 </patterns>
 
 <related>

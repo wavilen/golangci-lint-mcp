@@ -21,10 +21,10 @@ path := filepath.Join("/data", "config.yaml")
 </examples>
 
 <patterns>
-- `filepath.Join(baseDir, "/"+filename)` with leading slash
-- User-provided paths that may be absolute
-- `filepath.Join` where second argument starts with `/`
-- Cross-platform path construction with hardcoded separators
+- Remove leading slash in `filepath.Join` arguments — `filepath.Join(baseDir, filename)` not `"/"+filename`
+- Validate user-provided paths — reject absolute paths before joining
+- Remove hardcoded `/` separators — use `filepath.Join` for all path construction
+- Replace hardcoded separators with `filepath.Join` for cross-platform compatibility
 </patterns>
 
 <related>

@@ -26,10 +26,10 @@ if resp.StatusCode != http.StatusOK {
 </examples>
 
 <patterns>
-- Checking `err != nil` but not checking response status
-- Checking for non-nil pointer but not validating pointed-to data
-- Partial struct validation in conditional
-- Using `len(s) > 0` to guard against nil map access
+- Validate response status after checking `err != nil` — both must be verified
+- Validate the pointed-to data after checking for non-nil pointer — not just the pointer
+- Validate all struct fields in the conditional — avoid partial validation
+- Guard nil map access with proper nil check — not just `len(s) > 0`
 </patterns>
 
 <related>

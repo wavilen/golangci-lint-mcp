@@ -31,10 +31,10 @@ func canEdit(r string) bool {
 </examples>
 
 <patterns>
-- Error message strings used in multiple places
-- Status or role strings like "active", "admin", "pending"
-- HTTP method or content-type literals repeated across handlers
-- SQL fragment strings duplicated in query builders
+- Extract repeated error message strings into named constants
+- Define constants for repeated status or role strings
+- Replace repeated HTTP method and content-type literals with constants
+- Extract duplicated SQL fragment strings into constants
 </patterns>
 
 <related>

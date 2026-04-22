@@ -33,10 +33,10 @@ func totalPrice(items []Item) float64 {
 </examples>
 
 <patterns>
-- Tax rates, multipliers, or conversion factors used inline
-- Time durations as raw numbers without `time.Duration` constants
-- Buffer sizes or limits hardcoded in function bodies
-- Array indices or slice bounds using magic numbers
+- Extract inline tax rates, multipliers, and conversion factors into named constants
+- Replace raw time duration numbers with `time.Duration` constants
+- Define named constants for hardcoded buffer sizes and limits
+- Replace magic number indices with named constants or well-named variables
 </patterns>
 
 <related>

@@ -21,10 +21,10 @@ type Config struct{}
 </examples>
 
 <patterns>
-- Space between `//` and `go:` in directives — `// go:generate` is a comment, not a directive
-- `//go:embed` placed on wrong line or after the declaration
-- Custom build tags with incorrect formatting
-- `//go:build` constraints not paired with `// +build` for older Go versions
+- Remove space between `//` and `go:` — use `//go:generate` not `// go:generate`
+- Place `//go:embed` on the line immediately before the declaration it annotates
+- Format custom build tags without spaces: `//go:build linux,amd64`
+- Pair `//go:build` with `// +build` for compatibility with Go versions before 1.17
 </patterns>
 
 <related>

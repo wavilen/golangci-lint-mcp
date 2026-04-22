@@ -25,9 +25,9 @@ func match(s string) bool {
 </examples>
 
 <patterns>
-- `regexp.MustCompile` called inside a function body
-- Regex pattern is a constant string literal
-- `regexp.MustCompile` called in a loop or hot path
+- Move `regexp.MustCompile` to package level when the pattern is a constant string
+- Compile constant regex patterns at package level — avoid compiling inside functions
+- Move `regexp.MustCompile` out of loops and hot paths — compile once at package level
 </patterns>
 
 <related>

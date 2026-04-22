@@ -22,10 +22,10 @@ slog.Info("request failed",
 </examples>
 
 <patterns>
-- Mixing key-value pairs and slog attributes in one call
-- Duplicate keys in a single log call
-- Passing raw values without type-safe wrappers
-- Inconsistent key naming conventions (camelCase vs snake_case)
+- Use either key-value pairs or slog attributes consistently within a single call
+- Eliminate duplicate keys in a single log call
+- Wrap values in type-safe `slog.String`/`slog.Int` attributes instead of passing raw values
+- Adopt a single key naming convention (snake_case or camelCase) across all log calls
 </patterns>
 
 <related>

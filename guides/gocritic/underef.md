@@ -21,9 +21,9 @@ val := ptr.Field
 </examples>
 
 <patterns>
-- `(*p).Method()` → `p.Method()`
-- `(*p).Field` → `p.Field`
-- Explicit dereference for read operations on struct pointers
+- Replace `(*p).Method()` with `p.Method()` — Go dereferences automatically
+- Replace `(*p).Field` with `p.Field` — remove explicit pointer dereference
+- Remove explicit dereference for read operations on struct pointers
 </patterns>
 
 <related>

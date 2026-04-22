@@ -23,9 +23,9 @@ const page = 0x1000
 </examples>
 
 <patterns>
-- Bitmask values like `255`, `65535` → hex `0xFF`, `0xFFFF`
-- Permission modes like `493` → octal `0755`
-- Page sizes and alignment: `4096` → `0x1000`
+- Replace bitmask values like `255` with hex `0xFF`, `65535` with `0xFFFF`
+- Replace permission modes like `493` with octal `0o644` or `0755`
+- Replace page sizes and alignment constants like `4096` with hex `0x1000`
 </patterns>
 
 <related>

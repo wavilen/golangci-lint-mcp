@@ -27,10 +27,10 @@ data, _ := json.Marshal(User{Name: "alice"})
 </examples>
 
 <patterns>
-- Structs passed to `json.Marshal`/`json.Unmarshal` without `json` tags
-- Structs used with `yaml.Marshal` missing `yaml` tags
-- Protobuf-generated structs without proper tags
-- Third-party marshalers like `mapstructure` or `toml`
+- Add `json` tags to structs passed to `json.Marshal`/`json.Unmarshal`
+- Add `yaml` tags to structs used with `yaml.Marshal`/`yaml.Unmarshal`
+- Ensure protobuf-generated structs carry proper struct tags
+- Tag fields for third-party marshalers like `mapstructure` or `toml`
 </patterns>
 
 <related>

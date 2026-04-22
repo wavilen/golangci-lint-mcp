@@ -22,9 +22,9 @@ if v, ok := cache[key]; ok {
 </examples>
 
 <patterns>
-- `_, ok := m[k]` followed by `m[k]` — capture the value in the initial lookup
-- `if m[k] != ""` followed by `use(m[k])` — use comma-ok idiom instead
-- Checking existence then immediately retrieving — always use the returned value
+- Use the value from the initial lookup instead of `_, ok := m[k]` followed by `m[k]`
+- Use comma-ok idiom `v, ok := m[k]` instead of `if m[k] != ""` followed by `use(m[k])`
+- Use the value returned from the existence check instead of double lookups
 </patterns>
 
 <related>

@@ -34,10 +34,10 @@ func process(path string) error {
 </examples>
 
 <patterns>
-- `log.Fatal` or `log.Fatalf` after defer statements
-- `os.Exit` in functions with deferred cleanup
-- `log.Fatalln` in request handlers with deferred response writes
-- Calling `runtime.Goexit` followed by exit
+- Replace `log.Fatal` after defer with `log.Printf` + `return` to allow deferred cleanup
+- Replace `os.Exit` in functions with deferred cleanup — return an error instead
+- Replace `log.Fatalln` in request handlers with error return to execute deferred writes
+- Avoid `runtime.Goexit` followed by `os.Exit` — use error propagation
 </patterns>
 
 <related>

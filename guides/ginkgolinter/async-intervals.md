@@ -22,9 +22,9 @@ Eventually(func() bool { return ready() }).
 </examples>
 
 <patterns>
-- `WithPolling(time.Millisecond)` — too aggressive, use 10ms+ minimum
-- No explicit polling interval on `Eventually` — add one for clarity
-- `WithPolling(0)` — invalid, use a reasonable minimum
+- Replace `WithPolling(time.Millisecond)` with 10ms+ minimum to avoid CPU waste
+- Add explicit polling interval to `Eventually` for clarity and reliability
+- Replace `WithPolling(0)` with a reasonable minimum interval
 </patterns>
 
 <related>

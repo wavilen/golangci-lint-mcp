@@ -23,9 +23,9 @@ package pkg // recognized Go version
 </examples>
 
 <patterns>
-- Build constraint using a Go version beyond the toolchain's knowledge
-- Typos in version numbers (e.g., `go1.2` instead of `go1.20`)
-- Future version numbers that don't exist yet
+- Use Go versions supported by your toolchain in build constraints
+- Fix typos in Go version numbers (e.g., `go1.2` → `go1.20`)
+- Use only released Go version numbers in build constraints — remove speculative versions
 </patterns>
 
 <related>

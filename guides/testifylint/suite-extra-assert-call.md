@@ -23,9 +23,9 @@ func (s *MySuite) TestFeature() {
 </examples>
 
 <patterns>
-- `s.Assert().Xxx(...)` — use `s.Xxx(...)` directly
-- `s.Require().Equal(...)` is fine for require-style, but `s.Assert()` is unnecessary
-- Any `s.Assert()` call in suite method — replace with direct suite method
+- Use `s.Xxx(...)` directly instead of `s.Assert().Xxx(...)`
+- Replace any `s.Assert()` call in suite methods with direct suite method calls
+- Use `s.Require().Xxx(...)` for require-style — but avoid `s.Assert()` indirection
 </patterns>
 
 <related>

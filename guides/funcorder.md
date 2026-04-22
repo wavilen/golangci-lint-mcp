@@ -23,10 +23,10 @@ func (s *Server) start() error { /* ... */ }
 </examples>
 
 <patterns>
-- Unexported methods appearing before exported ones on same type
-- Methods for the same receiver scattered across different files
-- Constructor functions placed far from their type
-- Interface satisfaction methods not grouped with other methods
+- Reorder exported methods before unexported methods on the same type
+- Group methods for the same receiver into a single file
+- Move constructor functions next to their type definition
+- Group interface satisfaction methods with other methods on the same receiver
 </patterns>
 
 <related>

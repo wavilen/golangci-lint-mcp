@@ -23,9 +23,9 @@ if errors.As(err, &pathErr) {
 </examples>
 
 <patterns>
-- `err.(*SpecificType)` — use `errors.As(err, &target)`
-- `switch err.(type)` on errors — use `errors.As` for each case
-- `_, ok := err.(MyError)` — use `var e MyError; ok := errors.As(err, &e)`
+- Use `errors.As(err, &target)` instead of direct type assertions like `err.(*SpecificType)`
+- Replace `switch err.(type)` on errors with `errors.As` checks for each case
+- Use `var e MyError; ok := errors.As(err, &e)` instead of `_, ok := err.(MyError)`
 </patterns>
 
 <related>

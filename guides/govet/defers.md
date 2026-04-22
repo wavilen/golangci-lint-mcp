@@ -39,9 +39,9 @@ func processFile(path string) error {
 </examples>
 
 <patterns>
-- `defer` inside `for` loop body
-- `defer` inside `range` loop
-- Deferred resource cleanup accumulating across iterations
+- Move `defer` out of `for` loop bodies — extract the loop body into a helper function
+- Wrap `range` loop bodies in a function so `defer` runs after each iteration
+- Use explicit cleanup or helper functions instead of deferring resource release across iterations
 </patterns>
 
 <related>

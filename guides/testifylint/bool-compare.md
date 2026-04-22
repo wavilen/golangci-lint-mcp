@@ -19,9 +19,9 @@ assert.Equal(t, expected, result)
 </examples>
 
 <patterns>
-- `assert.True(t, x == y)` — use `assert.Equal(t, y, x)`
-- `assert.False(t, x == y)` — use `assert.NotEqual(t, y, x)`
-- `assert.True(t, x != y)` — use `assert.NotEqual(t, y, x)`
+- Use `assert.Equal(t, y, x)` instead of `assert.True(t, x == y)`
+- Use `assert.NotEqual(t, y, x)` instead of `assert.False(t, x == y)`
+- Use `assert.NotEqual(t, y, x)` instead of `assert.True(t, x != y)`
 </patterns>
 
 <related>

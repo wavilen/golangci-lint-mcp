@@ -19,7 +19,7 @@ func TestGuideStructure(t *testing.T) {
 
 	for _, name := range names {
 		t.Run(name, func(t *testing.T) {
-			g, ok := store.Lookup(name, "")
+			guide, ok := store.Lookup(name, "")
 			if !ok {
 				rules := store.ListRules(name)
 				if len(rules) > 0 {
@@ -28,11 +28,11 @@ func TestGuideStructure(t *testing.T) {
 				t.Fatalf("linter %q found in LinterNames but not in Lookup", name)
 			}
 
-			assert.NotEmpty(t, g.Instructions,
+			assert.NotEmpty(t, guide.Instructions,
 				"guide %q must have <instructions> tag", name)
-			assert.NotEmpty(t, g.Examples,
+			assert.NotEmpty(t, guide.Examples,
 				"guide %q must have <examples> tag", name)
-			assert.True(t, g.Instructions != "" || g.Examples != "" || g.Patterns != "",
+			assert.True(t, guide.Instructions != "" || guide.Examples != "" || guide.Patterns != "",
 				"guide %q must have at least one recognized tag", name)
 		})
 	}
@@ -43,15 +43,15 @@ func TestWordLimits(t *testing.T) {
 	require.NoError(t, err)
 
 	for _, name := range store.LinterNames() {
-		g, ok := store.Lookup(name, "")
+		guide, ok := store.Lookup(name, "")
 		if !ok {
 			continue
 		}
 
 		t.Run(name, func(t *testing.T) {
 			var total int
-			for _, s := range []string{g.Instructions, g.Examples, g.Patterns} {
-				total += len(strings.Fields(s))
+			for _, section := range []string{guide.Instructions, guide.Examples, guide.Patterns} {
+				total += len(strings.Fields(section))
 			}
 			assert.LessOrEqual(t, total, 200,
 				"simple linter guide %q must be ≤ 200 words (got %d)", name, total)
@@ -63,17 +63,28 @@ func TestCompoundWordLimits(t *testing.T) {
 	store, err := guides.NewStore(guideFS)
 	require.NoError(t, err)
 
-	compoundLinters := []string{"gocritic", "staticcheck", "revive", "gosec", "govet", "modernize", "testifylint", "ginkgolinter", "errorlint", "grouper"}
+	compoundLinters := []string{
+		"gocritic",
+		"staticcheck",
+		"revive",
+		"gosec",
+		"govet",
+		"modernize",
+		"testifylint",
+		"ginkgolinter",
+		"errorlint",
+		"grouper",
+	}
 	for _, linter := range compoundLinters {
 		rules := store.ListRules(linter)
 		for _, rule := range rules {
 			t.Run(linter+"/"+rule, func(t *testing.T) {
-				g, ok := store.Lookup(linter, rule)
+				guide, ok := store.Lookup(linter, rule)
 				require.True(t, ok, "rule %s/%s not found", linter, rule)
 
 				var total int
-				for _, s := range []string{g.Instructions, g.Examples, g.Patterns} {
-					total += len(strings.Fields(s))
+				for _, section := range []string{guide.Instructions, guide.Examples, guide.Patterns} {
+					total += len(strings.Fields(section))
 				}
 				assert.LessOrEqual(t, total, 500,
 					"compound linter guide %s/%s must be ≤ 500 words (got %d)", linter, rule, total)

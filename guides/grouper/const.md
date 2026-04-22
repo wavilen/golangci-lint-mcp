@@ -23,9 +23,9 @@ const (
 </examples>
 
 <patterns>
-- Multiple `const` declarations in sequence — group into `const ( ... )`
-- Related constants declared separately — group for readability
-- Single const per line in a block of declarations — use grouped form
+- Group sequential `const` declarations into a single `const ( ... )` block
+- Group related constants declared separately for readability
+- Use the grouped `const ( ... )` form instead of single-const-per-line declarations
 </patterns>
 
 <related>

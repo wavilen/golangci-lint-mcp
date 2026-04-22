@@ -34,11 +34,11 @@ type ProductCategory struct { ... }
 </examples>
 
 <patterns>
-- "Models" or "types" files containing all domain types
-- Auto-generated code producing many structs in one file
-- API schema files with many request/response types ungrouped
-- Legacy files that accumulated types over time without splitting
-- Shared constant or type definition files acting as registries
+- Separate monolithic "models" or "types" files into domain-specific files
+- Organize auto-generated structs into separate files by domain or feature
+- Group API request/response types by endpoint or feature in separate files
+- Separate legacy type accumulation into files grouped by responsibility
+- Organize types from shared registry files into their respective domain files
 </patterns>
 
 <related>

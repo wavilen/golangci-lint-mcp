@@ -17,21 +17,21 @@ import (
 func setupParseTestServer(t *testing.T, opts ...Options) (*mcptest.Server, context.Context) {
 	t.Helper()
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
-			Data: []byte("# errcheck\n\n<instructions>Errcheck detects unchecked errors</instructions>\n\n<examples>```go\nfile, _ := os.Open(\"f\")\n```</examples>"),
-		},
-		"guides/gocritic/badCall.md": &fstest.MapFile{
-			Data: []byte("# gocritic: badCall\n\n<instructions>Detects suspicious function calls</instructions>"),
-		},
-		"guides/gocritic/dupSubExpr.md": &fstest.MapFile{
-			Data: []byte("# gocritic: dupSubExpr\n\n<instructions>Detects duplicate sub-expressions</instructions>"),
-		},
-		"guides/gosec/G101.md": &fstest.MapFile{
-			Data: []byte("# G101\n\n<instructions>Detects hardcoded credentials</instructions>\n\n<examples>```go\npassword := \"secret123\"\n```</examples>"),
-		},
-		"guides/gosec/G201.md": &fstest.MapFile{
-			Data: []byte("# G201\n\n<instructions>Detects SQL injection via string format</instructions>"),
-		},
+		"guides/errcheck.md": testMapFile(
+			"# errcheck\n\n<instructions>Errcheck detects unchecked errors</instructions>\n\n<examples>```go\nfile, _ := os.Open(\"f\")\n```</examples>",
+		),
+		"guides/gocritic/badCall.md": testMapFile(
+			"# gocritic: badCall\n\n<instructions>Detects suspicious function calls</instructions>",
+		),
+		"guides/gocritic/dupSubExpr.md": testMapFile(
+			"# gocritic: dupSubExpr\n\n<instructions>Detects duplicate sub-expressions</instructions>",
+		),
+		"guides/gosec/G101.md": testMapFile(
+			"# G101\n\n<instructions>Detects hardcoded credentials</instructions>\n\n<examples>```go\npassword := \"secret123\"\n```</examples>",
+		),
+		"guides/gosec/G201.md": testMapFile(
+			"# G201\n\n<instructions>Detects SQL injection via string format</instructions>",
+		),
 	}
 	store, err := guides.NewStore(testFS)
 	require.NoError(t, err)
@@ -64,12 +64,7 @@ func setupParseTestServer(t *testing.T, opts ...Options) (*mcptest.Server, conte
 func TestParseHandler_MultipleLinters(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"main.go","Line":10,"Column":5}},{"FromLinter":"gocritic","Text":"dupSubExpr: suspicious identical LHS and RHS","Pos":{"Filename":"main.go","Line":15,"Column":8}}],"Report":{}}`
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 	text := result.Content[0].(mcp.TextContent).Text
@@ -82,12 +77,7 @@ func TestParseHandler_MultipleLinters(t *testing.T) {
 func TestParseHandler_Deduplication(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"a.go","Line":10,"Column":5}},{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"b.go","Line":20,"Column":5}}],"Report":{}}`
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Equal(t, 1, strings.Count(text, "## errcheck"))
@@ -96,12 +86,7 @@ func TestParseHandler_Deduplication(t *testing.T) {
 func TestParseHandler_CompoundRuleExtraction(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := `{"Issues":[{"FromLinter":"gocritic","Text":"dupSubExpr: suspicious identical LHS and RHS","Pos":{"Filename":"main.go","Line":10,"Column":5}}],"Report":{}}`
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "gocritic: dupSubExpr")
@@ -110,12 +95,8 @@ func TestParseHandler_CompoundRuleExtraction(t *testing.T) {
 
 func TestParseHandler_InvalidJSON(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": "not json at all"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": "not json at all"}))
 	require.NoError(t, err)
 	require.True(t, result.IsError)
 	text := result.Content[0].(mcp.TextContent).Text
@@ -124,12 +105,7 @@ func TestParseHandler_InvalidJSON(t *testing.T) {
 
 func TestParseHandler_EmptyOutput(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": ""},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": ""}))
 	require.NoError(t, err)
 	require.True(t, result.IsError)
 }
@@ -137,12 +113,7 @@ func TestParseHandler_EmptyOutput(t *testing.T) {
 func TestParseHandler_EmptyIssues(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := `{"Issues":[],"Report":{}}`
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	require.False(t, result.IsError)
 	text := result.Content[0].(mcp.TextContent).Text
@@ -152,12 +123,7 @@ func TestParseHandler_EmptyIssues(t *testing.T) {
 func TestParseHandler_UnknownLinter(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := `{"Issues":[{"FromLinter":"typolinter","Text":"Some issue","Pos":{"Filename":"main.go","Line":1,"Column":1}}],"Report":{}}`
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "Unknown linter")
@@ -165,14 +131,9 @@ func TestParseHandler_UnknownLinter(t *testing.T) {
 }
 
 func TestParseHandler_GosecWithAIFlag(t *testing.T) {
-	srv, ctx := setupParseTestServer(t, Options{GosecAI: true})
+	srv, ctx := setupParseTestServer(t, testAIOptions())
 	json := `{"Issues":[{"FromLinter":"gosec","Text":"G101: Potential hardcoded credentials","Pos":{"Filename":"main.go","Line":5,"Column":1}}],"Report":{}}`
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "hardcoded credentials")
@@ -182,12 +143,7 @@ func TestParseHandler_GosecWithAIFlag(t *testing.T) {
 func TestParseHandler_GosecWithoutAIFlag(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := `{"Issues":[{"FromLinter":"gosec","Text":"G101: Potential hardcoded credentials","Pos":{"Filename":"main.go","Line":5,"Column":1}}],"Report":{}}`
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "hardcoded credentials")
@@ -197,26 +153,78 @@ func TestParseHandler_GosecWithoutAIFlag(t *testing.T) {
 func TestParseHandler_MultiLineOutput(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := "{\"Issues\":[{\"FromLinter\":\"errcheck\",\"Text\":\"Error return value is not checked\",\"Pos\":{\"Filename\":\"main.go\",\"Line\":10,\"Column\":5}}],\"Report\":{}}\n2 issues:\n* errcheck: 2\n"
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_parse",
-			Arguments: map[string]any{"output": json},
-		},
-	})
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	require.False(t, result.IsError)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "Errcheck detects unchecked errors")
 }
 
+func TestParseHandler_SummaryBlock_SingleDiagnostic(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	json := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"main.go","Line":10,"Column":5}}],"Report":{}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
+	require.NoError(t, err)
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "## Summary")
+	assert.Contains(t, text, "Unique diagnostics: 1")
+	assert.Contains(t, text, "Strategy: A")
+	assert.Contains(t, text, "errcheck (1)")
+	assert.Contains(t, text, "Errcheck detects unchecked errors")
+}
+
+func TestParseHandler_SummaryBlock_StrategyAThreshold(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	json := `{"Issues":[` +
+		`{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"a.go","Line":1,"Column":1}},` +
+		`{"FromLinter":"gocritic","Text":"badCall: something","Pos":{"Filename":"a.go","Line":2,"Column":1}},` +
+		`{"FromLinter":"gocritic","Text":"dupSubExpr: something","Pos":{"Filename":"a.go","Line":3,"Column":1}},` +
+		`{"FromLinter":"gosec","Text":"G101: hardcoded credentials","Pos":{"Filename":"a.go","Line":4,"Column":1}},` +
+		`{"FromLinter":"gosec","Text":"G201: SQL injection","Pos":{"Filename":"a.go","Line":5,"Column":1}},` +
+		`{"FromLinter":"staticcheck","Text":"SA1000: something","Pos":{"Filename":"a.go","Line":6,"Column":1}},` +
+		`{"FromLinter":"staticcheck","Text":"SA2000: something","Pos":{"Filename":"a.go","Line":7,"Column":1}},` +
+		`{"FromLinter":"staticcheck","Text":"SA3000: something","Pos":{"Filename":"a.go","Line":8,"Column":1}},` +
+		`{"FromLinter":"govet","Text":"assign: something","Pos":{"Filename":"a.go","Line":9,"Column":1}},` +
+		`{"FromLinter":"govet","Text":"composite: something","Pos":{"Filename":"a.go","Line":10,"Column":1}}` +
+		`],"Report":{}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
+	require.NoError(t, err)
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "Unique diagnostics: 10")
+	assert.Contains(t, text, "Strategy: A")
+	assert.Contains(t, text, "≤10 diagnostics — present inline")
+}
+
+func TestParseHandler_SummaryBlock_StrategyB(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	json := `{"Issues":[` +
+		`{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"a.go","Line":1,"Column":1}},` +
+		`{"FromLinter":"gocritic","Text":"badCall: something","Pos":{"Filename":"a.go","Line":2,"Column":1}},` +
+		`{"FromLinter":"gocritic","Text":"dupSubExpr: something","Pos":{"Filename":"a.go","Line":3,"Column":1}},` +
+		`{"FromLinter":"gosec","Text":"G101: hardcoded credentials","Pos":{"Filename":"a.go","Line":4,"Column":1}},` +
+		`{"FromLinter":"gosec","Text":"G201: SQL injection","Pos":{"Filename":"a.go","Line":5,"Column":1}},` +
+		`{"FromLinter":"staticcheck","Text":"SA1000: something","Pos":{"Filename":"a.go","Line":6,"Column":1}},` +
+		`{"FromLinter":"staticcheck","Text":"SA2000: something","Pos":{"Filename":"a.go","Line":7,"Column":1}},` +
+		`{"FromLinter":"staticcheck","Text":"SA3000: something","Pos":{"Filename":"a.go","Line":8,"Column":1}},` +
+		`{"FromLinter":"staticcheck","Text":"SA4000: something","Pos":{"Filename":"a.go","Line":9,"Column":1}},` +
+		`{"FromLinter":"govet","Text":"assign: something","Pos":{"Filename":"a.go","Line":10,"Column":1}},` +
+		`{"FromLinter":"govet","Text":"composite: something","Pos":{"Filename":"a.go","Line":11,"Column":1}},` +
+		`{"FromLinter":"govet","Text":"copylocks: something","Pos":{"Filename":"a.go","Line":12,"Column":1}}` +
+		`],"Report":{}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
+	require.NoError(t, err)
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "## Summary")
+	assert.Contains(t, text, "Unique diagnostics: 12")
+	assert.Contains(t, text, "Strategy: B")
+	assert.Contains(t, text, ">10 diagnostics — summarize first")
+	assert.Contains(t, text, "Breakdown: staticcheck (4), govet (3), gocritic (2), gosec (2), errcheck (1)")
+}
+
 func TestParseHandler_ExistingGuideToolUnchanged(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
-	result, err := srv.Client().CallTool(ctx, mcp.CallToolRequest{
-		Params: mcp.CallToolParams{
-			Name:      "golangci_lint_guide",
-			Arguments: map[string]any{"linter": "errcheck"},
-		},
-	})
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck"}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "Errcheck detects unchecked errors")

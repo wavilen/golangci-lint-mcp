@@ -35,10 +35,10 @@ func TestSuite(t *testing.T) {
 </examples>
 
 <patterns>
-- Parent test calls `t.Parallel()` but some subtests don't
-- Subtest calls `t.Parallel()` but parent does not
-- Only first or last subtest marked parallel in a group
-- `t.Parallel()` in helper functions that may or may not run in parallel context
+- Add `t.Parallel()` to all subtests when the parent test is parallel
+- Call `t.Parallel()` in the parent test if any subtest uses `t.Parallel()`
+- Mark all subtests in a group as parallel — avoid mixing parallel and sequential
+- Move `t.Parallel()` out of helper functions that may run in non-parallel contexts
 </patterns>
 
 <related>

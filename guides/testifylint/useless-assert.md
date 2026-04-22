@@ -21,9 +21,9 @@ assert.False(t, hasError)
 </examples>
 
 <patterns>
-- `assert.True(t, true)` — remove or replace with actual boolean expression
-- `assert.Equal(t, x, x)` — compare against an expected constant, not itself
-- `assert.False(t, false)` — use a real condition
+- Remove `assert.True(t, true)` or replace with an actual boolean expression
+- Replace `assert.Equal(t, x, x)` with a comparison against an expected constant
+- Use a real condition instead of `assert.False(t, false)`
 </patterns>
 
 <related>

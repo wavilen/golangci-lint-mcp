@@ -21,10 +21,10 @@ re := regexp.MustCompile(`[a-z]+`)
 </examples>
 
 <patterns>
-- Duplicate alternatives: `a|a`
-- Empty or contradictory character classes
-- Anchors that make patterns impossible to match
-- Redundant flags or repetition on zero-width assertions
+- Remove duplicate regex alternatives like `a|a`
+- Remove empty or contradictory character classes that match nothing
+- Remove anchors that make the pattern impossible to match
+- Remove redundant flags or repetition on zero-width assertions
 </patterns>
 
 <related>

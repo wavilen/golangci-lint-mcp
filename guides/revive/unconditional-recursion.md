@@ -34,11 +34,11 @@ func factorial(n int) int {
 </examples>
 
 <patterns>
-- Method calling itself instead of the wrapped/delegated field
-- Recursive functions missing a base case
-- Typos where the receiver name is confused with the struct field name
-- Interface satisfaction wrappers that call themselves instead of the inner method
-- Accidental recursion in `String()` or `Error()` methods
+- Call the wrapped field instead of recursing into the method itself
+- Add a base case to recursive functions that currently recurse unconditionally
+- Replace typos where the receiver name is confused with a same-named struct field
+- Call the inner method in interface satisfaction wrappers instead of the wrapper itself
+- Avoid calling `String()` or `Error()` on the same type within their own implementations
 </patterns>
 
 <related>

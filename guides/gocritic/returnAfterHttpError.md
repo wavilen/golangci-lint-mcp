@@ -14,7 +14,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
         // execution continues — may write another response
     }
-    w.Write([]byte("ok"))
+    _, _ = w.Write([]byte("ok"))
 }
 ```
 
@@ -25,16 +25,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
         return
     }
-    w.Write([]byte("ok"))
+    _, _ = w.Write([]byte("ok"))
 }
 ```
 </examples>
 
 <patterns>
-- `http.Error()` without subsequent `return`
-- Error logging after response already written
-- Continuing processing after writing error status code
-- Multiple `w.WriteHeader()` calls in same handler
+- Add `return` after `http.Error()` — stop processing the request
+- Add `return` after logging an error when the response is already written
+- Add `return` after writing error status code — prevent continued processing
+- Avoid calling `w.WriteHeader()` multiple times in the same handler
 </patterns>
 
 <related>

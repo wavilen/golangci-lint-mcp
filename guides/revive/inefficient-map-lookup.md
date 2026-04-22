@@ -24,11 +24,11 @@ if result, ok := cache[key]; ok {
 </examples>
 
 <patterns>
-- Checking `m[key]` existence then immediately accessing `m[key]` again
-- Using `_, ok := m[k]` for existence check followed by `m[k]` for value
-- Double map access in cache hit/miss patterns
-- Set-membership checks using `delete` followed by re-check
-- Pattern matching on map keys where value is also needed
+- Use comma-ok `val, ok := m[key]` to check existence and retrieve value in one access
+- Replace `_, ok := m[k]` followed by `m[k]` with a single comma-ok lookup
+- Combine double map access in cache hit/miss patterns into one lookup
+- Use the ok value directly instead of checking membership with `delete` followed by re-check
+- Use comma-ok to get the value alongside the existence check when pattern matching on map keys
 </patterns>
 
 <related>

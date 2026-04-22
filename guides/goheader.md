@@ -26,10 +26,10 @@ import "fmt"
 </examples>
 
 <patterns>
-- New files created without the required copyright header
-- Headers that don't match the configured template (wrong year, company name)
-- Generated files missing headers when not excluded by config
-- Headers with incorrect spacing or formatting
+- Add the configured copyright header to every new source file
+- Update file headers to match the configured template (year, company name)
+- Add headers to generated files or exclude them in config
+- Fix header spacing and formatting to match the template exactly
 </patterns>
 
 <related>

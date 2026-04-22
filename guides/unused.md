@@ -29,10 +29,10 @@ func process() error {
 </examples>
 
 <patterns>
-- Unused constants and variables after refactoring
-- Helper functions that were superseded but not removed
-- Private struct types defined but never instantiated
-- Import aliases that are never referenced
+- Remove constants and variables left unused after refactoring
+- Delete helper functions that were superseded by newer implementations
+- Remove private struct types that are defined but never used
+- Remove import aliases that are never referenced in code
 </patterns>
 
 <related>

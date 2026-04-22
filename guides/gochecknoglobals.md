@@ -29,10 +29,10 @@ func (c *Cache) Get(key string) string {
 </examples>
 
 <patterns>
-- Package-level maps or slices used as registries
-- Global configuration variables mutated at init time
-- Singleton patterns using package-level vars
-- Counters or metrics stored as package variables
+- Move package-level maps and slices into struct fields passed via dependency injection
+- Replace global config variables with explicit setup functions called from `main()`
+- Use sync.Once inside a constructor instead of singleton package-level vars
+- Pass counters and metrics through struct receivers rather than package variables
 </patterns>
 
 <related>

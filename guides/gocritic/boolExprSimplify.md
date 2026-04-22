@@ -35,11 +35,11 @@ if a || b {
 </examples>
 
 <patterns>
-- `x == true` → `x`
-- `x == false` → `!x`
-- `x != true` → `!x`
-- `!!x` → `x`
-- `x || (!x && y)` → `x || y`
+- Replace `x == true` with `x`
+- Replace `x == false` with `!x`
+- Replace `x != true` with `!x`
+- Replace `!!x` with `x`
+- Simplify `x || (!x && y)` to `x || y`
 </patterns>
 
 <related>

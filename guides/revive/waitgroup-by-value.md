@@ -39,11 +39,11 @@ func main() {
 </examples>
 
 <patterns>
-- Function parameters of type `sync.WaitGroup` (not pointer)
-- Goroutine closures capturing a WaitGroup by value
-- Structs embedding `sync.WaitGroup` by value and being copied
-- Method receivers using value type for structs containing WaitGroup
-- Passing WaitGroup to goroutine-launching helpers without a pointer
+- Switch `sync.WaitGroup` function parameters to `*sync.WaitGroup` (pointer)
+- Use `*sync.WaitGroup` by pointer in goroutine closures, never by value
+- Avoid copying structs that embed `sync.WaitGroup` by value — use pointers
+- Use pointer receivers for structs containing a `sync.WaitGroup` field
+- Pass `&wg` to goroutine-launching helpers instead of copying by value
 </patterns>
 
 <related>

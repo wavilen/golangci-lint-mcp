@@ -19,10 +19,10 @@ name := req.GetName()
 </examples>
 
 <patterns>
-- Direct field access on proto messages: `msg.Field` instead of `msg.GetField()`
-- Accessing nested proto fields without nil checks
-- Direct access in comparisons: `if msg.Status == 1` instead of `if msg.GetStatus() == 1`
-- Assigning to proto fields directly instead of using setters
+- Use `msg.GetField()` instead of direct `msg.Field` access on proto messages
+- Guard nested proto field access with nil checks or use generated getters
+- Replace `if msg.Status == 1` with `if msg.GetStatus() == 1` for safe access
+- Set proto fields via generated setter methods instead of direct assignment
 </patterns>
 
 <related>

@@ -25,11 +25,11 @@ import (
 </examples>
 
 <patterns>
-- Import aliases that exactly match the package name
-- Auto-import tools adding redundant aliases
-- Refactored imports where the alias used to differ but was later changed
-- Generated code with explicit aliases for clarity that duplicate the name
-- Import grouping where some aliases are needed but others are redundant
+- Remove import aliases that exactly match the package name — use the plain import path
+- Set auto-import tools to skip adding redundant aliases
+- Remove the alias from refactored imports where it used to differ but now matches
+- Simplify generated code by removing explicit aliases that duplicate the package name
+- Remove redundant aliases from import groups while keeping necessary ones
 </patterns>
 
 <related>

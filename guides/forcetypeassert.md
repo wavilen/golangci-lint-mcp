@@ -24,10 +24,10 @@ if !ok {
 </examples>
 
 <patterns>
-- Direct type assertions without comma-ok: `v.(Type)`
-- Unmarshaled `any` values asserted without safety checks
-- Interface values from external packages asserted to concrete types
-- Switch case bodies that re-assert instead of using the matched type
+- Replace direct type assertions with comma-ok form: `v, ok := i.(T)`
+- Guard unmarshaled `any` value assertions with comma-ok checks
+- Use comma-ok when asserting external package interfaces to concrete types
+- Use the matched type directly in switch case bodies instead of re-asserting
 </patterns>
 
 <related>

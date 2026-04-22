@@ -19,9 +19,9 @@ Expect(err).ShouldNot(HaveOccurred())
 </examples>
 
 <patterns>
-- `Expect(x).To(Equal(y))` — use `Expect(x).Should(Equal(y))`
-- `Expect(x).ToNot(matcher)` — use `Expect(x).ShouldNot(matcher)`
-- Mixing `.To` and `.Should` — standardize on `.Should`/`.ShouldNot`
+- Use `Expect(x).Should(Equal(y))` instead of `Expect(x).To(Equal(y))`
+- Use `Expect(x).ShouldNot(matcher)` instead of `Expect(x).ToNot(matcher)`
+- Use `.Should`/`.ShouldNot` consistently — avoid mixing with `.To`/`.ToNot`
 </patterns>
 
 <related>

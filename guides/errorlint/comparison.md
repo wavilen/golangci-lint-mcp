@@ -21,9 +21,9 @@ if errors.Is(err, io.EOF) {
 </examples>
 
 <patterns>
-- `err == someSentinel` — use `errors.Is(err, someSentinel)`
-- `err != nil` is acceptable for nil check but `errors.Is` is safer for sentinel values
-- `if err == io.EOF || err == io.ErrUnexpectedEOF` — use `errors.Is` for each
+- Replace `err == someSentinel` with `errors.Is(err, someSentinel)` to walk the error chain
+- Use `errors.Is` for sentinel value checks — `err != nil` is acceptable for nil checks only
+- Replace `if err == io.EOF || err == io.ErrUnexpectedEOF` with separate `errors.Is` calls
 </patterns>
 
 <related>

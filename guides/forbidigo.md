@@ -23,10 +23,10 @@ func main() {
 </examples>
 
 <patterns>
-- `fmt.Println` or `fmt.Printf` instead of structured logging
-- `ioutil` package functions deprecated since Go 1.16
-- Deprecated functions configured in `.golangci.yml` forbid list
-- Testing helpers like `t.Log` used outside test files
+- Replace `fmt.Println`/`fmt.Printf` with `slog.Info`/`slog.Error` for structured logging
+- Use `os`/`io` equivalents instead of deprecated `ioutil` functions (Go 1.16+)
+- Check `.golangci.yml` forbid list for approved replacements of deprecated functions
+- Move `t.Log` calls into test files only, or use structured logging outside tests
 </patterns>
 
 <related>

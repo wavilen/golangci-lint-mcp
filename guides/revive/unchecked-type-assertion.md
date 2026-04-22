@@ -28,11 +28,11 @@ if !ok {
 </examples>
 
 <patterns>
-- Direct type assertions without comma-ok on `interface{}`
-- Assertions on JSON unmarshaled values (which are `interface{}`)
-- Type assertions on context values without checking
-- Slice element assertions after `reflect` or `interface{}` conversion
-- Assertions on interface types from external packages
+- Use the comma-ok form `v, ok := x.(string)` for type assertions on `interface{}`
+- Check the ok value for type assertions on JSON unmarshaled values (which are `interface{}`)
+- Validate type assertions on context values with the comma-ok pattern
+- Use comma-ok for slice element assertions after `reflect` or `interface{}` conversion
+- Handle the false case for type assertions on interface types from external packages
 </patterns>
 
 <related>

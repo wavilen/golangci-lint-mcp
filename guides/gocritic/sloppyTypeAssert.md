@@ -28,10 +28,10 @@ func process(v interface{}) {
 </examples>
 
 <patterns>
-- `i.(Type)` without comma-ok in general code paths
-- Type assertions on `interface{}` values from external sources
-- Unmarshaled JSON decoded as `interface{}` with direct assertions
-- Assertion on values from `context.Value()` without safety check
+- Use comma-ok form `v, ok := i.(Type)` for type assertions in general code paths
+- Guard type assertions on `interface{}` from external sources with comma-ok
+- Guard unmarshaled JSON `interface{}` values with comma-ok before asserting type
+- Guard `context.Value()` results with comma-ok before type assertion
 </patterns>
 
 <related>

@@ -27,11 +27,11 @@ func isValid() bool {
 </examples>
 
 <patterns>
-- `if cond { return true } return false` patterns
-- `if cond { return false } else { return true }` (should be `return !cond`)
-- Boolean comparison functions wrapping a single expression
-- Redundant guard checks before returning a boolean literal
-- Switch statements with `return true`/`return false` in every case
+- Replace `if cond { return true } return false` with `return cond`
+- Simplify `if cond { return false } else { return true }` to `return !cond`
+- Return boolean expressions directly instead of wrapping them in an if-return
+- Remove redundant guard checks before returning a boolean literal
+- Replace switch statements returning `true`/`false` per case with a direct return expression
 </patterns>
 
 <related>

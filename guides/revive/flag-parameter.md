@@ -30,11 +30,11 @@ func renderPretty(data []byte) string {
 </examples>
 
 <patterns>
-- Boolean parameters at the end of argument lists controlling flow
-- Functions like `Do(x, true)` where callers must look up what `true` means
-- Boolean flags added over time as the function gains optional behavior
-- API methods like `Get(path, async bool)` mixing two modes in one function
-- Constructor functions with boolean flags for optional features
+- Replace boolean parameters controlling flow with separate methods for each behavior
+- Separate functions like `Do(x, true)` into clearly named methods — callers shouldn't need to look up what `true` means
+- Extract boolean flags added over time into an options struct or separate functions
+- Provide distinct methods for each mode instead of mixing two modes in one function
+- Use an options struct for constructor functions with boolean flags for optional features
 </patterns>
 
 <related>

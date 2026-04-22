@@ -19,9 +19,9 @@ assert.Equal(t, 42, calculate())
 </examples>
 
 <patterns>
-- `assert.Equal(t, computed, constant)` — swap to `assert.Equal(t, constant, computed)`
-- `assert.Equal(t, result, expected)` — swap to `assert.Equal(t, expected, result)`
-- Literal or expected value in second position — move to first
+- Move the expected value to the first position: `assert.Equal(t, constant, computed)` instead of `(t, computed, constant)`
+- Move the expected value to the first position: `assert.Equal(t, expected, result)` instead of `(t, result, expected)`
+- Move literal or expected values to the first argument position
 </patterns>
 
 <related>

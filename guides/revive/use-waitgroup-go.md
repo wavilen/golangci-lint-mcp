@@ -33,11 +33,11 @@ wg.Wait()
 </examples>
 
 <patterns>
-- `wg.Add` called inside the goroutine instead of before the `go` statement
-- Loop-based goroutine spawning where `Add` is outside the loop but should be per-iteration
-- `WaitGroup` counter managed inconsistently across different launch sites
-- Missing `wg.Add` entirely (goroutines launched without tracking)
-- `Add` with the wrong count in batch goroutine patterns
+- Call `wg.Add(1)` before the `go` statement, not inside the goroutine
+- Move `wg.Add(1)` inside the loop body per-iteration rather than outside for loop-based spawning
+- Ensure the WaitGroup counter is incremented consistently at every launch site
+- Add `wg.Add` before every goroutine launch — never omit it
+- Set the correct count in `wg.Add` for batch goroutine patterns
 </patterns>
 
 <related>

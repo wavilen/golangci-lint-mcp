@@ -23,10 +23,10 @@ func logMessagef(format string, args ...any) {
 </examples>
 
 <patterns>
-- Custom logging wrappers with format strings but no `f` suffix
-- Functions named `log*` that call `fmt.Sprintf` internally
-- Helper functions wrapping `t.Logf` in tests
-- Variadic string functions that look like format functions
+- Rename custom logging wrappers to include the `f` suffix when using format strings
+- Add `f` suffix to `log*` functions that call `fmt.Sprintf` internally
+- Rename test helper functions wrapping `t.Logf` with the `f` suffix
+- Rename variadic string functions that use format strings to end with `f`
 </patterns>
 
 <related>

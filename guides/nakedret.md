@@ -33,10 +33,10 @@ func compute(a, b int) (sum, diff int) {
 </examples>
 
 <patterns>
-- Bare `return` at the end of multi-line functions
-- Naked returns combined with defer that modifies named returns
-- Early naked returns in conditional branches
-- Named return values used only for naked returns, not for documentation
+- Replace bare `return` with explicit return values in multi-line functions
+- Use explicit returns when defer modifies named return values
+- Replace early naked returns with explicit value returns in conditional branches
+- Use named return values for documentation clarity, not just to enable naked returns
 </patterns>
 
 <related>

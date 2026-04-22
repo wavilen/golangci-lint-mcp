@@ -33,9 +33,9 @@ if x > 0 {
 </examples>
 
 <patterns>
-- `else { if cond { ... } }` → `else if cond { ... }`
-- `else { if cond { ... } else { ... } }` → `else if cond { ... } else { ... }`
-- Multi-level nesting of if-else that should be a flat chain
+- Replace `else { if cond { ... } }` with `else if cond { ... }`
+- Replace `else { if cond { ... } else { ... } }` with `else if cond { ... } else { ... }`
+- Flatten multi-level nested if-else into a flat `else if` chain
 </patterns>
 
 <related>

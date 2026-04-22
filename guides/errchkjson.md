@@ -30,10 +30,10 @@ if err != nil {
 </examples>
 
 <patterns>
-- Structs with channel or function fields passed to `json.Marshal`
-- Missing `json:"-"` tags on non-serializable fields
-- Maps with non-string keys used in JSON marshaling
-- Unexported fields silently omitted from JSON output
+- Add `json:"-"` tags to channel or function fields, or avoid passing those structs to `json.Marshal`
+- Add `json:"-"` tags to fields that cannot be serialized (channels, functions, sync types)
+- Use string keys in maps passed to `json.Marshal`, or implement custom marshaling for non-string keys
+- Ensure fields that must appear in JSON output are exported — unexported fields are silently omitted
 </patterns>
 
 <related>

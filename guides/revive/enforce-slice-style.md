@@ -24,10 +24,10 @@ items := make([]string, 0, len(input))
 </examples>
 
 <patterns>
-- Mixed slice initialization styles within the same package
-- Empty slice literals `[]T{}` vs `make([]T, 0)` inconsistency
-- Some files using capacity hints while others do not
-- Auto-generated code using a different style than hand-written code
+- Use consistent slice initialization style within the same package — either `make` or literals
+- Use between empty slice literals `[]T{}` and `make([]T, 0)` consistently across the codebase
+- Use capacity hints uniformly — either use them everywhere or nowhere for similar patterns
+- Ensure auto-generated code to the slice initialization style used by hand-written code
 </patterns>
 
 <related>

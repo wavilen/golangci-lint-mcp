@@ -33,10 +33,10 @@ func (s *Server) Clone() *Server {
 </examples>
 
 <patterns>
-- Value receiver on struct containing a mutex
-- Returning struct with lock by value
-- Assigning lock-containing struct to a new variable
-- Range loop copying struct with mutex
+- Use pointer receivers for structs containing `sync.Mutex` or `sync.RWMutex` fields
+- Return pointers to lock-containing structs instead of copying by value
+- Use pointers when assigning lock-containing structs to new variables
+- Use pointer range (`for i := range &slice`) or index-based loop to avoid copying mutex structs
 </patterns>
 
 <related>

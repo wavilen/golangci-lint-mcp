@@ -21,9 +21,9 @@ assert.Equal(t, 5, result.ID)
 </examples>
 
 <patterns>
-- `assert.NoError` followed by using the result — use `require.NoError`
-- `assert.True(t, setupOK)` at test start — use `require.True`
-- Setup or initialization check that must pass — always use `require`
+- Use `require.NoError` when `assert.NoError` is followed by using the result
+- Use `require.True` instead of `assert.True(t, setupOK)` at test start
+- Use `require` for setup or initialization checks that must pass before continuing
 </patterns>
 
 <related>

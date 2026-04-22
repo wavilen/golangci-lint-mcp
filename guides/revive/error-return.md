@@ -33,11 +33,11 @@ func Parse() (int, bool, error) {
 </examples>
 
 <patterns>
-- Functions returning error in the first position
-- Functions returning error in a middle position among multiple values
-- Constructor functions with error not as the last return
-- Functions following a non-Go convention from another language
-- Interface methods where implementations place error non-last
+- Move the error return to the last position when functions return error first
+- Reorder return values so error is the last value in multi-return functions
+- Ensure constructor functions return error as the last value
+- Use Go convention by placing error last — avoid patterns from other languages
+- Replace interface methods where implementations place error in a non-last position
 </patterns>
 
 <related>

@@ -36,9 +36,9 @@ func FindUser(id int) (*User, error) {
 </examples>
 
 <patterns>
-- `(nil, nil)` return when a resource is not found
-- Functions returning `(pointer, error)` where both are nil on empty result
-- Repository/cache lookup methods that return nil-nil for missing items
+- Return a sentinel error or `ErrNotFound` instead of `(nil, nil)` when a resource is missing
+- Return a descriptive error instead of `(nil, nil)` for empty or not-found results
+- Define a clear not-found error and return it from repository/cache lookups instead of nil-nil
 </patterns>
 
 <related>

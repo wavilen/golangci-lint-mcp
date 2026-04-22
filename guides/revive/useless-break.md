@@ -31,11 +31,11 @@ case "blue":
 </examples>
 
 <patterns>
-- `break` at the end of every `case` in a switch (C-style habit)
-- `break` at the end of `default` clause
-- `break` in `select` case clauses
-- Break statements in type switch cases
-- Break in the last case of a switch where it serves no purpose
+- Remove trailing `break` at the end of every `case` in a switch — Go cases don't fall through
+- Remove `break` at the end of `default` clause
+- Remove `break` from `select` case clauses
+- Eliminate break statements in type switch cases
+- Remove `break` from the last case of a switch where it serves no purpose
 </patterns>
 
 <related>

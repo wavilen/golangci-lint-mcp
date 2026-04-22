@@ -23,10 +23,10 @@ if name == "" {
 </examples>
 
 <patterns>
-- `len(s) == 0` instead of `s == ""` for strings
-- `len(s) > 0` instead of `s != ""` for strings
-- `len(m) == 0` for maps when checking nil
-- `len(slice) != 0` when a nil check suffices
+- Replace `len(s) == 0` with `s == ""` for string empty checks
+- Replace `len(s) > 0` with `s != ""` for string non-empty checks
+- Replace `len(m) == 0` with direct nil check for maps when nil is the concern
+- Replace `len(slice) != 0` with `slice != nil` when a nil check suffices
 </patterns>
 
 <related>

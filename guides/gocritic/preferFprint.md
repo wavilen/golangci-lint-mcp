@@ -19,10 +19,10 @@ fmt.Fprintf(w, "name: %s, age: %d\n", name, age)
 </examples>
 
 <patterns>
-- `w.Write([]byte(fmt.Sprintf(...)))` — formats to string then converts to bytes for writing
-- `buf.WriteString(fmt.Sprintf(...))` — formats to string then writes to buffer
-- Using `Sprintf` to build output that is immediately written somewhere
-- Response writers or buffers receiving `Sprintf` output indirectly
+- Replace `w.Write([]byte(fmt.Sprintf(...)))` with `fmt.Fprintf(w, ...)`
+- Replace `buf.WriteString(fmt.Sprintf(...))` with `fmt.Fprintf(buf, ...)`
+- Replace `Sprintf` + immediate write with `Fprintf` directed to the writer
+- Use `fmt.Fprintf` when writing formatted output directly to a response writer or buffer
 </patterns>
 
 <related>

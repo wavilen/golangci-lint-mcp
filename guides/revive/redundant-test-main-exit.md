@@ -28,11 +28,11 @@ func TestMain(m *testing.M) {
 </examples>
 
 <patterns>
-- `os.Exit(m.Run())` pattern in TestMain functions
-- `os.Exit(0)` at the end of TestMain
-- Direct `os.Exit` calls that bypass deferred cleanup
-- Legacy TestMain implementations from pre-Go 1.15
-- TestMain with manual exit code propagation
+- Remove `os.Exit(m.Run())` from TestMain — the framework handles exit codes since Go 1.15
+- Remove `os.Exit(0)` at the end of TestMain — it is now redundant
+- Remove direct `os.Exit` calls that bypass deferred cleanup in TestMain
+- Replace legacy TestMain implementations from pre-Go 1.15 by removing `os.Exit`
+- Simplify TestMain by letting the framework handle exit code propagation
 </patterns>
 
 <related>

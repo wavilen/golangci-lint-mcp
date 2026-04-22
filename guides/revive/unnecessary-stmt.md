@@ -24,11 +24,11 @@ if len(items) > 0 {
 </examples>
 
 <patterns>
-- Standalone expressions with no side effects (arithmetic, function calls without assignment)
-- Empty statements (lone semicolons or blank lines inside blocks)
-- Assignments to blank identifier where the right side has no side effects
-- Increment/decrement operations on values never used
-- Leftover debug statements like `count + 1` from removed code
+- Remove standalone expressions with no side effects (arithmetic or function calls without assignment)
+- Remove empty statements (lone semicolons or blank lines inside blocks)
+- Remove assignments to blank identifier where the right side has no side effects
+- Eliminate increment/decrement operations on values that are never used afterward
+- Remove leftover debug statements like `count + 1` from removed code
 </patterns>
 
 <related>

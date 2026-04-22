@@ -24,10 +24,10 @@ func ExampleGreeting() {
 </examples>
 
 <patterns>
-- Example functions without `// Output:` comment
-- `// Output:` with wrong expected output (test fails silently)
-- Empty `// Output:` when the example prints nothing
-- Examples that call `os.Exit` or panic (not testable)
+- Add `// Output:` comments to all example functions so they run as tests
+- Ensure `// Output:` matches the actual stdout of the example
+- Use `// Output:` (empty) only when the example genuinely prints nothing
+- Avoid `os.Exit` or `panic` in examples — they prevent test execution
 </patterns>
 
 <related>

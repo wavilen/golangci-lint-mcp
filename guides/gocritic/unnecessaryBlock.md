@@ -29,9 +29,9 @@ func process() {
 </examples>
 
 <patterns>
-- Standalone `{ }` block inside a function with no control flow
-- Block used only for scoping that could be inlined
-- Accidental extra braces from copy-paste or refactoring
+- Remove standalone `{ }` blocks inside functions with no control flow purpose
+- Inline block-scoped code that doesn't need its own scope
+- Remove accidental extra braces from copy-paste or refactoring
 </patterns>
 
 <related>

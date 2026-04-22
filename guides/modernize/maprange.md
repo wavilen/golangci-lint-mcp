@@ -20,9 +20,9 @@ keys := maps.Keys(m)
 </examples>
 
 <patterns>
-- Collecting map keys into a slice in a loop — use `maps.Keys(m)`
-- Collecting map values into a slice — use `maps.Values(m)`
-- `for k := range m` followed by `append(keys, k)` — use `maps.Keys`
+- Use `maps.Keys(m)` instead of collecting map keys into a slice with a manual loop
+- Use `maps.Values(m)` instead of collecting map values into a slice with a manual loop
+- Use `maps.Keys` instead of `for k := range m { append(keys, k) }`
 </patterns>
 
 <related>

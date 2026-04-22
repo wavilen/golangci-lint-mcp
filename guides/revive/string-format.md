@@ -23,11 +23,11 @@ fmt.Sprintf("Hello %s, you are #%d", name, 1)
 </examples>
 
 <patterns>
-- Using `%d` for string arguments or `%s` for integers
-- More format verbs than provided arguments
-- Fewer format verbs than provided arguments (unused args)
-- Using `%v` where a specific verb would catch type mismatches at review time
-- Mismatched width/precision modifiers for the argument type
+- Ensure format verbs to argument types — use `%s` for strings, `%d` for integers
+- Ensure every format verb has a corresponding argument — remove extra verbs
+- Provide arguments for every format verb — remove unused arguments
+- Use type-specific verbs like `%d` instead of `%v` to catch type mismatches at review time
+- Use width/precision modifiers with the argument type
 </patterns>
 
 <related>

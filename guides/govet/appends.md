@@ -21,9 +21,9 @@ items = append(items, "c") // result assigned back to same variable
 </examples>
 
 <patterns>
-- Assigning append result to a different variable instead of the original slice
-- Calling append without using the return value
-- Appending to a field but assigning to a local variable
+- Assign the `append` result back to the original slice variable (`s = append(s, elem)`)
+- Use the return value of every `append` call — never discard it
+- Assign the `append` result back to the same struct field, not a local variable
 </patterns>
 
 <related>

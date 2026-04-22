@@ -24,10 +24,10 @@ return result
 </examples>
 
 <patterns>
-- `tracer.Start()` without corresponding `span.End()`
-- `span.End()` not deferred (missed on error paths)
-- Setting span status after `span.End()` has no effect
-- Missing error recording: `span.RecordError(err)` before `End()`
+- Call `defer span.End()` immediately after `tracer.Start()`
+- Call `span.End()` via `defer` to ensure it runs on all code paths, including error returns
+- Set span status and attributes before calling `span.End()`
+- Call `span.RecordError(err)` before `span.End()` when an error occurs
 </patterns>
 
 <related>

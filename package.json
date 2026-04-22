@@ -1,6 +1,6 @@
 {
   "name": "golangci-lint-guide",
-  "version": "1.0.0",
+  "version": "1.1",
   "description": "OpenCode skill for fixing golangci-lint issues using MCP tool guidance",
   "bin": {
     "golangci-lint-guide": "./bin/install.js"
@@ -8,6 +8,11 @@
   "files": [
     "bin/",
     "skills/",
+    "commands/",
+    "hooks/",
+    "rules/",
+    "shared/",
+    "plugins/",
     "README.md",
     "LICENSE"
   ],

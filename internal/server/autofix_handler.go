@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -12,7 +13,9 @@ import (
 
 const gosecAutofixTimeout = 60 * time.Second
 
-func makeGosecAutofixHandler(opts Options) func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func makeGosecAutofixHandler(
+	opts Options,
+) func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		path, err := req.RequireString("path")
 		if err != nil {
@@ -21,6 +24,13 @@ func makeGosecAutofixHandler(opts Options) func(ctx context.Context, req mcp.Cal
 		path = strings.TrimSpace(path)
 		if path == "" {
 			return mcp.NewToolResultError("parameter 'path' must not be empty"), nil
+		}
+		if filepath.IsAbs(path) {
+			return mcp.NewToolResultError("parameter 'path' must be a relative path, got absolute path"), nil
+		}
+		cleaned := filepath.Clean(path)
+		if strings.HasPrefix(cleaned, "../") {
+			return mcp.NewToolResultError("parameter 'path' must not traverse above the current directory"), nil
 		}
 
 		args := []string{"-ai-api-provider=" + opts.GosecAIProvider, "-ai-api-key=" + opts.GosecAIKey}
@@ -51,13 +61,9 @@ func makeGosecAutofixHandler(opts Options) func(ctx context.Context, req mcp.Cal
 						". Fall back to the guide's <instructions> and <examples> sections."), nil
 			}
 			return mcp.NewToolResultError(
-				"gosec AI autofix failed: " + sanitizeOutput(output, runErr.Error())), nil
+				"gosec AI autofix failed: " + output + ": " + runErr.Error()), nil
 		}
 
 		return mcp.NewToolResultText(output), nil
 	}
-}
-
-func sanitizeOutput(output string, errMsg string) string {
-	return output + ": " + errMsg
 }

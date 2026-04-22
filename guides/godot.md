@@ -21,10 +21,10 @@ func Parse(input string) (*Result, error) {
 </examples>
 
 <patterns>
-- Single-line doc comments missing trailing period
-- Multi-sentence comments where only the last sentence lacks punctuation
-- Package-level comments without proper sentence endings
-- TODO/FIXME comments excluded by default configuration
+- Add trailing periods to single-line doc comments
+- Check multi-sentence comments for missing punctuation on the final sentence
+- End package-level comments with proper sentence punctuation
+- Annotate TODO/FIXME with trailing periods unless excluded by configuration
 </patterns>
 
 <related>

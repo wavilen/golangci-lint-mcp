@@ -31,9 +31,9 @@ for range items {
 </examples>
 
 <patterns>
-- `for i, _ := range slice` where only the index is used — drop the blank
-- `for _, _ := range slice` where neither value is used — use `for range`
-- `for i := range n` where n is an integer — Go 1.22 range-over-int
+- Remove the blank identifier in `for i, _ := range slice` when only the index is used
+- Use `for range` instead of `for _, _ := range slice` when neither value is used
+- Use Go 1.22 range-over-int for `for i := range n` where n is an integer
 </patterns>
 
 <related>

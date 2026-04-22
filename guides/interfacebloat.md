@@ -44,9 +44,9 @@ type PostRepository interface {
 </examples>
 
 <patterns>
-- Mega-interfaces that combine CRUD operations for multiple entities
-- Service interfaces mixing query, command, and event methods
-- Client interfaces that expose every API endpoint as a method
+- Split mega-interfaces into entity-specific interfaces for each CRUD concern
+- Separate service interfaces into query, command, and event interfaces
+- Decompose client interfaces into focused sub-interfaces by API concern
 </patterns>
 
 <related>

@@ -23,11 +23,11 @@ package pkg
 </examples>
 
 <patterns>
-- `//go:build linux` in a file already named `_linux.go`
-- Build tags that are always true (e.g., `//go:build true`)
-- Duplicate build constraints that say the same thing twice
-- Obsolete `// +build` tags when `//go:build` is already present
-- Build tags that are subsets of the file suffix convention
+- Remove `//go:build linux` from files already named `_linux.go` — the suffix already implies the constraint
+- Remove build tags that are always true (e.g., `//go:build true`)
+- Combine duplicate build constraints into a single correct tag
+- Remove obsolete `// +build` tags when `//go:build` is already present
+- Eliminate build tags that are subsets of the file suffix convention
 </patterns>
 
 <related>

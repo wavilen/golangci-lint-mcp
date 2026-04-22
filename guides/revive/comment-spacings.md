@@ -23,11 +23,11 @@ x := compute() // also here
 </examples>
 
 <patterns>
-- Inline comments starting directly after `//` without a space
-- Comment directives like `//nolint` that are exceptions to the spacing rule
-- Block comments (`/* */`) with missing internal spacing
-- Auto-generated comments from tools that omit the space
-- Code sections or separators without proper spacing
+- Add a space after `//` in all comments — write `// comment` not `//comment`
+- Use `//nolint` and similar directives in their directive format as exceptions to spacing
+- Ensure block comments (`/* */`) include proper internal spacing
+- Replace auto-generated comments from tools that omit the space after `//`
+- Ensure code section separators have proper spacing after the comment marker
 </patterns>
 
 <related>

@@ -26,10 +26,9 @@ return fetchFromDB(key)
 </examples>
 
 <patterns>
-- `if`/`else` with identical return statements
-- Switch cases with duplicated logic
-- Ternary-equivalent branches that always produce the same result
-- Copy-paste errors in error handling branches
+- Extract identical `if`/`else` return statements into a single call before the branch
+- Remove ternary-equivalent branches that always produce the same result
+- Separate copy-paste errors in error handling branches — differentiate the logic
 </patterns>
 
 <related>

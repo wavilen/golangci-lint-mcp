@@ -21,11 +21,11 @@ addr := "localhost:" + strconv.Itoa(port)
 </examples>
 
 <patterns>
-- Converting int to string for display or concatenation
-- Using `string()` on numeric types from external APIs
-- Converting byte counts or sizes to strings
-- Building log messages with `string(count)` instead of `strconv.Itoa`
-- Converting rune values when the intent is actually numeric formatting
+- Use `strconv.Itoa` or `fmt.Sprintf("%d", n)` to convert int to string for display
+- Replace `string()` on numeric types from external APIs with `strconv.Itoa`
+- Convert byte counts or sizes using `strconv.Itoa` or `fmt.Sprintf`
+- Use `strconv.Itoa(count)` instead of `string(count)` for log messages
+- Use `strconv.Itoa` for numeric formatting instead of `string()` on rune values
 </patterns>
 
 <related>

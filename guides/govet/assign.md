@@ -21,9 +21,9 @@ x := 10
 </examples>
 
 <patterns>
-- Variable assigned to itself (`x = x`)
-- Struct field assigned to itself (`s.Field = s.Field`)
-- Result of pure function assigned back to same variable
+- Remove self-assignments (`x = x`) — either delete the line or fix the intended target
+- Remove struct field self-assignments (`s.Field = s.Field`) — fix the intended field or delete
+- Remove pure function reassignment to the same variable (`x = len(x)`)
 </patterns>
 
 <related>

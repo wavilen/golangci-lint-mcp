@@ -45,10 +45,10 @@ func validateField(name, value string, maxLen int) error {
 </examples>
 
 <patterns>
-- Copy-pasted validation or error-handling logic across multiple functions
-- Repeated struct initialization blocks in different constructors
-- Duplicated iteration patterns that can use a shared higher-order function
-- Similar test setup code repeated across test functions
+- Extract copy-pasted validation or error-handling logic into a shared function
+- Extract repeated struct initialization into a shared factory function
+- Replace duplicated iteration patterns with a shared higher-order function
+- Extract repeated test setup code into a shared helper or table-driven test
 </patterns>
 
 <related>

@@ -33,11 +33,11 @@ func CreateUser(p CreateUserParams) error {
 </examples>
 
 <patterns>
-- Data-transfer or builder functions accumulating parameters over time
-- Constructor functions that set many optional fields
-- API handler functions with many path/query parameters
-- Functions where callers frequently mix up argument order
-- Gradual parameter creep during development
+- Group related parameters into a struct when data-transfer or builder functions accumulate too many arguments
+- Use the options pattern for constructor functions that set many optional fields
+- Wrap API handler path/query parameters in a request struct to reduce argument count
+- Separate functions where callers frequently mix up argument order into smaller focused functions
+- Refactor parameter creep by periodically consolidating related arguments into structs
 </patterns>
 
 <related>

@@ -38,10 +38,10 @@ func process() error {
 </examples>
 
 <patterns>
-- `defer` as the last statement before `return`
-- `defer f.Close()` at the end of a function with no branching
-- Redundant `defer` after all error checks have passed
-- Multiple `defer f.Close()` calls for the same resource
+- Remove `defer` as the last statement before `return` — call directly
+- Remove `defer f.Close()` at the end of a function with no branching — call directly
+- Remove redundant `defer` after all error checks — the resource is about to go out of scope
+- Remove duplicate `defer f.Close()` calls — only one is needed per resource
 </patterns>
 
 <related>

@@ -33,11 +33,11 @@ proceed() // always reached anyway
 </examples>
 
 <patterns>
-- Contradictory conditions like `x && !x` or `x || !x`
-- Hardcoded boolean literals in logical expressions (`true && x`)
-- Double negation that cancels out (`!!x` is just `x`)
-- Copy-paste errors producing always-true or always-false guards
-- Stale conditions left after refactoring
+- Simplify contradictory conditions like `x && !x` or `x || !x` — they indicate a logic error
+- Remove hardcoded boolean literals from logical expressions (`true && x` → `x`)
+- Eliminate double negation that cancels out (`!!x` → `x`)
+- Replace copy-paste errors that produce always-true or always-false guards
+- Remove stale conditions left after refactoring that always evaluate to a constant
 </patterns>
 
 <related>

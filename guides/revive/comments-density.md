@@ -31,11 +31,11 @@ func Process(data []byte, flags int) (Result, error) {
 </examples>
 
 <patterns>
-- Exported functions or types without doc comments
-- Packages lacking a package-level comment
-- Complex algorithms with no inline explanation of the approach
-- Configuration or magic values without contextual comments
-- Large functions where individual steps need clarification
+- Add doc comments to exported functions and types explaining their purpose
+- Add a package-level comment starting with "Package {name}" for every package
+- Document complex algorithms with inline comments explaining the approach
+- Annotate configuration or magic values with comments describing their purpose
+- Add targeted inline comments to clarify individual steps in large functions
 </patterns>
 
 <related>

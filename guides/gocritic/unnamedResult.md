@@ -29,9 +29,9 @@ func divide(a, b float64) (quotient float64, err error) {
 </examples>
 
 <patterns>
-- Multiple return values with no names: `(int, string, error)`
-- Returns of same type that are easy to mix up
-- Public API functions where return value names appear in documentation
+- Add names to all return values when returning multiple: `(int, string, error)` → `(count int, name string, err error)`
+- Add names to return values of the same type to prevent order mix-ups
+- Add names to return values in public API functions — names appear in documentation
 </patterns>
 
 <related>

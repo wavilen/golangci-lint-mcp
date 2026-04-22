@@ -25,10 +25,10 @@ type Config struct {
 </examples>
 
 <patterns>
-- Inconsistent casing between `json` and `yaml` tags on the same field
-- snake_case in JSON tags when camelCase is configured
-- PascalCase tags for protocols expecting lowercase
-- Mixed conventions within a single struct definition
+- Apply the configured casing convention consistently across all tag types
+- Convert snake_case JSON tags to the configured casing (e.g., camelCase)
+- Lowercase PascalCase tags to match protocol conventions
+- Standardize all struct tags to use one consistent casing convention
 </patterns>
 
 <related>

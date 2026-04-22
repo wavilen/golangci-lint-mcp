@@ -37,10 +37,10 @@ func process(c Config) (int, error) {
 </examples>
 
 <patterns>
-- Inconsistent indentation (tabs vs spaces, wrong tab width)
-- Irregular spacing around operators and after keywords
-- Missing blank lines between functions or after imports
-- Misaligned struct fields or multi-line declarations
+- Run `gofmt -w .` to normalize indentation to Go standard (tabs)
+- Apply `gofmt` to fix irregular spacing around operators and keywords
+- Run `gofmt` to add required blank lines between functions
+- Use `gofmt` to auto-align struct fields and multi-line declarations
 </patterns>
 
 <related>

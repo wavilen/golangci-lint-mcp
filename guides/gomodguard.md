@@ -25,10 +25,10 @@ func readConfig(path string) ([]byte, error) {
 </examples>
 
 <patterns>
-- `io/ioutil` — replaced by `os` and `io` packages since Go 1.16
-- `github.com/golang/protobuf` — replaced by `google.golang.org/protobuf`
-- Deprecated testing libraries blocked by team policy
-- Modules with known security vulnerabilities
+- Replace `io/ioutil` imports with `os` and `io` package equivalents
+- Replace `github.com/golang/protobuf` with `google.golang.org/protobuf`
+- Replace deprecated testing libraries with approved alternatives
+- Remove modules with known vulnerabilities and use secure alternatives
 </patterns>
 
 <related>

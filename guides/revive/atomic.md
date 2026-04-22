@@ -28,11 +28,11 @@ val := atomic.LoadInt64(&counter)
 </examples>
 
 <patterns>
-- Assigning directly to a variable that is read atomically elsewhere
-- Mixing mutex-protected and atomic access to the same field
-- Using `atomic.Add` but reading with a plain access instead of `atomic.Load`
-- Forgetting that pointer atomic operations require `unsafe.Pointer` casting
-- Swapping values without using `atomic.Swap` or `atomic.CompareAndSwap`
+- Use `atomic.Store` instead of plain assignment for variables read atomically elsewhere
+- Use either mutex or atomic access consistently — never mix both on the same field
+- Use `atomic.Add` writes with `atomic.Load` reads instead of plain access
+- Use `unsafe.Pointer` casting for pointer atomic operations like `atomic.LoadPointer`
+- Use `atomic.Swap` or `atomic.CompareAndSwap` for conditional value updates
 </patterns>
 
 <related>

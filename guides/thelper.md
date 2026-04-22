@@ -32,10 +32,10 @@ func setupDB(t *testing.T) *sql.DB {
 </examples>
 
 <patterns>
-- Helper functions using `t.Fatal`/`t.Error` without `t.Helper()`
-- Table-driven test helpers that create subtests without `t.Helper()`
-- Benchmark helpers missing `b.Helper()` (same issue)
-- Helper calling another helper — both need `t.Helper()`
+- Add `t.Helper()` at the start of test helpers that call `t.Fatal`/`t.Error`
+- Call `t.Helper()` in table-driven test helpers that create subtests
+- Add `b.Helper()` in benchmark helpers that report failures
+- Ensure `t.Helper()` is called in every helper in a chain — both caller and callee need it
 </patterns>
 
 <related>

@@ -35,11 +35,11 @@ if !isValid {
 </examples>
 
 <patterns>
-- Comparing a boolean variable to `true` or `false`
-- Using `!= true` instead of the `!` operator
-- Double negation patterns like `!(!flag)`
-- Wrapping boolean function returns in redundant comparisons
-- Ternary-style expressions rewritten as `== true` conditions
+- Use the boolean variable directly instead of comparing to `true` or `false`
+- Use the `!` operator instead of writing `!= true`
+- Simplify double negation `!(!flag)` to just `flag`
+- Return boolean expressions directly instead of wrapping in `== true` comparisons
+- Replace ternary-style `== true` conditions with the expression itself
 </patterns>
 
 <related>

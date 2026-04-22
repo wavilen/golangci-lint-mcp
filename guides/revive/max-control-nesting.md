@@ -44,11 +44,11 @@ func handle(req Request) error {
 </examples>
 
 <patterns>
-- Nested if-statements where each level adds a guard condition
-- Loops containing nested conditionals with further nesting
-- Switch statements inside loops inside other conditionals
-- Error handling paths that nest deeper than the happy path
-- Callback or handler functions with many levels of validation
+- Replace nested guard conditions with sequential early returns
+- Extract nested loop conditionals into separate helper functions
+- Move switch-inside-loop logic into a dedicated function to reduce nesting
+- Convert error handling to use guard clauses instead of nesting deeper
+- Flatten callback or handler validation into sequential checks with early returns
 </patterns>
 
 <related>

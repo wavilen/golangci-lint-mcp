@@ -30,11 +30,11 @@ case http.StatusNotFound:
 </examples>
 
 <patterns>
-- Empty `default` cases in switch statements
-- Empty `else` blocks left after removing dead code
-- Empty `select` cases intended as placeholders
-- Empty `for` loop bodies where the condition handles everything
-- Empty blocks after code was moved elsewhere but braces remained
+- Remove empty `default` cases in switch statements or add a comment explaining intent
+- Remove empty `else` blocks left after removing dead code
+- Remove empty `select` cases intended as placeholders
+- Replace empty `for` loop bodies with the condition expression directly
+- Remove empty blocks left after moving code elsewhere — remove the braces entirely
 </patterns>
 
 <related>

@@ -32,9 +32,9 @@ if err == nil {
 </examples>
 
 <patterns>
-- Init clause variable used after the `if` block (scoped out)
-- Complex init clause with multiple assignments
-- Init clause that would benefit from broader scope for error handling
+- Move init-clause variables to outer scope when used after the `if` block
+- Simplify complex init clauses with multiple assignments — split into separate statements
+- Move init-clause logic to broader scope when error handling needs the variable later
 </patterns>
 
 <related>

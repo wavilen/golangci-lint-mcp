@@ -17,9 +17,9 @@ assert.Contains(t, haystack, needle, "msg", 1)
 </examples>
 
 <patterns>
-- `assert.Containsf(t, a, b, "msg", args...)` where format is trivial — use `assert.Contains`
-- Using `Xxxf` variant without actual format verbs — use non-f variant
-- `assert.Equalf` with no `%` in message — use `assert.Equal`
+- Use `assert.Contains` instead of `assert.Containsf(t, a, b, "msg", args...)` when format is trivial
+- Use non-f assertion variants when `Xxxf` is used without actual format verbs
+- Use `assert.Equal` instead of `assert.Equalf` when the message has no `%` format verbs
 </patterns>
 
 <related>

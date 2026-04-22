@@ -21,10 +21,10 @@ resp, err := http.DefaultClient.Do(req)
 </examples>
 
 <patterns>
-- `http.NewRequest` calls without context propagation
-- `http.Get`/`http.Post` shorthand functions (no context support)
-- Custom transport wrappers that drop context
-- Long-running requests that cannot be cancelled on shutdown
+- Replace `http.NewRequest` with `http.NewRequestWithContext(ctx, ...)` to propagate context
+- Use `http.NewRequestWithContext` + `client.Do` instead of `http.Get`/`http.Post` shorthand functions
+- Pass context through custom transport wrappers instead of dropping it
+- Ensure long-running requests accept a context for cancellation on shutdown
 </patterns>
 
 <related>

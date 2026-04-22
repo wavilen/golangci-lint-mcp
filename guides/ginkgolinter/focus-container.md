@@ -25,9 +25,9 @@ var _ = Describe("parser", func() {
 </examples>
 
 <patterns>
-- `FDescribe`, `FContext`, `FIt`, `FWhen` — remove the `F` prefix
-- `FMeasure` — remove the `F` prefix
-- Leftover debug focus markers — always remove before committing
+- Remove the `F` prefix from `FDescribe`, `FContext`, `FIt`, `FWhen` focus containers
+- Remove the `F` prefix from `FMeasure` before committing
+- Remove all debug focus markers before committing — CI should reject focused tests
 </patterns>
 
 <related>

@@ -22,10 +22,10 @@ if user == "admin" {
 </examples>
 
 <patterns>
-- Files committed with copy-pasted code from external sources containing invisible characters
-- RTL (right-to-left) override characters hiding logic in string comparisons
-- Bidirectional embeddings in comments that mask code behavior
-- Trojan source attacks using Unicode bidi controls to reorder tokens
+- Remove invisible Unicode characters from copy-pasted code before committing
+- Strip RTL override characters (U+202E) that hide logic in string comparisons
+- Remove bidirectional embedding characters from comments
+- Eliminate Unicode bidi controls that reorder tokens for trojan source attacks
 </patterns>
 
 <related>

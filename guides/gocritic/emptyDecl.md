@@ -26,10 +26,10 @@ type Handler struct {
 </examples>
 
 <patterns>
-- Files with only `package` and `import` declarations
-- Empty interface declarations used as type constraints
-- Empty struct types with no fields and no methods
-- Placeholder files committed without any content
+- Remove files with only `package` and `import` declarations — no executable code
+- Replace empty interface declarations with `any` when used as type constraints
+- Remove empty struct types with no fields and no methods — use an established empty type
+- Remove placeholder files committed without any content
 </patterns>
 
 <related>

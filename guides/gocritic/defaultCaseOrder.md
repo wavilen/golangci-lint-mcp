@@ -33,9 +33,9 @@ default:
 </examples>
 
 <patterns>
-- `default` as first case in a `switch`
-- `default` in the middle of `select` cases
-- `default` placed before more specific type cases
+- Move `default` to the last position in `switch` statements
+- Move `default` to the end of `select` statements
+- Reorder type switches — place `default` after all specific type cases
 </patterns>
 
 <related>

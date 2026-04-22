@@ -27,10 +27,10 @@ func TestParse(t *testing.T) {
 </examples>
 
 <patterns>
-- `os.MkdirTemp` in tests instead of `t.TempDir()`
-- `os.CreateTemp` in tests instead of using `t.TempDir()` + `os.Create`
-- Manual `defer os.RemoveAll(dir)` cleanup patterns
-- `ioutil.TempDir` (deprecated) in test code
+- Replace `os.MkdirTemp` in tests with `t.TempDir()`
+- Use `t.TempDir()` + `os.Create` instead of `os.CreateTemp` in tests
+- Replace manual `defer os.RemoveAll(dir)` with `t.TempDir()` auto-cleanup
+- Replace deprecated `ioutil.TempDir` with `t.TempDir()`
 </patterns>
 
 <related>

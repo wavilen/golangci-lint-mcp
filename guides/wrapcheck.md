@@ -31,10 +31,10 @@ func loadConfig() error {
 </examples>
 
 <patterns>
-- Returning errors from stdlib or third-party packages without wrapping
-- Missing `errors.Wrap` when wrapping errors across package boundaries
-- Direct `return err` for errors crossing package boundaries
-- Internal package errors passed through without adding call-site context
+- Wrap errors from stdlib or third-party packages with `errors.Wrap`
+- Add context when passing errors across package boundaries using `errors.Wrap`
+- Wrap errors with call-site context before returning them across package boundaries
+- Add call-site context to internal package errors before passing them to external callers
 </patterns>
 
 <related>

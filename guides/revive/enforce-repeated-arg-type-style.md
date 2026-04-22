@@ -30,10 +30,10 @@ func move(x, y int) (dx, dy int) {
 </examples>
 
 <patterns>
-- Function signatures mixing shorthand and explicit type styles
-- New team members using their preferred style without checking conventions
-- Auto-generated code not matching the project's chosen style
-- Code review feedback inconsistency on this point
+- Use consistent shorthand or explicit type style for repeated parameter types within a function signature
+- Use the project's convention for repeated argument types — don't mix styles
+- Ensure auto-generated code to the project's chosen repeated-arg-type style
+- Ensure consistent repeated-arg-type style in code reviews
 </patterns>
 
 <related>

@@ -20,11 +20,11 @@ const maxOmega = 3.14 // use plain ASCII identifier
 </examples>
 
 <patterns>
-- Smart quotes or em-dashes copied from documentation into string literals
-- Non-ASCII Unicode characters in identifiers
-- Invisible zero-width characters pasted from external editors
-- Emoji characters in comments or strings when disallowed by team policy
-- Language-specific characters in variable names
+- Replace smart quotes or em-dashes copied from documentation with plain ASCII equivalents
+- Use ASCII-only characters in identifiers instead of non-ASCII Unicode
+- Remove invisible zero-width characters pasted from external editors
+- Replace emoji characters in comments or strings with text equivalents when disallowed by team policy
+- Rename variables with language-specific characters to ASCII equivalents
 </patterns>
 
 <related>

@@ -35,9 +35,9 @@ if role == "admin" {
 </examples>
 
 <patterns>
-- `nil == x` → `x == nil`
-- `0 == len(s)` → `len(s) == 0` (or use `s == ""` / `len(s) == 0`)
-- Constant-first comparisons: `"value" == variable`
+- Reverse Yoda-style comparisons: `nil == x` → `x == nil`
+- Reverse Yoda-style comparisons: `0 == len(s)` → `len(s) == 0` or `s == ""`
+- Reverse constant-first comparisons: `"value" == variable` → `variable == "value"`
 </patterns>
 
 <related>

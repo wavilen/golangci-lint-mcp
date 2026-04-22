@@ -21,11 +21,11 @@ resp, err := http.Get("https://metadata.internal/role")
 </examples>
 
 <patterns>
-- Hardcoded `http://` URLs for external services or APIs
-- HTTP URLs in configuration defaults or constants
-- HTTP URLs in test fixtures meant for production-like services
-- String literals containing `http://` in redirect logic
-- HTTP URLs in documentation examples that get copy-pasted
+- Replace hardcoded `http://` URLs for external services with `https://`
+- Use HTTPS in configuration defaults and constants instead of HTTP
+- Replace HTTP URLs in test fixtures for production-like services with HTTPS
+- Replace `http://` in redirect logic with `https://`
+- Use HTTPS in documentation examples to prevent insecure copy-paste patterns
 </patterns>
 
 <related>

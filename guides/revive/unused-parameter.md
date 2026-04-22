@@ -23,11 +23,11 @@ func Process(_ context.Context, data []byte, _ string) error {
 </examples>
 
 <patterns>
-- Parameters added for future use but never referenced
-- Interface implementation parameters not needed by this specific method
-- Callback functions where only some parameters are relevant
-- Refactored functions where parameters were removed from the body but not the signature
-- Constructor parameters stored elsewhere and no longer needed locally
+- Remove parameters added for future use that are never referenced, or add `_` prefix
+- Add `_` prefix to unused interface implementation parameters to signal intentional non-use
+- Use `_` for callback function parameters where only some are relevant
+- Remove unused parameters from refactored function signatures
+- Remove constructor parameters stored elsewhere that are no longer needed locally
 </patterns>
 
 <related>

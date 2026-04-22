@@ -36,9 +36,9 @@ func parseConfig() (*Config, error) {
 </examples>
 
 <patterns>
-- Functions returning 6+ values
-- Multiple return values of the same type (easy to mix up order)
-- Error buried among many return values
+- Reduce function return values to fewer than 6 — use a result struct for grouping
+- Wrap multiple return values of the same type in a named struct to prevent mix-ups
+- Move the error return to the last position — avoid burying it among many values
 </patterns>
 
 <related>

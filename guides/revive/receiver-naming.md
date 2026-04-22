@@ -23,11 +23,11 @@ func (c *Client) Send() error  { ... }
 </examples>
 
 <patterns>
-- Receiver named `this` or `self` (non-idiomatic Go)
-- Inconsistent receiver names across methods of the same type
-- Overly long receiver names (e.g., `server` instead of `s`)
-- Single-letter receiver names that don't match the type (e.g., `(x *Server)`)
-- Mixed value and pointer receivers on the same type
+- Replace `this` or `self` receiver names with a short type-derived abbreviation (e.g., `s` for `Server`)
+- Use the same receiver name across all methods of a given type
+- Simplify overly long receiver names to 1-2 characters derived from the type name
+- Use a receiver letter that matches the type name (e.g., `s` for `Server`, not `x`)
+- Use consistent value or pointer receivers across all methods of the same type
 </patterns>
 
 <related>

@@ -27,10 +27,10 @@ slog.Info("request completed",
 </examples>
 
 <patterns>
-- Odd number of key-value arguments in structured log calls
-- Using non-string types as log field keys (e.g., int keys)
-- Mixing positional and key-value arguments in slog/zap calls
-- Passing structs directly instead of key-value pairs to structured loggers
+- Ensure an even number of key-value arguments in structured log calls
+- Use string keys only for log field names — never int or other types
+- Separate positional arguments from key-value pairs in slog/zap calls
+- Decompose structs into key-value pairs when passing to structured loggers
 </patterns>
 
 <related>

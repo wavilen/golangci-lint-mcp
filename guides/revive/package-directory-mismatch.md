@@ -21,11 +21,11 @@ package helpers
 </examples>
 
 <patterns>
-- Package name `utils` in a directory named `helpers`
-- Test packages with `_test` suffix not matching directory
-- Refactored packages where directory was renamed but package declaration was not
-- Multi-word directories with underscores but package names without
-- Generated code with a different package name than the target directory
+- Use the package declaration name with the directory name — e.g., rename `utils` to `helpers` if the directory is `helpers`
+- Ensure test packages with `_test` suffix match the directory convention
+- Rename the package declaration when renaming a directory during refactoring
+- Use consistent naming between multi-word directories and their package declarations
+- Set code generation to output the correct package name for the target directory
 </patterns>
 
 <related>

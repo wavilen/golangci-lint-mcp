@@ -21,10 +21,10 @@ func Parse(r io.Reader) (*Config, error) {
 </examples>
 
 <patterns>
-- "the the", "is is", "to to" — common editing artifacts
-- Duplicate words split across line wraps in comments
-- Copy-paste errors in doc comments
-- Adjacent identical words in multi-sentence comments
+- Remove common editing artifacts like "the the", "is is", "to to"
+- Check for duplicate words that span line wraps in comments
+- Proofread doc comments for copy-paste errors introducing duplicate words
+- Eliminate adjacent identical words in multi-sentence comments
 </patterns>
 
 <related>

@@ -21,11 +21,11 @@ xs = append(xs, 1, 2, 3)
 </examples>
 
 <patterns>
-- Multiple consecutive `append` calls appending individual values to the same slice
-- Loops that could use variadic `append` or `append(s, slice...)` instead of repeated appends
-- Append chains in initialization code where all values are known at compile time
-- Building slices in constructors with repeated single-element appends
+- Combine consecutive `append` calls into a single variadic `append(xs, 1, 2, 3)`
+- Replace loop-based appending with `append(s, slice...)` for bulk additions
+- Combine compile-time-known append chains into a single literal or variadic call
+- Replace repeated single-element appends in constructors with one combined call
 </patterns>
 
 <related>
-appendAssign, rangedExpr, makeLen
+appendAssign, rangeExprCopy, makeLen

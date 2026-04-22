@@ -21,10 +21,10 @@ resp.Header.Set("X-Request-Id", id)
 </examples>
 
 <patterns>
-- Using lowercase header keys with http.Header.Get
-- Using all-caps header keys like "CONTENT-TYPE"
-- Setting response headers with non-canonical key forms
-- Accessing custom headers with inconsistent casing across handlers
+- Use canonical header keys with `http.Header.Get` — Go normalizes via `textproto.CanonicalMIMEHeaderKey`
+- Replace all-caps keys like `"CONTENT-TYPE"` with canonical form `"Content-Type"`
+- Set response headers using canonical key forms to ensure consistent access
+- Use canonical key form consistently when accessing custom headers across all handlers
 </patterns>
 
 <related>

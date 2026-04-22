@@ -31,10 +31,10 @@ func (s *Service) Fetch(ctx context.Context) error {
 </examples>
 
 <patterns>
-- HTTP requests without using `http.NewRequestWithContext`
-- Goroutines that discard the parent context instead of deriving a child
-- Functions that accept `context.Context` but call helpers without passing it
-- Using `context.Background()` where the caller's context should propagate
+- Replace `http.NewRequest` with `http.NewRequestWithContext(ctx, ...)` to propagate context
+- Use `context.WithCancel(parent)` in goroutines instead of discarding the parent context
+- Pass `context.Context` to all helper functions that accept it
+- Avoid `context.Background()` when the caller's context should propagate through the call chain
 </patterns>
 
 <related>

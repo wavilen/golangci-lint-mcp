@@ -25,10 +25,10 @@ func status() int {
 </examples>
 
 <patterns>
-- Code after `return` in same block
-- Code after `panic()` in same block
-- Code after `break` or `continue` in loop body
-- Statements after `goto` label
+- Remove code after `return` in the same block — it can never execute
+- Remove code after `panic()` in the same block — move it before the panic
+- Remove code after `break`/`continue` in the same loop block
+- Remove code after `goto` in the same block — it is never reached
 </patterns>
 
 <related>

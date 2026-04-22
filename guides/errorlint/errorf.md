@@ -17,10 +17,10 @@ return errors.Wrap(err, "open config")
 </examples>
 
 <patterns>
-- `fmt.Errorf("...: %s", err)` — use `errors.Wrap(err, "...")` instead
-- `fmt.Errorf("...: %v", err)` — use `errors.Wrap(err, "...")` instead
-- `errors.New(fmt.Sprintf("...: %s", err))` — use `errors.Wrap(err, "...")`
-- Missing `errors.Wrap` when wrapping errors
+- Replace `fmt.Errorf("...: %s", err)` with `errors.Wrap(err, "...")` to preserve the error chain
+- Replace `fmt.Errorf("...: %v", err)` with `errors.Wrap(err, "...")` for proper wrapping
+- Replace `errors.New(fmt.Sprintf("...: %s", err))` with `errors.Wrap(err, "...")`
+- Use `errors.Wrap` whenever wrapping errors to maintain chain traversal
 </patterns>
 
 <related>

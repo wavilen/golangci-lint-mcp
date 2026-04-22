@@ -20,9 +20,9 @@ assert.Equal(t, 42, result)
 </examples>
 
 <patterns>
-- `val, err := fn()` with `val` used but `err` unchecked — add `require.NoError`
-- Multiple return values where error is ignored — always check first
-- `result.Method()` after error-returning call — require.NoError before use
+- Add `require.NoError` when `val, err := fn()` uses `val` but leaves `err` unchecked
+- Check error return values first when multiple return values include an error
+- Add `require.NoError` before using results from error-returning calls
 </patterns>
 
 <related>

@@ -23,10 +23,10 @@ sort.Slice(items, func(i, j int) bool {
 </examples>
 
 <patterns>
-- `sort.Slice` with `<=` in comparator
-- `sort.SliceStable` with `>=` in comparator
-- Using `cmp.Compare` incorrectly as a boolean
-- Forgetting that equal elements should return `false`
+- Use strict `<` in `sort.Slice` comparators — never `<=`
+- Use strict `<` in `sort.SliceStable` comparators — never `>=`
+- Replace `cmp.Compare` used as a boolean with a direct comparison
+- Return `false` for equal elements in sort comparators to avoid instability
 </patterns>
 
 <related>

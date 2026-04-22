@@ -29,10 +29,10 @@ for _, chunk := range chunks {
 </examples>
 
 <patterns>
-- `append(dst, src...)` inside range loop over `src`
-- Building a result slice by appending from iterated slices
-- Appending from the same slice being ranged over (infinite loop risk)
-- Growing slices in loops without pre-allocation
+- Replace `append(dst, src...)` inside range loops with `append(dst, slices.Collect(src)...)`
+- Replace loop-based slice building with a single `append` outside the loop
+- Avoid appending from the same slice being ranged — risk of infinite loop
+- Preallocate destination slices before range-loop appending
 </patterns>
 
 <related>

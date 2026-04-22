@@ -19,9 +19,9 @@ fmt.Sprintf("%s", val)
 </examples>
 
 <patterns>
-- Format verb mismatch: `%d` with string, `%s` with int
-- Passing `interface{}` or `any` to fmt functions without type assertion
-- Aliased types used with wrong format verb
+- Match format verbs to argument types: use `%d` for integers, `%s` for strings
+- Add type assertions or conversions before passing `any` values to `fmt` functions
+- Check aliased types against format verbs — a type alias does not change the underlying format
 </patterns>
 
 <related>

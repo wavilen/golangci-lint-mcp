@@ -19,10 +19,10 @@ padding := string(make([]byte, 16)) // all zeros, no Repeat needed
 </examples>
 
 <patterns>
-- Creating zero-padded strings or byte buffers using `strings.Repeat("\x00", n)`
-- Building null-terminated or zero-filled protocol messages with Repeat
-- Initializing padding or alignment buffers with repeated zero bytes
-- Using `bytes.Repeat([]byte{0}, n)` when `make([]byte, n)` is simpler and equivalent
+- Replace `strings.Repeat("\x00", n)` with `make([]byte, n)` for zero-padded buffers
+- Replace `bytes.Repeat([]byte{0}, n)` with `make([]byte, n)` — simpler and equivalent
+- Replace repeated zero-byte initialization with `make([]byte, n)` — zero-valued by default
+- Use `make([]byte, n)` for null-terminated or zero-filled protocol messages
 </patterns>
 
 <related>

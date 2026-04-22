@@ -12,14 +12,14 @@ import (
 
 func TestRun_Success(t *testing.T) {
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
+		"guides/errcheck.md": {
 			Data: []byte("# errcheck\n\n<instructions>Test instructions</instructions>"),
 		},
 	}
 
-	env := func(key string) string { return "" }
+	env := func(_ string) string { return "" }
 
-	err := run(testFS, false, env, func(srv *mcpserver.MCPServer, opts ...mcpserver.StdioOption) error {
+	err := run(testFS, false, env, func(_ *mcpserver.MCPServer, _ ...mcpserver.StdioOption) error {
 		return nil
 	})
 	require.NoError(t, err)
@@ -28,9 +28,9 @@ func TestRun_Success(t *testing.T) {
 func TestRun_GuideLoadError(t *testing.T) {
 	emptyFS := fstest.MapFS{}
 
-	env := func(key string) string { return "" }
+	env := func(_ string) string { return "" }
 
-	err := run(emptyFS, false, env, func(srv *mcpserver.MCPServer, opts ...mcpserver.StdioOption) error {
+	err := run(emptyFS, false, env, func(_ *mcpserver.MCPServer, _ ...mcpserver.StdioOption) error {
 		return nil
 	})
 	require.Error(t, err)
@@ -39,14 +39,14 @@ func TestRun_GuideLoadError(t *testing.T) {
 
 func TestRun_ServeError(t *testing.T) {
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
+		"guides/errcheck.md": {
 			Data: []byte("# errcheck\n\n<instructions>Test instructions</instructions>"),
 		},
 	}
 
-	env := func(key string) string { return "" }
+	env := func(_ string) string { return "" }
 
-	err := run(testFS, false, env, func(srv *mcpserver.MCPServer, opts ...mcpserver.StdioOption) error {
+	err := run(testFS, false, env, func(_ *mcpserver.MCPServer, _ ...mcpserver.StdioOption) error {
 		return errors.New("transport failure")
 	})
 	require.Error(t, err)
@@ -55,7 +55,7 @@ func TestRun_ServeError(t *testing.T) {
 
 func TestRun_GosecAIWithKey(t *testing.T) {
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
+		"guides/errcheck.md": {
 			Data: []byte("# errcheck\n\n<instructions>Test</instructions>"),
 		},
 	}
@@ -67,7 +67,7 @@ func TestRun_GosecAIWithKey(t *testing.T) {
 		return ""
 	}
 
-	err := run(testFS, true, env, func(srv *mcpserver.MCPServer, opts ...mcpserver.StdioOption) error {
+	err := run(testFS, true, env, func(_ *mcpserver.MCPServer, _ ...mcpserver.StdioOption) error {
 		return nil
 	})
 	require.NoError(t, err)
@@ -75,14 +75,14 @@ func TestRun_GosecAIWithKey(t *testing.T) {
 
 func TestRun_GosecAIWithoutKey(t *testing.T) {
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
+		"guides/errcheck.md": {
 			Data: []byte("# errcheck\n\n<instructions>Test</instructions>"),
 		},
 	}
 
-	env := func(key string) string { return "" }
+	env := func(_ string) string { return "" }
 
-	err := run(testFS, true, env, func(srv *mcpserver.MCPServer, opts ...mcpserver.StdioOption) error {
+	err := run(testFS, true, env, func(_ *mcpserver.MCPServer, _ ...mcpserver.StdioOption) error {
 		return nil
 	})
 	require.NoError(t, err)
@@ -90,7 +90,7 @@ func TestRun_GosecAIWithoutKey(t *testing.T) {
 
 func TestRun_SkipSSL(t *testing.T) {
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
+		"guides/errcheck.md": {
 			Data: []byte("# errcheck\n\n<instructions>Test</instructions>"),
 		},
 	}
@@ -105,7 +105,7 @@ func TestRun_SkipSSL(t *testing.T) {
 		return ""
 	}
 
-	err := run(testFS, true, env, func(srv *mcpserver.MCPServer, opts ...mcpserver.StdioOption) error {
+	err := run(testFS, true, env, func(_ *mcpserver.MCPServer, _ ...mcpserver.StdioOption) error {
 		return nil
 	})
 	require.NoError(t, err)
@@ -113,7 +113,7 @@ func TestRun_SkipSSL(t *testing.T) {
 
 func TestRun_EnvVarsPropagated(t *testing.T) {
 	testFS := fstest.MapFS{
-		"guides/errcheck.md": &fstest.MapFile{
+		"guides/errcheck.md": {
 			Data: []byte("# errcheck\n\n<instructions>Test</instructions>"),
 		},
 	}
@@ -131,7 +131,7 @@ func TestRun_EnvVarsPropagated(t *testing.T) {
 		}
 	}
 
-	err := run(testFS, true, env, func(srv *mcpserver.MCPServer, opts ...mcpserver.StdioOption) error {
+	err := run(testFS, true, env, func(_ *mcpserver.MCPServer, _ ...mcpserver.StdioOption) error {
 		return nil
 	})
 	require.NoError(t, err)

@@ -8,8 +8,8 @@
 package testdata
 
 import (
-	"crypto/md5"      //nolint:gosec // G501: blocklisted package crypto/sha1 pattern
-	"crypto/sha1"      //nolint:gosec // G501: blocklisted import
+	"crypto/md5"
+	"crypto/sha1"
 	"database/sql"
 	"errors"
 	"fmt"

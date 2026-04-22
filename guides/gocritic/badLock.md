@@ -27,10 +27,10 @@ func (s *Server) Process() {
 </examples>
 
 <patterns>
-- Locking `mu1` but unlocking `mu2`
-- Value receiver methods that copy the mutex
-- `defer mu.Unlock()` paired with a different `mu.Lock()`
-- Copying structs containing embedded mutexes
+- Ensure `Lock` and `Unlock` target the same mutex instance
+- Use pointer receivers on methods that access mutex fields — value receivers copy the mutex
+- Pair every `mu.Lock()` with `defer mu.Unlock()` on the same mutex
+- Avoid copying structs with embedded `sync.Mutex` — always use pointers
 </patterns>
 
 <related>

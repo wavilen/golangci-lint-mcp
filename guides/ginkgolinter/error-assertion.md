@@ -17,9 +17,9 @@ Expect(err).ShouldNot(HaveOccurred())
 </examples>
 
 <patterns>
-- `Expect(err).Should(BeNil())` — use `Expect(err).ShouldNot(HaveOccurred())`
-- `Expect(err).ToNot(BeNil())` — use `Expect(err).To(HaveOccurred())`
-- Checking error is nil with `BeNil()` — always prefer `HaveOccurred`
+- Use `Expect(err).ShouldNot(HaveOccurred())` instead of `Expect(err).Should(BeNil())`
+- Use `Expect(err).To(HaveOccurred())` instead of `Expect(err).ToNot(BeNil())`
+- Prefer `HaveOccurred` over `BeNil()` for all error value assertions
 </patterns>
 
 <related>

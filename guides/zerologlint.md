@@ -19,10 +19,10 @@ log.Info().Str("key", "value").Int("count", 42).Send()
 </examples>
 
 <patterns>
-- Log chains ending with a field method instead of `Send()` or `Msg()`
-- Conditional logging that builds the event but never sends
-- Using `.Msg("")` instead of `.Send()` (works but semantically wrong)
-- Chains split across multiple lines where the terminal call is missing
+- End every zerolog chain with `.Send()` or `.Msg("message")` to emit the log event
+- Ensure conditional logging branches always call `.Send()` or `.Msg()`
+- Replace `.Msg("")` with `.Send()` for event emission without a message
+- Complete chains split across multiple lines with a terminal `.Send()` or `.Msg()`
 </patterns>
 
 <related>

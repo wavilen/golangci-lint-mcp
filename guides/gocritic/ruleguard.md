@@ -26,9 +26,9 @@ func TestSomething(t *testing.T) {
 </examples>
 
 <patterns>
-- Any pattern defined in your project's `rules.go` or `.go` ruleguard files
-- Project-specific conventions enforced via AST pattern matching
-- Custom anti-patterns not covered by built-in linters
+- Examine project `rules.go` or `.go` ruleguard files for defined patterns
+- Identify project-specific conventions enforced via AST pattern matching
+- Identify custom anti-patterns not covered by built-in linters
 </patterns>
 
 <related>

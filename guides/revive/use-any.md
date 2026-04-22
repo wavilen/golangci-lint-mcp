@@ -23,11 +23,11 @@ func Marshal(v any) ([]byte, error)
 </examples>
 
 <patterns>
-- `interface{}` in function signatures and variable declarations
-- Map types using `interface{}` as the value type
-- Slice types `[]interface{}` instead of `[]any`
-- Empty interface in generic constraint positions
-- Legacy code written before Go 1.18 using the old spelling
+- Replace `interface{}` with `any` in function signatures and variable declarations
+- Use `any` as the map value type instead of `interface{}`
+- Replace `[]interface{}` with `[]any` for slice types
+- Use `any` in generic constraint positions instead of `interface{}`
+- Replace legacy pre-Go 1.18 code by replacing `interface{}` with `any`
 </patterns>
 
 <related>

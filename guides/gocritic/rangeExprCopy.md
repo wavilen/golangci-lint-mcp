@@ -31,10 +31,10 @@ for i, v := range &arr {
 </examples>
 
 <patterns>
-- Ranging over function calls that return large arrays or structs by value
-- `for i, v := range someFunc()` where `someFunc` returns a type ≥80 bytes
-- Ranging over large stack-allocated arrays that get copied into the range expression
-- Functions returning value-type collections iterated via `range`
+- Use a pointer to large arrays returned by functions before ranging — avoid copying the value
+- Replace `for i, v := range someFunc()` with a pointer when `someFunc` returns ≥80 bytes
+- Avoid ranging over large stack-allocated value types — use a pointer instead
+- Replace value-type collection iteration with pointer-based iteration for large types
 </patterns>
 
 <related>

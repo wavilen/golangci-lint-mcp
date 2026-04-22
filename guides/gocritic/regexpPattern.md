@@ -19,10 +19,10 @@ re := regexp.MustCompile(`\d+`)
 </examples>
 
 <patterns>
-- `[\d]` instead of `\d`
-- `[[:digit:]]` mixed with `\d`
-- Unnecessary nested character classes: `[[a-z]]`
-- Redundant anchors or grouping
+- Replace `[\d]` with `\d` — remove unnecessary character class wrapping
+- Replace `[[:digit:]]` with `\d` for consistency
+- Remove unnecessary nested character classes like `[[a-z]]` — use `[a-z]`
+- Remove redundant anchors or grouping in regex patterns
 </patterns>
 
 <related>

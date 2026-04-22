@@ -25,9 +25,9 @@ if errors.As(err, &target) { // pointer to target variable
 </examples>
 
 <patterns>
-- Passing a non-pointer to `errors.As` second argument
-- Passing nil as `errors.As` target
-- Passing value type instead of `&value` to `errors.As`
+- Pass a pointer as the second argument to `errors.As` — never a value type
+- Pass a non-nil pointer as the `errors.As` target
+- Use `&value` (not bare `value`) for the `errors.As` target argument
 </patterns>
 
 <related>

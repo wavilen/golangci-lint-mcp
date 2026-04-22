@@ -18,9 +18,9 @@ Expect(os.Remove(tmpFile)).Should(Succeed())
 </examples>
 
 <patterns>
-- `err := fn(); Expect(err).To(BeNil())` where fn returns only error — use `Expect(fn()).To(Succeed())`
-- `Expect(err).ShouldNot(HaveOccurred())` for single-return — can simplify to `Expect(fn()).To(Succeed())`
-- Two-line error check for single-return function — collapse to one line
+- Use `Expect(fn()).To(Succeed())` instead of `err := fn(); Expect(err).To(BeNil())` for single-return functions
+- Simplify `Expect(err).ShouldNot(HaveOccurred())` for single-return functions to `Expect(fn()).To(Succeed())`
+- Simplify two-line error checks for single-return functions into `Expect(fn()).To(Succeed())`
 </patterns>
 
 <related>

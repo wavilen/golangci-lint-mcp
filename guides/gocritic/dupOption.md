@@ -26,10 +26,10 @@ server := NewServer(
 </examples>
 
 <patterns>
-- Same functional option passed twice in constructor
-- Duplicate key in struct literal or map literal
-- Same `With*` option applied multiple times
-- Duplicate field assignment in struct initialization
+- Remove duplicate functional options passed to constructors
+- Remove duplicate keys in struct or map literals
+- Remove duplicate `With*` options — pass each option only once
+- Remove duplicate field assignments in struct initialization
 </patterns>
 
 <related>

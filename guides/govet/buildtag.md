@@ -23,10 +23,10 @@ package main
 </examples>
 
 <patterns>
-- Build tag placed after the package declaration
-- Invalid boolean expression in build tag (`||` without parentheses)
-- Malformed `// +build` syntax
-- Missing blank line between `//go:build` and `// +build` lines
+- Place build tags before the `package` declaration at the top of the file
+- Use valid boolean syntax in build constraints — wrap `||` in parentheses
+- Fix malformed `// +build` syntax to match the constraint format
+- Add a blank line between `//go:build` and `// +build` directives when both are present
 </patterns>
 
 <related>

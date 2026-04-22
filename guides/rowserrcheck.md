@@ -36,10 +36,10 @@ if err := rows.Err(); err != nil {
 </examples>
 
 <patterns>
-- Missing `rows.Err()` check after `rows.Next()` loop
-- Missing `rows.Close()` in defer after query
-- Early loop breaks without checking `rows.Err()`
-- Query errors masked by ignoring the returned error
+- Check `rows.Err()` immediately after every `rows.Next()` loop
+- Add `defer rows.Close()` immediately after acquiring `*sql.Rows` from a query
+- Check `rows.Err()` after early `break` from a `rows.Next()` loop
+- Check the error from `db.Query`/`db.QueryContext` before iterating rows
 </patterns>
 
 <related>

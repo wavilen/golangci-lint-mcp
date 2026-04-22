@@ -29,10 +29,10 @@ case io.Reader:
 </examples>
 
 <patterns>
-- Type switches with interface subtypes in wrong order
-- Value switches with `case 1:` before `case 1, 2, 3:`
-- Overlapping string patterns in switch cases
-- Fallthrough making later cases redundant
+- Reorder type switches — place more specific interface types before general ones
+- Reorder value switches — place broader cases like `case 1, 2, 3:` before `case 1:`
+- Eliminate overlapping string patterns in switch cases
+- Remove fallthrough that makes later cases unreachable
 </patterns>
 
 <related>

@@ -21,9 +21,9 @@ w := r.(io.Writer)  // valid assertion
 </examples>
 
 <patterns>
-- Asserting to an interface the source cannot implement
-- Asserting to the same interface (always succeeds — useless)
-- Interface assertion where neither is a subset of the other
+- Remove impossible interface assertions where the source cannot implement the target
+- Remove redundant same-interface assertions (`r.(io.Reader)` on an `io.Reader`) — always succeeds
+- Remove interface assertions with no overlapping method set — use a valid type or interface
 </patterns>
 
 <related>

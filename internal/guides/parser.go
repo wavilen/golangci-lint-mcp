@@ -5,9 +5,6 @@ import (
 	"strings"
 )
 
-// recognizedTags lists the XML tags that the parser extracts from guide markdown.
-var recognizedTags = []string{"instructions", "examples", "patterns"}
-
 // Parse extracts XML-tagged sections from a markdown guide file.
 // filename is a relative path like "errcheck.md" or "gocritic/badcall.md".
 // content is the raw markdown bytes.
@@ -19,11 +16,16 @@ func Parse(filename string, content []byte) (*Guide, error) {
 	// "gocritic/badcall.md" → linter="gocritic", rule="badcall"
 	linter, rule := parseFilename(filename)
 
-	g := &Guide{
-		Linter:  linter,
-		Rule:    rule,
-		RawBody: raw,
+	guide := &Guide{
+		Linter:       linter,
+		Rule:         rule,
+		RawBody:      raw,
+		Instructions: "",
+		Examples:     "",
+		Patterns:     "",
 	}
+
+	recognizedTags := []string{"instructions", "examples", "patterns"}
 
 	// Extract each recognized tag's content.
 	found := false
@@ -34,28 +36,31 @@ func Parse(filename string, content []byte) (*Guide, error) {
 		}
 		switch tag {
 		case "instructions":
-			g.Instructions = inner
+			guide.Instructions = inner
 		case "examples":
-			g.Examples = inner
+			guide.Examples = inner
 		case "patterns":
-			g.Patterns = inner
+			guide.Patterns = inner
 		}
 	}
 
 	if !found {
-		return nil, fmt.Errorf("guide %q must contain at least one recognized XML tag (<instructions>, <examples>, or <patterns>)", filename)
+		return nil, fmt.Errorf(
+			"guide %q must contain at least one recognized XML tag (<instructions>, <examples>, or <patterns>)",
+			filename,
+		)
 	}
 
-	return g, nil
+	return guide, nil
 }
 
 // parseFilename extracts linter name and optional rule from a relative file path.
-func parseFilename(filename string) (linter, rule string) {
-	// Remove .md extension
+func parseFilename(filename string) (string, string) {
+	const pathParts = 2
+
 	base := strings.TrimSuffix(filename, ".md")
 
-	// Split on directory separator
-	parts := strings.SplitN(base, "/", 2)
+	parts := strings.SplitN(base, "/", pathParts)
 	if len(parts) == 1 {
 		// Simple linter: "errcheck.md" → linter="errcheck"
 		return parts[0], ""
@@ -67,7 +72,7 @@ func parseFilename(filename string) (linter, rule string) {
 // extractTag returns the content between <tag>...</tag>, or empty string if not found.
 func extractTag(content, tag string) string {
 	open := "<" + tag + ">"
-	close := "</" + tag + ">"
+	closeTag := "</" + tag + ">"
 
 	startIdx := strings.Index(content, open)
 	if startIdx == -1 {
@@ -75,7 +80,7 @@ func extractTag(content, tag string) string {
 	}
 	startIdx += len(open)
 
-	endIdx := strings.Index(content[startIdx:], close)
+	endIdx := strings.Index(content[startIdx:], closeTag)
 	if endIdx == -1 {
 		return ""
 	}

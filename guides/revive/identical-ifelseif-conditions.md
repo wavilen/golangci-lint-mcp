@@ -27,11 +27,11 @@ if x > 100 {
 </examples>
 
 <patterns>
-- Copy-paste errors duplicating the condition in else-if
-- Refactoring that changed one branch but not the condition
-- Long if-else chains where duplicate conditions are hard to spot
-- Feature flags checked multiple times in the same chain
-- Variable mutation between checks making conditions appear different but evaluate the same
+- Remove duplicate conditions in else-if chains caused by copy-paste errors
+- Replace conditions that were not updated during refactoring, making branches unreachable
+- Simplify long if-else chains by removing unreachable duplicate conditions
+- Remove redundant feature flag checks that appear multiple times in the same chain
+- Simplify variable-based conditions that evaluate identically due to intermediate mutations
 </patterns>
 
 <related>

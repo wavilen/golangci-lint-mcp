@@ -21,9 +21,9 @@ resp := &http.Response{StatusCode: 200, Body: http.NoBody}
 </examples>
 
 <patterns>
-- `http.NewRequest(method, url, nil)` → use `http.NoBody`
-- `http.Response{Body: nil}` → use `http.NoBody`
-- `http.NewRequestWithContext(ctx, method, url, nil)` → use `http.NoBody`
+- Replace `nil` body with `http.NoBody` in `http.NewRequest(method, url, http.NoBody)`
+- Replace `nil` body with `http.NoBody` in `http.Response{Body: http.NoBody}`
+- Replace `nil` body with `http.NoBody` in `http.NewRequestWithContext(ctx, method, url, http.NoBody)`
 </patterns>
 
 <related>

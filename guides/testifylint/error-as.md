@@ -21,9 +21,9 @@ assert.ErrorAs(t, err, &pathErr, "expected PathError")
 </examples>
 
 <patterns>
-- `errors.As(err, &target)` in test code — use `assert.ErrorAs`
-- Manual type assertion on errors — use `assert.ErrorAs`
-- `assert.True(t, errors.As(err, &target))` — use `assert.ErrorAs`
+- Use `assert.ErrorAs` instead of `errors.As(err, &target)` in test code
+- Use `assert.ErrorAs` instead of manual type assertions on errors
+- Use `assert.ErrorAs` instead of `assert.True(t, errors.As(err, &target))`
 </patterns>
 
 <related>

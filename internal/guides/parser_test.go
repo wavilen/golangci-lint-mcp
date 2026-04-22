@@ -14,7 +14,7 @@ func TestParse(t *testing.T) {
 		content     string
 		wantErr     bool
 		errContains string
-		check       func(t *testing.T, g *Guide)
+		check       func(t *testing.T, guide *Guide)
 	}{
 		{
 			name:     "all three recognized tags",
@@ -38,17 +38,18 @@ Errcheck detects unchecked error returns.
 - Use comma-ok pattern for type assertions
 </patterns>
 `,
-			wantErr: false,
-			check: func(t *testing.T, g *Guide) {
-				assert.Equal(t, "errcheck", g.Linter)
-				assert.Equal(t, "", g.Rule)
-				assert.Contains(t, g.Instructions, "Errcheck detects unchecked error returns")
-				assert.Contains(t, g.Examples, "os.Open")
-				assert.Contains(t, g.Patterns, "comma-ok pattern")
-				assert.Contains(t, g.RawBody, "<instructions>")
-				assert.Contains(t, g.RawBody, "</patterns>")
-				assert.Equal(t, "errcheck", g.Key())
-				assert.False(t, g.IsCompound())
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Equal(t, "errcheck", guide.Linter)
+				assert.Empty(t, guide.Rule)
+				assert.Contains(t, guide.Instructions, "Errcheck detects unchecked error returns")
+				assert.Contains(t, guide.Examples, "os.Open")
+				assert.Contains(t, guide.Patterns, "comma-ok pattern")
+				assert.Contains(t, guide.RawBody, "<instructions>")
+				assert.Contains(t, guide.RawBody, "</patterns>")
+				assert.Equal(t, "errcheck", guide.Key())
+				assert.False(t, guide.IsCompound())
 			},
 		},
 		{
@@ -60,12 +61,13 @@ Errcheck detects unchecked error returns.
 Simplify code constructs.
 </instructions>
 `,
-			wantErr: false,
-			check: func(t *testing.T, g *Guide) {
-				assert.Equal(t, "gosimple", g.Linter)
-				assert.Contains(t, g.Instructions, "Simplify code constructs")
-				assert.Equal(t, "", g.Examples)
-				assert.Equal(t, "", g.Patterns)
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Equal(t, "gosimple", guide.Linter)
+				assert.Contains(t, guide.Instructions, "Simplify code constructs")
+				assert.Empty(t, guide.Examples)
+				assert.Empty(t, guide.Patterns)
 			},
 		},
 		{
@@ -74,6 +76,7 @@ Simplify code constructs.
 			content:     "# barelinter\n\nThis is just plain markdown.\n",
 			wantErr:     true,
 			errContains: "must contain at least one recognized XML tag",
+			check:       nil,
 		},
 		{
 			name:     "custom tags preserved in raw body",
@@ -88,11 +91,12 @@ Some instructions here.
 This is a custom tag that should be preserved.
 </tips>
 `,
-			wantErr: false,
-			check: func(t *testing.T, g *Guide) {
-				assert.Contains(t, g.Instructions, "Some instructions here")
-				assert.Contains(t, g.RawBody, "<tips>")
-				assert.Contains(t, g.RawBody, "This is a custom tag")
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Contains(t, guide.Instructions, "Some instructions here")
+				assert.Contains(t, guide.RawBody, "<tips>")
+				assert.Contains(t, guide.RawBody, "This is a custom tag")
 			},
 		},
 		{
@@ -110,11 +114,12 @@ Govet reports suspicious constructs.
 Multiple lines of code here.
 </examples>
 `,
-			wantErr: false,
-			check: func(t *testing.T, g *Guide) {
-				assert.Contains(t, g.Examples, "```go")
-				assert.Contains(t, g.Examples, "fmt.Printf")
-				assert.Contains(t, g.Examples, "Multiple lines of code here")
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Contains(t, guide.Examples, "```go")
+				assert.Contains(t, guide.Examples, "fmt.Printf")
+				assert.Contains(t, guide.Examples, "Multiple lines of code here")
 			},
 		},
 		{
@@ -126,28 +131,29 @@ Multiple lines of code here.
 Detects suspicious function calls.
 </instructions>
 `,
-			wantErr: false,
-			check: func(t *testing.T, g *Guide) {
-				assert.Equal(t, "gocritic", g.Linter)
-				assert.Equal(t, "badcall", g.Rule)
-				assert.Equal(t, "gocritic/badcall", g.Key())
-				assert.True(t, g.IsCompound())
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Equal(t, "gocritic", guide.Linter)
+				assert.Equal(t, "badcall", guide.Rule)
+				assert.Equal(t, "gocritic/badcall", guide.Key())
+				assert.True(t, guide.IsCompound())
 			},
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			g, err := Parse(tt.filename, []byte(tt.content))
-			if tt.wantErr {
-				require.Error(t, err)
-				assert.Contains(t, err.Error(), tt.errContains)
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			guide, parseErr := Parse(testCase.filename, []byte(testCase.content))
+			if testCase.wantErr {
+				require.Error(t, parseErr)
+				assert.Contains(t, parseErr.Error(), testCase.errContains)
 				return
 			}
-			require.NoError(t, err)
-			require.NotNil(t, g)
-			if tt.check != nil {
-				tt.check(t, g)
+			require.NoError(t, parseErr)
+			require.NotNil(t, guide)
+			if testCase.check != nil {
+				testCase.check(t, guide)
 			}
 		})
 	}

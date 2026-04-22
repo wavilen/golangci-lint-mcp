@@ -21,10 +21,10 @@ msg := "Hello " + name
 </examples>
 
 <patterns>
-- `"" + s` → `s`
-- `s + ""` → `s`
-- `"a" + "b"` → `"ab"` (constant folding)
-- Multiple concatenations that could use `strings.Builder`
+- Remove `"" + s` — use `s` directly
+- Remove `s + ""` — use `s` directly
+- Combine `"a" + "b"` into `"ab"` at compile time
+- Replace multiple concatenations with `strings.Builder` for performance
 </patterns>
 
 <related>

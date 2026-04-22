@@ -23,10 +23,10 @@ if strings.Contains(line, "error") {
 </examples>
 
 <patterns>
-- Checking substring presence with `strings.Index(...) != -1` or `>= 0`
-- Using `bytes.Index` for presence checks instead of `bytes.Contains`
-- `strings.IndexByte(s, ',') != -1` for single-byte presence tests
-- Legacy code predating `strings.Contains` (added in Go 1.1)
+- Replace `strings.Index(s, sub) != -1` with `strings.Contains(s, sub)`
+- Replace `bytes.Index(b, sub) >= 0` with `bytes.Contains(b, sub)`
+- Replace `strings.IndexByte(s, ',') != -1` with `strings.ContainsByte(s, ',')`
+- Use `strings.Contains` for all substring presence checks
 </patterns>
 
 <related>

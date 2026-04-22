@@ -32,9 +32,9 @@ const (
 </examples>
 
 <patterns>
-- Multiple `iota` expressions in one const block with different patterns
-- Reusing `iota` after a break in the sequence
-- Mixing bit-shift iota with plain iota in the same block
+- Split const blocks that mix different `iota` patterns into separate groups
+- Use explicit values or separate const blocks after an iota break
+- Separate bit-shift iota and plain iota into distinct const blocks
 </patterns>
 
 <related>

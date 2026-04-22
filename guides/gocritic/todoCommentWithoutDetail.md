@@ -22,10 +22,10 @@ Add descriptive detail to the comment: what needs to be done, who is responsible
 </examples>
 
 <patterns>
-- `// TODO` with no text after it
-- `// FIXME` without description or owner
-- `// HACK` without explaining why the hack exists
-- `// XXX` without context
+- Add description after `// TODO` — explain what needs to be done
+- Add description and owner to `// FIXME` comments
+- Add explanation to `// HACK` comments — describe why the workaround exists
+- Add context to `// XXX` comments — explain the concern
 </patterns>
 
 <related>

@@ -21,9 +21,9 @@ json.Unmarshal(data, &cfg) // pointer to target
 </examples>
 
 <patterns>
-- Passing value (not pointer) to `Unmarshal`
-- Passing nil as the target
-- Passing pointer to interface instead of pointer to concrete type
+- Pass a pointer (not value) to `json.Unmarshal` as the second argument
+- Pass a valid non-nil pointer as the `Unmarshal` target
+- Pass a pointer to a concrete type (not `*interface{}`) to `Unmarshal`
 </patterns>
 
 <related>

@@ -25,10 +25,10 @@ type Server struct {
 </examples>
 
 <patterns>
-- Embedded unexported pointer types in exported structs
-- Embedded unexported interfaces in public API types
-- sync.Mutex or sync.WaitGroup embedded in exported structs
-- Embedding for convenience that leaks into public API
+- Use named fields instead of embedding unexported pointer types in exported structs
+- Avoid embedding unexported interfaces in public API types — use them as named fields
+- Prefer named `mu sync.Mutex` fields over embedding `sync.Mutex` in exported structs
+- Guard public API surface by replacing convenience embeddings with explicit named fields
 </patterns>
 
 <related>

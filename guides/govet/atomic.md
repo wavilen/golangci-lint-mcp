@@ -23,10 +23,10 @@ val := atomic.LoadInt64(&counter)
 </examples>
 
 <patterns>
-- Direct field access mixed with atomic operations on the same variable
-- Passing value instead of pointer to atomic functions
-- Using `*addr` instead of `atomic.LoadPtr`
-- Reassigning atomic pointer with non-atomic store
+- Use only `atomic.Load`/`atomic.Store` for fields accessed concurrently — never mix with direct reads/writes
+- Pass pointers (not values) to all `atomic` functions (`atomic.AddInt32(&x, 1)`, not `atomic.AddInt32(x, 1)`)
+- Use `atomic.LoadPtr(&addr)` instead of dereferencing `*addr` for atomic values
+- Use `atomic.Store` when reassigning atomic pointers — never plain assignment
 </patterns>
 
 <related>

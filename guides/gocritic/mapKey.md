@@ -26,10 +26,10 @@ _ = map[string]int{
 </examples>
 
 <patterns>
-- Duplicate string keys in map literals
-- Duplicate constant expressions as map keys
-- Using slices as map keys (compile error, but gocritic may catch related patterns)
-- Map literals where copy-paste introduced duplicate entries
+- Remove duplicate string keys in map literals
+- Remove duplicate constant expressions used as map keys
+- Avoid using slices as map keys — use a string key or struct instead
+- Remove copy-paste duplicate entries in map literals
 </patterns>
 
 <related>

@@ -39,17 +39,17 @@ Uses **stdio transport** — designed for MCP clients like opencode, Claude Desk
 go install github.com/wavilen/golangci-lint-mcp@latest
 ```
 
-This places the `golangci-lint-mcp` binary in `$GOPATH/bin`. Make sure your Go bin directory is in your `PATH`.
+This places the `golangci-lint-mcp` binary in `$GOPATH/bin`. Make sure your Go bin directory is in your `PATH`. The version is derived automatically from the git tag via Go's built-in VCS info.
 
 ### Build locally
 
 ```bash
 git clone <repo-url>
 cd golangci-lint-mcp
-make build
+make install
 ```
 
-This creates a `golangci-lint-mcp` binary in the project directory. Move it to your PATH, or use the full path in your MCP client config.
+This installs with the exact version from `git describe --tags` injected via ldflags. Use `make build` to build locally without installing.
 
 ### Install the OpenCode Skill
 
@@ -74,6 +74,32 @@ make install-skill
 
 This copies the golangci-lint-guide skill to `~/.agents/skills/golangci-lint-guide/`, making it available in any Go project opened with opencode.
 
+## Compatibility
+
+This server ships guides validated against **golangci-lint v2.0+**.
+
+**golangci-lint v1.x is incompatible** — it uses completely different CLI flags and will not work with this server.
+
+At startup, the server checks your installed golangci-lint version and logs a warning if:
+- The version is below v2.0 (incompatible — wrong CLI flags)
+- The version is significantly newer (6+ minor versions ahead) — some linters may have changed behavior compared to when the guides were written
+
+The version check is non-blocking — the server starts normally regardless of the result. Warnings appear in stderr logs, visible in MCP client debug output.
+
+### Versioning
+
+The server reports its own version at startup and to MCP clients. The version is derived from git tags:
+
+- **`go install @latest`** — version comes from Go's built-in VCS info (`vcs.tag` build setting)
+- **`make install`** — version injected via ldflags from `git describe --tags`
+- **Development builds** — falls back to commit hash or `"dev"`
+
+To sync `package.json` with the latest git tag:
+
+```bash
+make sync-version
+```
+
 ## MCP Client Configuration
 
 ### opencode
@@ -91,6 +117,8 @@ Add to your project's `opencode.json`:
   }
 }
 ```
+
+The plugin automatically injects `--output.json.path stdout` into any `golangci-lint` command and strips conflicting output format flags (e.g., `--output.text.*`, `--out-format`, `--verbose`, `--show-stats`) that would break JSON parsing. No manual flag management needed.
 
 If the binary is not in PATH, use the full path:
 
@@ -220,7 +248,7 @@ Or from source: `make install-skill`
 
 When an agent runs `/golangci-lint-guide`, it follows the structured workflow:
 
-1. Run `golangci-lint run --output.json.path stdout ./...` to get all diagnostics
+1. Run `golangci-lint run --output.json.path stdout ./...` to get all diagnostics (the opencode plugin strips conflicting output flags automatically)
 2. Call the MCP tool `golangci_lint_parse` with the raw JSON output to get fix guidance for all diagnostics at once (or call `golangci_lint_guide` per diagnostic for individual lookups)
 3. Apply fixes per package, re-running golangci-lint after each package
 4. Final verification with `golangci-lint run ./...`
@@ -230,6 +258,8 @@ When an agent runs `/golangci-lint-guide`, it follows the structured workflow:
 **Single binary:** All 629 guides are embedded via `go:embed` at compile time. No external files, no database, no network calls. The binary is self-contained.
 
 **MCP server:** Built with the mcp-go framework (v0.48.0). Uses stdio transport — reads JSON-RPC from stdin, writes to stdout. Exposes two tools: `golangci_lint_guide` (per-diagnostic lookup) and `golangci_lint_parse` (bulk JSON parsing).
+
+**OpenCode plugin:** The `plugins/golangci-lint.js` plugin hooks into `tool.execute.before` to strip 20+ conflicting output format flags (`--output.text.*`, `--output.tab.*`, `--out-format`, `--verbose`, `--show-stats`, legacy flags, etc.) and inject `--output.json.path stdout` — ensuring the MCP server always receives clean JSON. It also hooks into `tool.execute.after` to nudge agents toward using MCP tools when diagnostics are found.
 
 **Guide store:** In-memory index loaded at startup from the embedded filesystem. Lookup by key is O(1). Keys are formatted as `linter` for simple linters and `linter/rule` for compound linter rules.
 

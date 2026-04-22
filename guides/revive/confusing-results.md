@@ -29,11 +29,11 @@ func GetCoordinates() (Coordinates, error) {
 </examples>
 
 <patterns>
-- Functions returning two or more values of the same primitive type
-- Lat/lng or x/y coordinate pairs returned as bare floats
-- Functions returning `(int, int)` for index and count
-- Multiple string returns that can be confused (name vs path, key vs value)
-- Functions where callers frequently destructure with `_` for confusion
+- Return a struct instead of multiple values of the same primitive type
+- Wrap coordinate pairs (lat/lng, x/y) in a named struct to prevent argument swaps
+- Use named return values or a result struct for functions returning `(int, int)` pairs
+- Define a result struct when returning multiple strings that could be confused
+- Replace same-type multi-returns with a struct to prevent callers from destructuring with `_`
 </patterns>
 
 <related>

@@ -27,9 +27,8 @@ case namedItem:
 </examples>
 
 <patterns>
-- Anonymous struct types in `case` clauses
-- Inline type definitions in `switch` arms
-- `case struct{ ... }` instead of named type
+- Define named types for anonymous structs used in `case` clauses
+- Replace `case struct{ ... }` with a named type defined before the switch
 </patterns>
 
 <related>

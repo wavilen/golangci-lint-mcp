@@ -17,9 +17,9 @@ Expect(results).Should(BeEmpty())
 </examples>
 
 <patterns>
-- `Expect(x).To(HaveLen(0))` — use `Expect(x).To(BeEmpty())`
-- `Expect(x).ToNot(HaveLen(0))` — use `Expect(x).ToNot(BeEmpty())`
-- `Expect(len(x)).To(Equal(0))` — use `Expect(x).To(BeEmpty())`
+- Use `Expect(x).To(BeEmpty())` instead of `Expect(x).To(HaveLen(0))`
+- Use `Expect(x).ToNot(BeEmpty())` instead of `Expect(x).ToNot(HaveLen(0))`
+- Use `Expect(x).To(BeEmpty())` instead of `Expect(len(x)).To(Equal(0))`
 </patterns>
 
 <related>

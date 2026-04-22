@@ -35,10 +35,10 @@ func process() error {
 </examples>
 
 <patterns>
-- Blank lines after opening braces `{` or before closing braces `}`
-- Multiple consecutive blank lines between functions
-- Leading blank lines in file bodies
-- Trailing whitespace at end of code blocks
+- Remove blank lines immediately after `{` or before `}`
+- Reduce multiple consecutive blank lines to a single blank line
+- Remove leading blank lines at the start of file bodies
+- Remove trailing whitespace at the end of code blocks
 </patterns>
 
 <related>

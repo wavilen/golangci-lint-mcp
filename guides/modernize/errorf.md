@@ -17,9 +17,9 @@ return errors.Wrap(err, "failed to open")
 </examples>
 
 <patterns>
-- `errors.New(fmt.Sprintf(...))` — use `errors.Wrap` for wrapping or `fmt.Errorf` for new errors
-- `fmt.Sprintf("... %s", err)` when building errors — use `errors.Wrap` instead
-- `fmt.Errorf("... %s", err)` — use `errors.Wrap` for proper error wrapping
+- Replace `errors.New(fmt.Sprintf(...))` with `errors.Wrap` for wrapping or `fmt.Errorf` for new errors
+- Replace `fmt.Sprintf("... %s", err)` when building errors with `errors.Wrap`
+- Replace `fmt.Errorf("... %s", err)` with `errors.Wrap` for proper error wrapping
 </patterns>
 
 <related>

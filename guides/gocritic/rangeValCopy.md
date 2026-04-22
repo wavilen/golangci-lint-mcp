@@ -31,10 +31,10 @@ for i := range records {
 </examples>
 
 <patterns>
-- Iterating over slices of large structs with `for _, v := range` and only reading `v`
-- Loop variables that are structs with large embedded arrays or many fields
-- Processing batches of large value-type elements where only a few fields are accessed
-- Any range loop where the value variable size exceeds ~80 bytes
+- Use `for i := range slice` with index access instead of `for _, v := range` for large structs
+- Use pointer elements in the slice instead of copying large value-type elements
+- Replace `for _, v := range` with index access when only a few fields are needed from large structs
+- Use `for i := range` when the value variable size exceeds ~80 bytes
 </patterns>
 
 <related>

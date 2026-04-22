@@ -38,11 +38,11 @@ func process(data []byte) error {
 </examples>
 
 <patterns>
-- Error checks wrapping the main logic in nested `if err == nil` blocks
-- Happy path code indented multiple levels due to error checks
-- Functions where the success path is harder to read than the error path
-- `if err != nil` followed by an else block containing the main logic
-- Deeply nested error handling that should use guard clauses
+- Handle errors first with early return instead of wrapping main logic in `if err == nil` blocks
+- Reduce indentation by returning on error before the happy path code
+- Convert error checks so the success path is more readable than the error path
+- Remove else blocks after `if err != nil` — the happy path continues below
+- Replace deeply nested error handling with sequential guard clauses
 </patterns>
 
 <related>

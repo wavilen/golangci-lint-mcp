@@ -25,10 +25,10 @@ import "net/http"
 </examples>
 
 <patterns>
-- Same package imported under different aliases across files
-- Non-standard aliases for well-known packages (`proto` for `protobuf`)
-- Auto-generated aliases like `v1`, `v2` from versioned APIs
-- Inconsistent casing in alias names (camelCase vs snake_case)
+- Use the same alias for each imported package across all files
+- Replace non-standard aliases with the configured canonical alias
+- Configure explicit aliases for auto-generated versioned API packages
+- Standardize alias casing to the project convention
 </patterns>
 
 <related>

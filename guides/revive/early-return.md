@@ -39,11 +39,11 @@ func process(data []byte) error {
 </examples>
 
 <patterns>
-- Functions where the main logic is deeply nested inside if-else blocks
-- Error handling wrapping the entire function body
-- Multiple levels of if-else that could be flattened with early returns
-- Functions with a "success path" indented 3+ levels
-- Validation checks followed by business logic all in one nested block
+- Flatten nested if-else logic with early returns — handle error/edge cases first, then proceed with main logic
+- Guard against errors first with early return instead of wrapping the entire function body in `if err == nil`
+- Reduce nesting by converting multiple if-else levels to sequential early returns
+- Convert "success path" code indented 3+ levels into a flat sequence with guard clauses
+- Extract validation checks as early returns before the main business logic block
 </patterns>
 
 <related>

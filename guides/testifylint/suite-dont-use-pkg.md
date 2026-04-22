@@ -23,9 +23,9 @@ func (s *MySuite) TestSomething() {
 </examples>
 
 <patterns>
-- `assert.Xxx(s.T(), ...)` in suite method — use `s.Xxx(...)`
-- `require.Xxx(s.T(), ...)` in suite method — use `s.Require().Xxx(...)`
-- Mixing package-level assertions with suite methods — use suite methods consistently
+- Use `s.Xxx(...)` instead of `assert.Xxx(s.T(), ...)` in suite methods
+- Use `s.Require().Xxx(...)` instead of `require.Xxx(s.T(), ...)` in suite methods
+- Use suite methods consistently instead of mixing package-level assertions
 </patterns>
 
 <related>

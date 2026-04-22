@@ -19,10 +19,10 @@ last := items[len(items)-1]
 </examples>
 
 <patterns>
-- `s[len(s)]` instead of `s[len(s)-1]`
-- Loop bound `<= len(s)` instead of `< len(s)`
-- Slice expression `s[:len(s)]` which is equivalent to `s`
-- `s[0:len(s)-1]` when `s[:len(s)]` or `s` was intended
+- Replace `s[len(s)]` with `s[len(s)-1]` for the last element
+- Replace `<= len(s)` loop bounds with `< len(s)`
+- Simplify `s[:len(s)]` to just `s`
+- Replace `s[0:len(s)-1]` — verify if `s[:len(s)]` or just `s` was intended
 </patterns>
 
 <related>

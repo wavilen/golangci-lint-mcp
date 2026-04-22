@@ -23,10 +23,10 @@ type Processor interface {
 </examples>
 
 <patterns>
-- Interface methods with only type parameters and no names
-- Callback function signatures in interfaces with unnamed params
-- `func(int, error)` style signatures in interface definitions
-- Single-parameter interfaces where the name adds context
+- Name all parameters in interface method signatures
+- Add descriptive names to callback parameters in interface definitions
+- Replace bare type signatures with named parameters in interfaces
+- Give descriptive names even to single-parameter interface methods
 </patterns>
 
 <related>

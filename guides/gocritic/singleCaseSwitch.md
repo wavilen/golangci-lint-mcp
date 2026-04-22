@@ -24,9 +24,9 @@ if x > 10 {
 </examples>
 
 <patterns>
-- `switch` with one `case` and no `default`
-- `switch` with one `case` and a `default` → `if`/`else`
-- Tagged `switch` with a single `case` value
+- Replace `switch` with one `case` and no `default` with an `if` statement
+- Replace `switch` with one `case` and `default` with `if`/`else`
+- Replace tagged `switch` with a single `case` value with an `if` comparison
 </patterns>
 
 <related>

@@ -23,10 +23,10 @@ if strings.EqualFold(s1, s2) {
 </examples>
 
 <patterns>
-- Case-insensitive header or MIME type comparisons in HTTP handlers
-- Comparing user input case-insensitively (e.g., "yes"/"NO" flags)
-- String equality checks after `strings.ToLower` or `strings.ToUpper` on both operands
-- Case-insensitive enum or config value matching
+- Use `strings.EqualFold` for case-insensitive HTTP header or MIME type comparisons
+- Use `strings.EqualFold` for case-insensitive user input matching like "yes"/"NO"
+- Replace `strings.ToLower(a) == strings.ToLower(b)` with `strings.EqualFold(a, b)`
+- Use `strings.EqualFold` for case-insensitive enum or config value matching
 </patterns>
 
 <related>

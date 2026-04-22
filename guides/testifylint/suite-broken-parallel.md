@@ -22,9 +22,9 @@ func (s *MySuite) TestFeature() {
 </examples>
 
 <patterns>
-- `s.T().Parallel()` inside suite method — remove it
-- `t.Parallel()` in suite setup/teardown — remove it
-- Running suite tests in parallel — use parallel suite runner configuration
+- Remove `s.T().Parallel()` from suite methods — the suite runner manages execution
+- Remove `t.Parallel()` from suite setup/teardown methods
+- Use parallel suite runner configuration instead of `t.Parallel()` in individual suite tests
 </patterns>
 
 <related>

@@ -39,9 +39,9 @@ func (c *Counter) Increment() {
 </examples>
 
 <patterns>
-- Structs with value-receiver getters and pointer-receiver mutators
-- Types that implement interfaces with value receivers but have pointer-receiver methods
-- Mixed receiver styles inherited from different authors or code generations
+- Use pointer receivers consistently when any method mutates state
+- Align all methods on a type to use the same receiver kind (pointer or value)
+- Unify mixed receiver styles inherited from different authors into a consistent pattern
 </patterns>
 
 <related>

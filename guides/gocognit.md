@@ -47,9 +47,9 @@ func HandleCreateOrder(w http.ResponseWriter, r *http.Request) {
 </examples>
 
 <patterns>
-- God handlers mixing input validation, business logic, and response formatting
-- Functions where multiple responsibilities create deeply nested control flow
-- Service methods combining lookup, transformation, and persistence
+- Decompose god handlers into separate functions for validation, logic, and formatting
+- Extract nested responsibilities into single-purpose helper functions
+- Separate service methods into distinct lookup, transform, and persist steps
 - Replace switch with interface dispatch (OCP)
 - Prefer small focused interfaces over one fat interface (ISP)
 </patterns>

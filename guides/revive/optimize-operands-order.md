@@ -29,11 +29,11 @@ if "" != name {
 </examples>
 
 <patterns>
-- Comparisons with constant values on the right side
-- Empty string or nil checks with the variable on the left
-- Numeric comparisons where the expected value could come first
-- Boolean expressions in conditions where ordering is inconsistent
-- Mixed operand ordering style across a codebase
+- Move constant values on the left side of comparisons (e.g., `42 == x`)
+- Move empty string or nil checks to put the constant on the left (e.g., `"" != name`)
+- Reorder numeric comparisons to put the expected value first
+- Use consistent operand ordering in boolean expressions
+- Use a consistent operand ordering style across the codebase
 </patterns>
 
 <related>

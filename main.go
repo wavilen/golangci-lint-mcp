@@ -9,6 +9,7 @@ import (
 
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
 	"github.com/wavilen/golangci-lint-mcp/internal/server"
+	"github.com/wavilen/golangci-lint-mcp/internal/version"
 
 	mcpserver "github.com/mark3labs/mcp-go/server"
 )
@@ -20,7 +21,11 @@ func main() {
 	gosecAI := flag.Bool("gosec-ai", false, "append AI autofix hints to gosec guide responses")
 	flag.Parse()
 
-	if err := run(guideFS, *gosecAI, os.Getenv, mcpserver.ServeStdio); err != nil {
+	version.Check()
+	log.Printf("golangci-lint-mcp version %s", version.Server)
+
+	err := run(guideFS, *gosecAI, os.Getenv, mcpserver.ServeStdio)
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
@@ -42,17 +47,18 @@ func run(fsys fs.FS, gosecAI bool, getenv envGetter, serve serveFunc) error {
 		GosecAIProvider: getenv("GOSEC_AI_API_PROVIDER"),
 		GosecAIKey:      getenv("GOSEC_AI_API_KEY"),
 		GosecAIBaseURL:  getenv("GOSEC_AI_BASE_URL"),
-	}
-	if getenv("GOSEC_AI_SKIP_SSL") == "true" {
-		opts.GosecAISkipSSL = true
+		GosecAISkipSSL:  getenv("GOSEC_AI_SKIP_SSL") == "true",
 	}
 	if opts.GosecAI && opts.GosecAIKey == "" {
-		log.Printf("warning: --gosec-ai enabled but GOSEC_AI_API_KEY not set; gosec_ai_autofix tool will not be available")
+		log.Printf(
+			"warning: --gosec-ai enabled but GOSEC_AI_API_KEY not set; gosec_ai_autofix tool will not be available",
+		)
 	}
 	mcpSrv := server.NewServer(store, opts)
 
-	if err := serve(mcpSrv); err != nil {
-		return fmt.Errorf("server error: %w", err)
+	serveErr := serve(mcpSrv)
+	if serveErr != nil {
+		return fmt.Errorf("server error: %w", serveErr)
 	}
 	return nil
 }

@@ -19,10 +19,10 @@ addr := net.JoinHostPort(host, strconv.Itoa(port))
 </examples>
 
 <patterns>
-- `fmt.Sprintf` with `%s:%d` or `%s:%s` for address construction
-- String concatenation for host:port: `host + ":" + port`
-- IPv6 addresses that break when formatted as `[host]:port` manually
-- URL construction via string formatting instead of `url.URL`
+- Replace `fmt.Sprintf` address construction with `net.JoinHostPort`
+- Use `net.JoinHostPort` instead of string concatenation for host:port
+- Use `net.JoinHostPort` to correctly handle IPv6 address formatting
+- Build URLs using `url.URL` struct instead of string formatting
 </patterns>
 
 <related>

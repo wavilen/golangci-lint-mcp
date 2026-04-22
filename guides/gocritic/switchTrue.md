@@ -33,8 +33,8 @@ default:
 </examples>
 
 <patterns>
-- `switch true { ... }` → `switch { ... }`
-- Any expression in switch that evaluates to a constant `true`
+- Replace `switch true { ... }` with `switch { ... }`
+- Replace any constant-true expression in `switch` with a bare `switch`
 </patterns>
 
 <related>

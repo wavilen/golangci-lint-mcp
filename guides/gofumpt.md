@@ -35,10 +35,10 @@ func main() {
 </examples>
 
 <patterns>
-- Inconsistent spacing around operators and after keywords
-- Imports not grouped (stdlib, third-party, local)
-- `else` and `if` on same line with different indentation
-- Multiline function signatures without aligned parameters
+- Run `gofumpt -w .` to enforce consistent spacing
+- Group imports into stdlib, third-party, and local blocks
+- Move `else` blocks to a new line with consistent indentation
+- Align multiline function signature parameters
 </patterns>
 
 <related>

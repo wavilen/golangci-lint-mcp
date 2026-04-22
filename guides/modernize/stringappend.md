@@ -24,9 +24,9 @@ result := b.String()
 </examples>
 
 <patterns>
-- `s += x` inside a loop — use `strings.Builder`
-- `s = s + x` in loop body — use `b.WriteString(x)`
-- Building query strings, CSV rows, or error messages in loops — always use Builder
+- Use `strings.Builder` instead of `s += x` inside a loop
+- Use `b.WriteString(x)` instead of `s = s + x` in loop bodies
+- Use `strings.Builder` for building query strings, CSV rows, or error messages in loops
 </patterns>
 
 <related>

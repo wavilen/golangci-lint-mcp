@@ -23,10 +23,10 @@ func TestMyFunc(t *testing.T) {
 </examples>
 
 <patterns>
-- `TestXxx` without `*testing.T` parameter
-- `BenchmarkXxx` without `*testing.B` parameter
-- `ExampleXxx` with parameters (should have none)
-- Test function with wrong name pattern (lowercase first letter)
+- Add `*testing.T` as the parameter for `TestXxx` functions — the test runner ignores wrong signatures
+- Add `*testing.B` as the parameter for `BenchmarkXxx` functions
+- Remove parameters from `ExampleXxx` functions — examples must take no arguments
+- Capitalize the first letter after `Test`/`Benchmark`/`Example` — lowercase names are ignored
 </patterns>
 
 <related>

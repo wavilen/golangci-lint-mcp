@@ -21,10 +21,10 @@ fmt.Println(data) // fmt handles []byte natively
 </examples>
 
 <patterns>
-- `fmt.Println(string(byteSlice))` — `fmt` formats `[]byte` as a string automatically
-- `string(b) == "expected"` comparisons — use `bytes.Equal(b, []byte("expected"))`
-- `[]byte(s)` then immediately passing to a function accepting `string`
-- Redundant conversions in hot loops where each allocation adds up
+- Remove `string(byteSlice)` conversion when passing to `fmt.Println` — `fmt` formats `[]byte` as string
+- Replace `string(b) == "expected"` with `bytes.Equal(b, []byte("expected"))` to avoid allocation
+- Remove `[]byte(s)` conversion when the target function accepts `string`
+- Eliminate redundant `string`↔`[]byte` conversions in hot loops — use consistent types
 </patterns>
 
 <related>

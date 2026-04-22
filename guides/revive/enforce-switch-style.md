@@ -39,11 +39,11 @@ func httpStatus(code int) string {
 </examples>
 
 <patterns>
-- If-else chains comparing one variable against constants or enums
-- Multiple if statements that could be switch cases
-- Status code or enum value handling with if-else
-- Command or event dispatch via if-else instead of switch
-- State machine transitions implemented as if-else chains
+- Convert if-else chains comparing one variable against constants to switch statements
+- Replace multiple if statements that could be switch cases with a switch
+- Use switch for status code or enum value handling instead of if-else chains
+- Switch to switch for command or event dispatch instead of if-else
+- Convert state machine transitions from if-else chains to switch statements
 </patterns>
 
 <related>

@@ -21,9 +21,9 @@ slices.SortFunc(items, compare)
 </examples>
 
 <patterns>
-- `func(x T) { f(x) }` → `f`
-- Lambda wrapping a method call: `func() { obj.Method() }` when no deferred eval needed
-- Anonymous function in `sort.Slice` that just calls a comparator
+- Replace `func(x T) { f(x) }` with `f` when the function signature matches
+- Replace lambda-wrapped method calls `func() { obj.Method() }` with `obj.Method` when no deferred evaluation needed
+- Replace anonymous functions in `sort.Slice` that just call a comparator with a direct reference
 </patterns>
 
 <related>

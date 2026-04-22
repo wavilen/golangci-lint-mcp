@@ -23,9 +23,9 @@ var (
 </examples>
 
 <patterns>
-- Multiple `var` declarations in sequence — group into `var ( ... )`
-- Package-level configuration variables declared separately — group them
-- Related state variables — group for readability
+- Group sequential `var` declarations into a single `var ( ... )` block
+- Group package-level configuration variables declared separately
+- Group related state variables for readability
 </patterns>
 
 <related>

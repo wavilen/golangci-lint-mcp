@@ -45,9 +45,9 @@ func handle(s Status) {
 </examples>
 
 <patterns>
-- Switch on enum types missing newly added enum members
-- Type switch statements missing interface implementations
-- Package-level enum switches scattered across the codebase
+- Add cases for newly added enum members in switch statements
+- Include all interface implementations in type switch statements
+- Audit all enum switch sites when adding new enum values
 </patterns>
 
 <related>

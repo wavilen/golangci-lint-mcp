@@ -23,11 +23,11 @@ if x.Max - x.Min > threshold {
 </examples>
 
 <patterns>
-- `x == x` or `x != x` — self-comparison
-- `x - x` or `x / x` — self-operation
-- `a[i] == a[i]` — same index on both sides
-- `s[i] - s[i]` in loop bodies — likely meant `s[j]`
-- `x && x` or `x || x` — redundant boolean
+- Remove self-comparisons like `x == x` or `x != x`
+- Remove self-operations like `x - x` or `x / x`
+- Replace `a[i] == a[i]` with different indices like `a[i] == a[j]`
+- Replace `s[i] - s[i]` in loops with `s[i] - s[j]`
+- Remove redundant boolean like `x && x` or `x || x` — use `x` directly
 </patterns>
 
 <related>

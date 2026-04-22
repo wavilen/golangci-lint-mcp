@@ -26,9 +26,9 @@ type (
 </examples>
 
 <patterns>
-- Multiple `type` declarations in sequence — group into `type ( ... )`
-- Related small types declared separately — group for clarity
-- Type aliases or interfaces defined individually — group when adjacent
+- Group sequential `type` declarations into a single `type ( ... )` block
+- Group related small types declared separately for clarity
+- Group adjacent type aliases or interfaces defined individually
 </patterns>
 
 <related>

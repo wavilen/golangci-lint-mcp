@@ -21,11 +21,11 @@ slices.Sort(names)
 </examples>
 
 <patterns>
-- `sort.Slice` with a simple less-than comparison on the slice elements
-- `sort.SliceStable` where `slices.SortStableFunc` would be more type-safe
-- `sort.Ints`, `sort.Strings`, `sort.Float64s` where `slices.Sort` handles all types
-- Custom `sort.Interface` implementations for simple orderings
-- `sort.Slice` with reflection-heavy comparison callbacks
+- Replace `sort.Slice` with `slices.Sort` for simple less-than comparisons on slice elements
+- Use `slices.SortStableFunc` instead of `sort.SliceStable` for type-safe stable sorting
+- Replace `sort.Ints`, `sort.Strings`, and `sort.Float64s` with `slices.Sort`
+- Use `slices.SortFunc` instead of custom `sort.Interface` implementations for simple orderings
+- Replace `sort.Slice` with `slices.Sort` to avoid reflection-heavy comparison callbacks
 </patterns>
 
 <related>

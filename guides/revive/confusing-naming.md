@@ -31,11 +31,11 @@ func (c *Client) fetchData()   {} // distinct name
 </examples>
 
 <patterns>
-- Struct fields differing only in casing (e.g., `URL` vs `Url`)
-- Methods with identical names except for case
-- Package-level identifiers shadowed by cased variants
-- JSON tag names that collide with differently-cased Go field names
-- Generated code producing case-conflicting names from external schemas
+- Rename struct fields that differ only in casing to clearly distinct names
+- Avoid methods with names that differ only by case from other methods on the same type
+- Ensure package-level identifiers are visually distinguishable from cased variants
+- Use JSON tag names with Go field names to prevent casing collisions
+- Rename case-conflicting identifiers produced by code generation from external schemas
 </patterns>
 
 <related>

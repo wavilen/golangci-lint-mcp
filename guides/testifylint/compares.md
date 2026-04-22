@@ -19,10 +19,10 @@ assert.GreaterOrEqual(t, age, minimumAge)
 </examples>
 
 <patterns>
-- `assert.True(t, a > b)` — use `assert.Greater(t, a, b)`
-- `assert.True(t, a >= b)` — use `assert.GreaterOrEqual(t, a, b)`
-- `assert.False(t, a < b)` — use `assert.GreaterOrEqual(t, a, b)`
-- `assert.True(t, a < b)` — use `assert.Less(t, a, b)`
+- Use `assert.Greater(t, a, b)` instead of `assert.True(t, a > b)`
+- Use `assert.GreaterOrEqual(t, a, b)` instead of `assert.True(t, a >= b)`
+- Use `assert.GreaterOrEqual(t, a, b)` instead of `assert.False(t, a < b)`
+- Use `assert.Less(t, a, b)` instead of `assert.True(t, a < b)`
 </patterns>
 
 <related>

@@ -22,10 +22,10 @@ cursor, err := db.Query(ctx, query, bindVars)
 </examples>
 
 <patterns>
-- String concatenation in AQL queries instead of bind parameters
-- Using fmt.Sprintf to build query strings with user input
-- Missing bind variables map when query contains placeholders
-- Direct string interpolation of values into AQL filter conditions
+- Use bind parameters (`@name`) instead of string concatenation in AQL queries
+- Replace `fmt.Sprintf` query building with parameterized queries and a bind variables map
+- Pass a `bindVars` map when query contains `@placeholder` tokens
+- Avoid direct string interpolation of values into AQL filter conditions
 </patterns>
 
 <related>

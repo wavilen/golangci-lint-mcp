@@ -21,10 +21,10 @@ name := v.Elem().Type().Name() // dereferences pointer first
 </examples>
 
 <patterns>
-- Calling value-receiver methods on a pointer reflect.Value without Elem()
-- Using `reflect.ValueOf(ptr).FieldByName()` instead of `Elem().FieldByName()`
-- Accessing `NumField()` or `Field()` on pointer values
-- Comparing `CanInterface()` results on non-addressable pointer values
+- Call `Elem()` on pointer `reflect.Value` before using value-receiver methods
+- Replace `ValueOf(ptr).FieldByName()` with `ValueOf(ptr).Elem().FieldByName()`
+- Dereference pointer values with `Elem()` before calling `NumField()` or `Field()`
+- Use `Elem()` to get an addressable value before checking `CanInterface()`
 </patterns>
 
 <related>

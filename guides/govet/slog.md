@@ -19,10 +19,10 @@ slog.Info("user logged in", "user_id", userID, "role", "admin")
 </examples>
 
 <patterns>
-- Odd number of arguments to slog functions (missing value)
-- Non-string keys in key-value pairs
-- Passing raw values without key strings
-- Using `slog.With` with mismatched pairs
+- Provide key-value pairs in slog functions — always an even number of arguments
+- Use string keys in all slog key-value pairs — wrap values with `"key", value`
+- Pair every value with a string key in slog calls
+- Ensure `slog.With` receives matching key-value pairs — no dangling keys
 </patterns>
 
 <related>

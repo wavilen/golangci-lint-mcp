@@ -31,11 +31,11 @@ func setup() {
 </examples>
 
 <patterns>
-- Dot-importing utility packages to save typing
-- Test files dot-importing packages other than the one under test
-- DSL packages where dot imports are not an established convention
-- Migrating code and leaving dot imports from copy-paste
-- Circular import workarounds using dot imports
+- Use qualified imports instead of dot-importing utility packages
+- Limit dot imports in test files to the package under test only
+- Avoid dot imports for DSL packages unless dot imports are an established convention
+- Remove leftover dot imports when migrating code via copy-paste
+- Refactor circular import workarounds that use dot imports into proper package boundaries
 </patterns>
 
 <related>

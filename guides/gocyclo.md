@@ -47,9 +47,9 @@ func classify(code int) string {
 </examples>
 
 <patterns>
-- Functions with many sequential if/else-if branches
-- Long conditional chains refactorable into maps or tables
-- Complex permission or routing logic with many cases
+- Replace sequential if/else-if chains with table-driven dispatch
+- Convert long conditional chains into maps or lookup tables
+- Simplify routing logic with map-based dispatch
 </patterns>
 
 <related>

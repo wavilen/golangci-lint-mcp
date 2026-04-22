@@ -25,10 +25,10 @@ for _, r := range s {
 </examples>
 
 <patterns>
-- Manual rune decoding loops using `utf8.DecodeRune` or `utf8.DecodeRuneInString`
-- Byte-indexed string iteration that manually advances by rune size
-- Converting a string to `[]rune` just to iterate over characters
-- Code that mixes byte offsets with rune values unnecessarily
+- Replace manual `utf8.DecodeRune` loops with `for _, r := range s`
+- Replace byte-indexed rune iteration with `range` over the string
+- Replace `[]rune(s)` iteration with `for _, r := range s` — avoid the allocation
+- Separate byte offsets from rune values — use `for i, r := range s`
 </patterns>
 
 <related>

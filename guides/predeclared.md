@@ -23,10 +23,10 @@ type appError struct {
 </examples>
 
 <patterns>
-- `type error struct{}` shadowing the built-in `error` interface
-- `var copy = ...` shadowing the built-in `copy` function
-- `type string = myString` shadowing the built-in `string` type
-- Local variables named `true`, `nil`, `len` hiding predeclared identifiers
+- Rename types that shadow built-in `error` to a distinct name (e.g., `appError`)
+- Rename variables that shadow built-in functions like `copy`
+- Rename type aliases that shadow built-in `string`
+- Rename local variables that shadow predeclared identifiers like `true`, `nil`, `len`
 </patterns>
 
 <related>

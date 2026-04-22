@@ -23,9 +23,9 @@ import (
 </examples>
 
 <patterns>
-- `_ "github.com/stretchr/testify/assert"` — import explicitly and use
-- `_ "github.com/stretchr/testify/require"` — same, use require directly
-- Blank import leftover from debugging — remove it
+- Import `github.com/stretchr/testify/assert` explicitly instead of blank-importing it
+- Use `require` directly instead of blank-importing `github.com/stretchr/testify/require`
+- Remove blank import leftovers from debugging
 </patterns>
 
 <related>

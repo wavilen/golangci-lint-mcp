@@ -33,9 +33,9 @@ TEXT ·Add(SB), NOSPLIT, $0
 </examples>
 
 <patterns>
-- Assembly function missing return value storage
-- Argument size mismatch between Go and assembly
-- Incorrect frame pointer offsets in assembly
+- Add return value storage in assembly functions — map return values to correct frame offsets
+- Match argument sizes between Go declarations and assembly implementations
+- Use correct frame pointer offsets in assembly to match the Go ABI
 </patterns>
 
 <related>

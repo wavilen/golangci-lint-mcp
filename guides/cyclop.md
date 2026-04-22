@@ -45,9 +45,9 @@ func Process(status string, o Order) error {
 </examples>
 
 <patterns>
-- Multi-branch processors where each branch has its own validation and side effects
-- Status-based routing via map or function dispatch
-- Functions combining lookup, transform, and store operations
+- Extract branches into separate functions to reduce cyclomatic complexity
+- Replace conditional chains with map or function dispatch
+- Decompose functions combining lookup, transform, and store
 - Replace switch with interface dispatch (OCP)
 - Prefer small focused interfaces over one fat interface (ISP)
 </patterns>

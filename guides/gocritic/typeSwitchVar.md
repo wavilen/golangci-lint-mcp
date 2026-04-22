@@ -26,9 +26,9 @@ case int:
 </examples>
 
 <patterns>
-- `switch x.(type)` followed by `x.(T)` inside case body
-- Redundant type assertion after the switch already matched the type
-- Using the original interface value instead of the switch-assigned variable
+- Use `switch v := x.(type)` and work with `v` inside cases — avoid redundant `x.(T)`
+- Use the switch-assigned variable instead of re-asserting on the original interface value
+- Replace `switch x.(type)` followed by `x.(T)` with `switch v := x.(type)` and use `v`
 </patterns>
 
 <related>

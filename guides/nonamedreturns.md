@@ -27,10 +27,10 @@ func parse(input string) (*Config, error) {
 </examples>
 
 <patterns>
-- Named returns used solely to enable naked returns
-- Named returns that shadow local variable names
-- Named returns in defer closures that modify return values implicitly
-- Unnecessary named returns on single-return-value functions
+- Remove named returns used solely to enable naked `return` statements
+- Avoid named returns that shadow local variable names
+- Use explicit returns in defer closures instead of relying on named returns
+- Eliminate named returns on single-return-value functions
 </patterns>
 
 <related>

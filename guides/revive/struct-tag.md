@@ -26,11 +26,11 @@ type User struct {
 </examples>
 
 <patterns>
-- Missing quotes around tag values
-- Unexported fields with struct tags (tags are ignored by most encoders)
-- Inconsistent field naming conventions between different tag formats
-- Typos in tag keys (e.g., `jason` instead of `json`)
-- Missing `omitempty` on pointer or slice fields where it would reduce output noise
+- Ensure tag values are properly quoted within backtick-enclosed strings
+- Remove struct tags from unexported fields — most encoders ignore them
+- Use consistent field naming conventions across `json`, `xml`, `yaml`, and other tag formats
+- Replace typos in tag keys (e.g., `jason` → `json`)
+- Add `omitempty` to pointer or slice fields where it would reduce serialization noise
 </patterns>
 
 <related>

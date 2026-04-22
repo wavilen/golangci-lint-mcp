@@ -31,11 +31,10 @@ func process(items []string) {
 </examples>
 
 <patterns>
-- `len := 0` shadowing the `len()` builtin
-- `new := ...` shadowing the `new()` builtin
-- `error := ...` shadowing the `error` type
-- `close := ...` shadowing the `close()` builtin
-- Local variable names matching builtin function names
+- Rename variables that shadow `len()` builtin — use `length` or `count`
+- Rename variables that shadow `new()` builtin — use `newVal` or `created`
+- Rename variables that shadow the `error` type — use `err` or `appError`
+- Avoid using builtin names (`close`, `copy`, `append`) as local variable names
 </patterns>
 
 <related>

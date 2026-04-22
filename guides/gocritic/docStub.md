@@ -29,10 +29,10 @@ type Config struct{}
 </examples>
 
 <patterns>
-- `// Name ...` — placeholder ellipsis pattern
-- `// Name is a Name` — tautological description
-- Empty doc comment: `// ` with no text
-- `//nolint` as the only doc comment on an exported symbol
+- Replace `// Name ...` placeholder ellipsis with actual documentation
+- Replace `// Name is a Name` tautologies with meaningful descriptions
+- Add text to empty doc comments — `// ` with no content provides no value
+- Add proper doc comments instead of `//nolint` as the only comment on exported symbols
 </patterns>
 
 <related>

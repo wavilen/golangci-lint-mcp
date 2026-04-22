@@ -23,11 +23,11 @@ for _, item := range items {
 </examples>
 
 <patterns>
-- Manual `for i := 0; i < len(s); i++` loops that could be range loops
-- Range loops that use only the index to access elements
-- Loops where neither index nor value is used (e.g., counting)
-- Index-based iteration over maps (which is not even possible in Go)
-- C-style for loops over slices or maps
+- Replace manual `for i := 0; i < len(s); i++` loops with `for i := range s`
+- Use `for _, v := range` to access elements directly instead of indexing with `s[i]`
+- Simplify loops to `for range s` when neither index nor value is needed
+- Use `for k, v := range m` for map iteration instead of index-based approaches
+- Convert C-style for loops over slices to range loops
 </patterns>
 
 <related>

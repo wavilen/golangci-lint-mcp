@@ -29,11 +29,11 @@ func process() {
 </examples>
 
 <patterns>
-- Multiple consecutive blank lines between functions or declarations
-- Blank line immediately after an opening brace
-- Blank line immediately before a closing brace
-- Blank lines between a doc comment and its declaration
-- Extra blank lines introduced by automated formatting tools or merges
+- Remove multiple consecutive blank lines between functions or declarations to a single blank line
+- Remove blank lines immediately after an opening brace
+- Remove blank lines immediately before a closing brace
+- Move doc comments directly above their declaration with no intervening blank lines
+- Remove extra blank lines introduced by automated formatting tools or merges
 </patterns>
 
 <related>

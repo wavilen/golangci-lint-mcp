@@ -19,9 +19,9 @@ Expect(name).ShouldNot(BeEmpty())
 </examples>
 
 <patterns>
-- `Expect(a == b).Should(BeTrue())` — use `Expect(a).Should(Equal(b))`
-- `Expect(a != b).Should(BeTrue())` — use `Expect(a).ShouldNot(Equal(b))`
-- `Expect(a > b).Should(BeTrue())` — use `Expect(a).To(BeNumerically(">", b))`
+- Use `Expect(a).Should(Equal(b))` instead of `Expect(a == b).Should(BeTrue())`
+- Use `Expect(a).ShouldNot(Equal(b))` instead of `Expect(a != b).Should(BeTrue())`
+- Use `Expect(a).To(BeNumerically(">", b))` instead of `Expect(a > b).Should(BeTrue())`
 </patterns>
 
 <related>

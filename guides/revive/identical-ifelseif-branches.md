@@ -32,11 +32,11 @@ if status == "active" || status == "pending" {
 </examples>
 
 <patterns>
-- Copy-paste errors in long if-else-if chains
-- Status or state handling with identical logic for different states
-- Error classification where multiple error types get the same treatment
-- Feature branches merged but conditions not consolidated
-- Multi-condition checks that should be combined with logical OR
+- Replace copy-paste errors in long if-else-if chains by updating the branch that should differ
+- Combine status or state conditions with identical logic using `||` in the condition
+- Combine error classification branches that give multiple error types the same treatment
+- Combine conditions in merged feature branches that were not combined
+- Combine multi-condition checks into a single condition using logical OR
 </patterns>
 
 <related>

@@ -30,11 +30,11 @@ func normalize(items []string) []string {
 </examples>
 
 <patterns>
-- Reassigning slice or map parameters that affect the caller
-- Modifying struct pointer parameters as "output" parameters
-- Using input parameters as scratch space to avoid allocations
-- Sorting or shuffling input slices in-place unexpectedly
-- Pointer parameters used for both input and output without clear documentation
+- Use a local copy of slice or map parameters before modifying to avoid affecting the caller
+- Return new values instead of modifying struct pointer parameters as "output" parameters
+- Use a local variable for mutation instead of using input parameters as scratch space
+- Use a copy of input slices before sorting or shuffling to avoid unexpected in-place mutation
+- Document pointer parameters used for both input and output, or restructure to use separate types
 </patterns>
 
 <related>

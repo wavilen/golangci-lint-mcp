@@ -34,11 +34,11 @@ if status == httpStatusNotFound {
 </examples>
 
 <patterns>
-- Numeric literals used in comparisons or calculations without explanation
-- HTTP status codes, port numbers, or timeout values hardcoded inline
-- Repeated string literals that represent fixed values
-- Array indices or slice bounds with unexplained numeric values
-- Configuration-like values scattered through business logic
+- Extract numeric literals used in comparisons or calculations into named constants
+- Replace hardcoded HTTP status codes, port numbers, or timeout values with named constants
+- Define constants for repeated string literals that represent fixed values
+- Rename array indices or slice bounds with unexplained numeric values
+- Move configuration-like values scattered through business logic into `const` declarations
 </patterns>
 
 <related>

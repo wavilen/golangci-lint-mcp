@@ -23,9 +23,9 @@ if name == "" {
 </examples>
 
 <patterns>
-- `len(s) == 0` for strings → `s == ""`
-- `len(s) != 0` for strings → `s != ""`
-- `s == ""` is already optimal — no further simplification needed
+- Replace `len(s) == 0` with `s == ""` for string empty checks
+- Replace `len(s) != 0` with `s != ""` for string non-empty checks
+- Use `s == ""` directly — no further simplification needed
 </patterns>
 
 <related>

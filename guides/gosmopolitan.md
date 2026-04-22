@@ -23,10 +23,10 @@ func schedule(loc *time.Location) time.Time {
 </examples>
 
 <patterns>
-- `time.Local` used implicitly via `time.Now()` without timezone awareness
-- `strings.ToLower`/`ToUpper` on user-facing text without locale consideration
-- Hardcoded timezone names instead of loading from configuration
-- Date formatting with locale-sensitive format strings
+- Use explicit `time.UTC` or pass `*time.Location` instead of relying on `time.Local`
+- Avoid `strings.ToLower`/`ToUpper` on user-facing text without locale consideration
+- Load timezone names from configuration rather than hardcoding them
+- Use locale-aware formatting for dates presented to users
 </patterns>
 
 <related>

@@ -19,9 +19,9 @@ assert.InEpsilon(t, 0.3, result, 0.001)
 </examples>
 
 <patterns>
-- `assert.Equal(t, floatA, floatB)` — use `assert.InDelta`
-- Manual `math.Abs` comparison in assertion — use `assert.InDelta`
-- Comparing computed float results — always use InDelta or InEpsilon
+- Use `assert.InDelta` instead of `assert.Equal(t, floatA, floatB)`
+- Use `assert.InDelta` instead of manual `math.Abs` comparison in assertions
+- Use `assert.InDelta` or `assert.InEpsilon` for comparing computed float results
 </patterns>
 
 <related>

@@ -44,9 +44,9 @@ func area(s Shape) float64 {
 </examples>
 
 <patterns>
-- Missing implementation in a type switch over a sum-type interface
-- New struct added to a sealed interface but not added to existing switches
-- No `default` case as a safety net for future additions
+- Handle all implementations in type switches over sum-type interfaces
+- Add new struct types to every existing type switch when extending a sealed interface
+- Include a `default` case as a safety net for future additions to the sum type
 </patterns>
 
 <related>

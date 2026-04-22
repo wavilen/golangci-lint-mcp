@@ -21,10 +21,10 @@ dur := time.Hour
 </examples>
 
 <patterns>
-- `time.Second * N` → `N * time.Second`
-- `time.Minute * 60` → `time.Hour`
-- `time.Millisecond * 1000` → `time.Second`
-- `time.Minute * N` where N is divisible by 60 → `time.Hour`
+- Replace `time.Second * N` with `N * time.Second`
+- Replace `time.Minute * 60` with `time.Hour`
+- Replace `time.Millisecond * 1000` with `time.Second`
+- Replace `time.Minute * N` with `time.Hour` when N is divisible by 60
 </patterns>
 
 <related>

@@ -31,11 +31,11 @@ func Process() Result {
 </examples>
 
 <patterns>
-- Exported function returning a struct defined with a lowercase name
-- Exported method on an exported type returning an unexported type
-- Factory functions returning unexported implementation types
-- API surface where the return type is invisible to calling packages
-- Tests in another package unable to assert on the return type
+- Export the return type when an exported function returns an unexported struct
+- Export the return type when an exported method returns an unexported type
+- Return an interface from factory functions instead of an unexported implementation type
+- Export types used in the API surface so calling packages can reference them
+- Export return types needed for assertions in external test packages
 </patterns>
 
 <related>

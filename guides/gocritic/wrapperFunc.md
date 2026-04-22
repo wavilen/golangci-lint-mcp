@@ -16,7 +16,7 @@ func handleError(err error) {
 
 ## Good
 ```go
-// Use log.Fatal directly at call sites, or add real value:
+// Use [log.Fatal] directly at call sites, or add real value.
 func handleError(err error) {
 	log.Printf("operation failed: %v", err)
 	os.Exit(1)
@@ -25,9 +25,9 @@ func handleError(err error) {
 </examples>
 
 <patterns>
-- Function body is a single call to another function
-- Wrapper adds no logic, validation, or transformation
-- Method that just forwards to another method on an embedded field
+- Remove functions whose body is a single call to another function with no added logic
+- Inline the wrapped call when the wrapper adds no validation or transformation
+- Remove forwarding methods on embedded fields — call the embedded method directly
 </patterns>
 
 <related>

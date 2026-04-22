@@ -20,9 +20,9 @@ items = append(items, "hello")
 </examples>
 
 <patterns>
-- `make([]T, n)` followed by `append` — zero-value elements pollute the slice
-- Pre-allocated slices used only with `append`, never with index assignment
-- `make([]T, n, m)` where length n > 0 but only `append` is used
+- Use `make([]T, 0, n)` when the slice will be filled with `append`
+- Set initial length to 0 and use capacity-only allocation for append-only slices
+- Change `make([]T, n, m)` to `make([]T, 0, m)` when only `append` is used
 </patterns>
 
 <related>

@@ -23,10 +23,10 @@ func expensive() int {
 </examples>
 
 <patterns>
-- `//go:noinline` on non-function declarations
-- Unknown or misspelled directive names
-- Directive separated from its target by blank lines
-- `//go:generate` with malformed command
+- Place `//go:noinline` and similar directives only on function declarations
+- Use correct directive names — fix misspelled or unknown directives
+- Place directives directly above their target without intervening blank lines
+- Fix malformed `//go:generate` commands — ensure valid shell syntax
 </patterns>
 
 <related>

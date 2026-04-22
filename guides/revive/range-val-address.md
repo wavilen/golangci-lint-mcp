@@ -23,11 +23,11 @@ for i := range items {
 </examples>
 
 <patterns>
-- Taking `&v` where `v` is a range variable and appending to a slice
-- Passing `&v` to goroutines inside a range loop
-- Storing pointers to range variables in a map
-- Range over slice of values with address-of operations
-- Capturing `&v` in a closure that runs after the loop
+- Use `&items[i]` instead of `&v` when appending pointers from a range loop
+- Pass values directly to goroutines as parameters instead of taking `&v` inside range loops
+- Use indexing into the original slice instead of storing pointers to range variables in a map
+- Use the range value to a local variable before taking its address
+- Use a copy of the value in a closure instead of `&v` when the closure runs after the loop
 </patterns>
 
 <related>

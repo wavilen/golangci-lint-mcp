@@ -27,10 +27,10 @@ if !useTLS {
 </examples>
 
 <patterns>
-- Same value assigned in both `if` and `else` branches
-- Variable reassigned immediately after declaration with same value
-- Redundant reassignment in switch cases
-- Conditional that always assigns the same result
+- Extract identical assignments from `if`/`else` branches to a single assignment before the branch
+- Remove reassignment immediately after declaration with the same value
+- Remove redundant reassignment in switch cases
+- Remove conditional that always assigns the same result — assign once unconditionally
 </patterns>
 
 <related>

@@ -23,11 +23,11 @@ bits &= mask
 </examples>
 
 <patterns>
-- `x = x + y` → `x += y`
-- `x = x - y` → `x -= y`
-- `x = x * y` → `x *= y`
-- `x = x & mask` → `x &= mask`
-- String concatenation in loops: `s = s + t` → `s += t`
+- Replace `x = x + y` with `x += y`
+- Replace `x = x - y` with `x -= y`
+- Replace `x = x * y` with `x *= y`
+- Replace `x = x & mask` with `x &= mask`
+- Replace `s = s + t` loop concatenation with `s += t`
 </patterns>
 
 <related>

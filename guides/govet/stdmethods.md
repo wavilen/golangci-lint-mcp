@@ -23,11 +23,11 @@ func (m MyType) String() string {
 </examples>
 
 <patterns>
-- `String()` not returning `string`
-- `Error()` not returning `string`
-- `Read(p []byte)` not returning `(int, error)`
-- `Write(p []byte)` not returning `(int, error)`
-- `MarshalJSON()` not returning `([]byte, error)`
+- Ensure `String()` methods return `string` — fix the return type
+- Ensure `Error()` methods return `string` — fix the return type
+- Ensure `Read(p []byte)` returns `(int, error)` — match the `io.Reader` signature
+- Ensure `Write(p []byte)` returns `(int, error)` — match the `io.Writer` signature
+- Ensure `MarshalJSON()` returns `([]byte, error)` — match the `json.Marshaler` signature
 </patterns>
 
 <related>

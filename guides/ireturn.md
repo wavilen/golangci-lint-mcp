@@ -31,10 +31,10 @@ func NewStore(path string) (*os.File, error) {
 </examples>
 
 <patterns>
-- Factory functions returning interface types instead of concrete implementations
-- Constructor-style functions that unnecessarily hide the concrete type
-- Functions returning `error` interface wrapped in another interface
-- Providers that return `io.Reader` when a concrete `*bytes.Buffer` would suffice
+- Return concrete types from factory functions and let callers abstract as needed
+- Declare the concrete return type in constructors instead of hiding it behind an interface
+- Return `error` directly rather than wrapping it in another interface
+- Return `*bytes.Buffer` instead of `io.Reader` when the concrete type suffices
 </patterns>
 
 <related>

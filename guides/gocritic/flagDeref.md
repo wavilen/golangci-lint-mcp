@@ -25,10 +25,10 @@ func main() {
 </examples>
 
 <patterns>
-- Package-level `var x = *flag.String(...)` dereferences before parse
-- Dereferencing flag pointers in `var` blocks
-- `*flag.Bool(...)` in global variable declarations
-- Using flag values in `init()` functions
+- Dereference flags after `flag.Parse()` — avoid `var x = *flag.String(...)` at package level
+- Move flag dereferences from `var` blocks to `func main()` after `flag.Parse()`
+- Replace `*flag.Bool(...)` in global declarations with pointer access after parse
+- Use flag pointer values only after `flag.Parse()` — never in `init()` functions
 </patterns>
 
 <related>

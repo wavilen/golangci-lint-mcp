@@ -18,3 +18,13 @@ msg := fmt.Sprintf("status: %d", code)
 log.Println(msg)
 ```
 </examples>
+
+<patterns>
+- Capture the return value from function calls that produce meaningful output
+- Use `fmt.Sprintf` result directly or assign it — never discard it
+- Check for ignored returns from `append`, `strings.Builder` methods, and formatter functions
+</patterns>
+
+<related>
+ineffassign, wastedassign
+</related>

@@ -19,10 +19,10 @@ flag.Int("max-retries", 3, "maximum retry count")
 </examples>
 
 <patterns>
-- Flag names with underscores: `db_host`
-- CamelCase flag names: `maxRetries`
-- Mixed naming conventions across flags in the same program
-- Flag names starting with uppercase letters
+- Replace underscores in flag names with hyphens — use `db-host` not `db_host`
+- Use `kebab-case` for flag names — avoid `maxRetries`, use `max-retries`
+- Use consistent naming convention across all flags in the same program
+- Use lowercase for flag names — avoid uppercase starting letters
 </patterns>
 
 <related>

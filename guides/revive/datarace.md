@@ -31,11 +31,11 @@ func inc() {
 </examples>
 
 <patterns>
-- Goroutines accessing shared variables without locks or atomics
-- Non-thread-safe map access from multiple goroutines
-- Shared slices appended to from concurrent goroutines
-- WaitGroup `Add` called inside the spawned goroutine instead of before
-- Closing over loop variables that are modified concurrently
+- Guard shared variables accessed from goroutines with `sync.Mutex` or `sync/atomic`
+- Use `sync.Map` or mutex-protected maps for concurrent map access from multiple goroutines
+- Guard shared slice appends from concurrent goroutines with a mutex
+- Call `wg.Add` before spawning a goroutine — never inside it
+- Use loop variables by value when closing over them in concurrent goroutines
 </patterns>
 
 <related>

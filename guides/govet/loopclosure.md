@@ -28,9 +28,9 @@ for _, v := range values {
 </examples>
 
 <patterns>
-- Goroutine launched inside loop referencing loop variable
-- Defer inside loop capturing loop variable by reference
-- Closure passed to `go` or `defer` with loop variable in body
+- Copy loop variables locally (`v := v`) before launching goroutines that reference them
+- Pass loop variables as arguments to deferred functions inside loops
+- Pass loop variables as closure parameters to `go` and `defer` calls
 </patterns>
 
 <related>

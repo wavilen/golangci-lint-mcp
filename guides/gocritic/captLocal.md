@@ -25,10 +25,10 @@ func calculate() int {
 </examples>
 
 <patterns>
-- Short-lived local variables with `PascalCase` names
-- Loop iteration variables with capitalized names
-- Receiver names that are capitalized
-- Block-scoped variables that look like exported symbols
+- Rename short-lived `PascalCase` locals to `camelCase`
+- Rename loop iteration variables with capitalized names to lowercase
+- Use lowercase receiver names — avoid capitalized receiver names
+- Rename block-scoped variables that look like exported symbols
 </patterns>
 
 <related>

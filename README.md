@@ -56,13 +56,13 @@ This installs with the exact version from `git describe --tags` injected via ldf
 **One-command install (recommended):**
 
 ```bash
-npx golangci-lint-guide
+npx @wavilen/golangci-lint-guide
 ```
 
 **Or install globally:**
 
 ```bash
-npm install -g golangci-lint-guide
+npm install -g @wavilen/golangci-lint-guide
 golangci-lint-guide
 ```
 
@@ -241,7 +241,7 @@ Query `errchek` → server suggests "Did you mean \"errcheck\"?" using fuzzy mat
 The `/golangci-lint-guide` skill teaches agents the full fix workflow. Install it with:
 
 ```bash
-npx golangci-lint-guide
+npx @wavilen/golangci-lint-guide
 ```
 
 Or from source: `make install-skill`

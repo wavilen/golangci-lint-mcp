@@ -7,13 +7,6 @@ Replace every occurrence of `interface{}` with `any`. They are type aliases, so 
 </instructions>
 
 <examples>
-## Bad
-```go
-func Process(data interface{}) error
-var items []interface{}
-func Marshal(v interface{}) ([]byte, error)
-```
-
 ## Good
 ```go
 func Process(data any) error
@@ -31,4 +24,5 @@ func Marshal(v any) ([]byte, error)
 </patterns>
 
 <related>
-use-errors-new, use-fmt-print, use-slices-sort
+revive/use-errors-new, revive/use-fmt-print, revive/use-slices-sort
+</related>

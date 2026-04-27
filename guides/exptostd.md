@@ -7,13 +7,6 @@ Replace the third-party import with the equivalent standard library function or 
 </instructions>
 
 <examples>
-## Bad
-```go
-import "golang.org/x/exp/slices"
-
-sorted := slices.Sort(nums)
-```
-
 ## Good
 ```go
 import "slices"
@@ -31,3 +24,4 @@ sorted := slices.Sort(nums)
 
 <related>
 depguard, gomodguard, usestdlibvars
+</related>

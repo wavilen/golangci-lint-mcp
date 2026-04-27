@@ -7,12 +7,6 @@ Follow Go naming conventions: use PascalCase for exported names, camelCase for u
 </instructions>
 
 <examples>
-## Bad
-```go
-type httpHandler struct{} // unexported but looks like it wraps http
-const max_retries = 3     // snake_case in Go
-```
-
 ## Good
 ```go
 type httpHandler struct{} // unexported, fine if truly internal
@@ -29,4 +23,5 @@ const maxRetries = 3      // camelCase for unexported
 </patterns>
 
 <related>
-unexported-return, var-naming, receiver-naming
+revive/unexported-return, revive/var-naming, revive/receiver-naming
+</related>

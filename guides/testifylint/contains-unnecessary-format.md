@@ -5,11 +5,6 @@ Detects usage of formatted assertion variants (`assert.Containsf`) when the form
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Containsf(t, haystack, needle, "msg %d", 1)
-```
-
 ## Good
 ```go
 assert.Contains(t, haystack, needle, "msg", 1)
@@ -23,4 +18,5 @@ assert.Contains(t, haystack, needle, "msg", 1)
 </patterns>
 
 <related>
-formatter, expected-actual
+testifylint/formatter, testifylint/expected-actual
+</related>

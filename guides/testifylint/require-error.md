@@ -5,12 +5,6 @@ Detects missing error assertion before using the result of a function that retur
 </instructions>
 
 <examples>
-## Bad
-```go
-result, err := strconv.Atoi(input)
-assert.Equal(t, 42, result) // what if err != nil?
-```
-
 ## Good
 ```go
 result, err := strconv.Atoi(input)
@@ -26,4 +20,5 @@ assert.Equal(t, 42, result)
 </patterns>
 
 <related>
-go-require, error-nil
+testifylint/go-require, testifylint/error-nil
+</related>

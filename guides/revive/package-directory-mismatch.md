@@ -7,12 +7,6 @@ Rename the package declaration to match the directory name, or rename the direct
 </instructions>
 
 <examples>
-## Bad
-```go
-// file: pkg/helpers/util.go
-package utils // mismatch: directory is "helpers"
-```
-
 ## Good
 ```go
 // file: pkg/helpers/helpers.go
@@ -29,4 +23,5 @@ package helpers
 </patterns>
 
 <related>
-package-comments, package-naming
+revive/package-comments, revive/package-naming
+</related>

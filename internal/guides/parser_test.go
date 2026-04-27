@@ -140,6 +140,102 @@ Detects suspicious function calls.
 				assert.True(t, guide.IsCompound())
 			},
 		},
+		{
+			name:     "related tag parsed as []string",
+			filename: "errcheck.md",
+			content: `# errcheck
+
+<instructions>
+Errcheck detects unchecked error returns.
+</instructions>
+
+<related>errcheck, govet, gosec/G101</related>
+`,
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Equal(t, []string{"errcheck", "govet", "gosec/G101"}, guide.Related)
+			},
+		},
+		{
+			name:     "compound related refs preserved",
+			filename: "gosec/G204.md",
+			content: `# G204
+
+<instructions>
+Detects command execution.
+</instructions>
+
+<related>gosec/G201, gosec/G202, gosec/G304</related>
+`,
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Equal(t, []string{"gosec/G201", "gosec/G202", "gosec/G304"}, guide.Related)
+			},
+		},
+		{
+			name:     "missing related tag gives nil",
+			filename: "bare.md",
+			content: `# bare
+
+<instructions>
+Some instructions.
+</instructions>
+`,
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Nil(t, guide.Related)
+			},
+		},
+		{
+			name:     "empty related tag gives nil",
+			filename: "empty.md",
+			content: `# empty
+
+<instructions>
+Some instructions.
+</instructions>
+
+<related>
+
+</related>
+`,
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Nil(t, guide.Related)
+			},
+		},
+		{
+			name:     "whitespace in related refs trimmed",
+			filename: "ws.md",
+			content: `# ws
+
+<instructions>
+Some instructions.
+</instructions>
+
+<related>  errcheck  ,  govet  </related>
+`,
+			wantErr:     false,
+			errContains: "",
+			check: func(t *testing.T, guide *Guide) {
+				assert.Equal(t, []string{"errcheck", "govet"}, guide.Related)
+			},
+		},
+		{
+			name:     "related only without primary tags rejected",
+			filename: "relatedonly.md",
+			content: `# relatedonly
+
+<related>errcheck, govet</related>
+`,
+			wantErr:     true,
+			errContains: "must contain at least one recognized XML tag",
+			check:       nil,
+		},
 	}
 
 	for _, testCase := range tests {

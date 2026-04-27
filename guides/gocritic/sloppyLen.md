@@ -7,13 +7,6 @@ Use the idiomatic emptiness check: compare to empty string, use `len()` only whe
 </instructions>
 
 <examples>
-## Bad
-```go
-if len(name) == 0 {
-    return errors.New("name required")
-}
-```
-
 ## Good
 ```go
 if name == "" {
@@ -30,5 +23,5 @@ if name == "" {
 </patterns>
 
 <related>
-sloppyReassign, sloppyTypeAssert, offBy1
+gocritic/sloppyReassign, gocritic/sloppyTypeAssert, gocritic/offBy1
 </related>

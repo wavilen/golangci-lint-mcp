@@ -5,15 +5,6 @@ Detects focused Ginkgo containers (`FDescribe`, `FContext`, `FIt`, `FWhen`) left
 </instructions>
 
 <examples>
-## Bad
-```go
-var _ = Describe("parser", func() {
-    FIt("handles edge case", func() {  // skips all other tests!
-        Expect(Parse("")).To(HaveOccurred())
-    })
-})
-```
-
 ## Good
 ```go
 var _ = Describe("parser", func() {
@@ -31,4 +22,5 @@ var _ = Describe("parser", func() {
 </patterns>
 
 <related>
-spec-pollution, expect-to
+ginkgolinter/spec-pollution, ginkgolinter/expect-to
+</related>

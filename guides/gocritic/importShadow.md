@@ -7,15 +7,6 @@ Rename the local identifier to avoid colliding with the imported package name.
 </instructions>
 
 <examples>
-## Bad
-```go
-import "fmt"
-
-func process(fmt string) {
-	fmt.Println(fmt) // fmt is now a string, not the package
-}
-```
-
 ## Good
 ```go
 import "fmt"
@@ -34,5 +25,5 @@ func process(format string) {
 </patterns>
 
 <related>
-builtinShadow, builtinShadowDecl, dupImport
+gocritic/builtinShadow, gocritic/builtinShadowDecl, gocritic/dupImport
 </related>

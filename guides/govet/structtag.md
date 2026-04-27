@@ -7,14 +7,6 @@ Fix tag format to follow the convention: `json:"fieldname,omitempty"`.
 </instructions>
 
 <examples>
-## Bad
-```go
-type User struct {
-    Name string `json:"name" json:"username"` // duplicate key
-    Email string `json:"email, string"`       // space after comma is invalid
-}
-```
-
 ## Good
 ```go
 type User struct {
@@ -32,5 +24,5 @@ type User struct {
 </patterns>
 
 <related>
-composites, stdmethods
+govet/composites, govet/stdmethods
 </related>

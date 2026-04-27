@@ -7,15 +7,6 @@ Move global state into structs passed explicitly as dependencies. Use function-s
 </instructions>
 
 <examples>
-## Bad
-```go
-var cache = map[string]string{}
-
-func Get(key string) string {
-    return cache[key]
-}
-```
-
 ## Good
 ```go
 type Cache struct {

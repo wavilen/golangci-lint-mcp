@@ -5,13 +5,6 @@ Detects manual slice clearing patterns like `for i := range s { s[i] = zero }` o
 </instructions>
 
 <examples>
-## Bad
-```go
-for i := range buf {
-    buf[i] = 0
-}
-```
-
 ## Good
 ```go
 clear(buf)
@@ -25,4 +18,5 @@ clear(buf)
 </patterns>
 
 <related>
-stringappend, slicesort
+modernize/stringappend, modernize/slicesort
+</related>

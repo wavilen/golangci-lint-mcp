@@ -7,13 +7,6 @@ Pass `*sync.WaitGroup` to functions, and call `wg.Add(1)` before launching the g
 </instructions>
 
 <examples>
-## Bad
-```go
-func worker(wg sync.WaitGroup) { // passed by value — copy of counter
-    defer wg.Done()
-}
-```
-
 ## Good
 ```go
 func worker(wg *sync.WaitGroup) { // pointer — shared counter
@@ -30,5 +23,5 @@ func worker(wg *sync.WaitGroup) { // pointer — shared counter
 </patterns>
 
 <related>
-copylocks, atomic
+govet/copylocks, govet/atomic, revive/waitgroup-by-value
 </related>

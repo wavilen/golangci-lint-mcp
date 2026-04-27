@@ -7,13 +7,6 @@ Replace `strings.Index(s, sub) >= 0` with `strings.Contains(s, sub)`, and `strin
 </instructions>
 
 <examples>
-## Bad
-```go
-if strings.Index(line, "error") != -1 {
-    log.Println("error found")
-}
-```
-
 ## Good
 ```go
 if strings.Contains(line, "error") {
@@ -30,4 +23,5 @@ if strings.Contains(line, "error") {
 </patterns>
 
 <related>
-equalFold, preferDecodeRune, stringXbytes
+gocritic/equalFold, gocritic/preferDecodeRune, gocritic/stringXbytes
+</related>

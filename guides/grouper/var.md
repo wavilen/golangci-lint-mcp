@@ -5,13 +5,6 @@ Detects multiple consecutive `var` declarations that can be grouped into a singl
 </instructions>
 
 <examples>
-## Bad
-```go
-var defaultTimeout = 30 * time.Second
-var maxRetries = 3
-var enableCache = true
-```
-
 ## Good
 ```go
 var (
@@ -29,4 +22,5 @@ var (
 </patterns>
 
 <related>
-const, type, import
+grouper/const, grouper/type, grouper/import
+</related>

@@ -7,13 +7,6 @@ Rename the variable or type to avoid colliding with the built-in identifier. Use
 </instructions>
 
 <examples>
-## Bad
-```go
-var true = false
-var append = func(items ...int) []int { ... }
-error := "something went wrong"
-```
-
 ## Good
 ```go
 var isValid = false
@@ -31,4 +24,5 @@ errMsg := "something went wrong"
 </patterns>
 
 <related>
-var-naming, confusing-naming
+revive/var-naming, revive/confusing-naming
+</related>

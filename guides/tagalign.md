@@ -7,15 +7,6 @@ Align struct tag key-value pairs into columns so each tag type (`json`, `yaml`, 
 </instructions>
 
 <examples>
-## Bad
-```go
-type User struct {
-    Name string `json:"name" validate:"required"`
-    Age  int    `json:"age"`
-    Email string `json:"email" validate:"required,email"`
-}
-```
-
 ## Good
 ```go
 type User struct {

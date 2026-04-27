@@ -5,6 +5,9 @@
   "bin": {
     "golangci-lint-guide": "./bin/install.js"
   },
+  "scripts": {
+    "lint": "eslint plugins/ shared/ hooks/ bin/install.js"
+  },
   "files": [
     "bin/",
     "skills/",
@@ -33,6 +36,9 @@
     "url": "https://github.com/wavilen/golangci-lint-mcp"
   },
   "devDependencies": {
-    "desloppify": "^1.0.1"
+    "@eslint/js": "^10.0.1",
+    "desloppify": "^1.0.1",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0"
   }
 }

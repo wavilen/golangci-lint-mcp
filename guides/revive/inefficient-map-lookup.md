@@ -7,14 +7,6 @@ Replace the double lookup with a single comma-ok map access.
 </instructions>
 
 <examples>
-## Bad
-```go
-if _, ok := cache[key]; ok {
-    result := cache[key] // second lookup
-    process(result)
-}
-```
-
 ## Good
 ```go
 if result, ok := cache[key]; ok {
@@ -32,4 +24,5 @@ if result, ok := cache[key]; ok {
 </patterns>
 
 <related>
-datarace
+revive/datarace
+</related>

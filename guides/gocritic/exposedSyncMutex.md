@@ -7,14 +7,6 @@ Make sync fields unexported and provide methods that encapsulate the locking beh
 </instructions>
 
 <examples>
-## Bad
-```go
-type Server struct {
-	Mu    sync.Mutex
-	Count int
-}
-```
-
 ## Good
 ```go
 type Server struct {
@@ -38,5 +30,5 @@ func (s *Server) Increment() {
 </patterns>
 
 <related>
-captLocal, underef
+gocritic/captLocal, gocritic/underef
 </related>

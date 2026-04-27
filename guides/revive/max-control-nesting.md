@@ -7,22 +7,6 @@ Use early returns, extract nested logic into helper functions, or restructure wi
 </instructions>
 
 <examples>
-## Bad
-```go
-func handle(req Request) error {
-    if req.Valid {
-        if req.Auth {
-            if req.HasPermission {
-                if req.RateLimitOk {
-                    return process(req)
-                }
-            }
-        }
-    }
-    return errors.New("rejected")
-}
-```
-
 ## Good
 ```go
 func handle(req Request) error {
@@ -52,4 +36,5 @@ func handle(req Request) error {
 </patterns>
 
 <related>
-cognitive-complexity, cyclomatic, early-return, indent-error-flow
+revive/cognitive-complexity, revive/cyclomatic, revive/early-return, revive/indent-error-flow
+</related>

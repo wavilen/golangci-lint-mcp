@@ -7,13 +7,6 @@ Use `s == ""` for string emptiness checks instead of `len(s) == 0`.
 </instructions>
 
 <examples>
-## Bad
-```go
-if len(name) == 0 {
-	return errors.New("name required")
-}
-```
-
 ## Good
 ```go
 if name == "" {
@@ -29,5 +22,5 @@ if name == "" {
 </patterns>
 
 <related>
-stringConcatSimplify, stringsCompare
+gocritic/stringConcatSimplify, gocritic/stringsCompare
 </related>

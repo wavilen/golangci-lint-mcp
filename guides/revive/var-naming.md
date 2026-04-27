@@ -7,15 +7,6 @@ Rename variables to follow camelCase without underscores. Shorten overly verbose
 </instructions>
 
 <examples>
-## Bad
-```go
-user_name := "Alice"
-http_request := buildRequest()
-for user_index := range users {
-    process(users[user_index])
-}
-```
-
 ## Good
 ```go
 userName := "Alice"
@@ -35,4 +26,5 @@ for i := range users {
 </patterns>
 
 <related>
-var-declaration, receiver-naming, unexported-naming, package-naming
+revive/var-declaration, revive/receiver-naming, revive/unexported-naming, revive/package-naming
+</related>

@@ -7,16 +7,6 @@ Insert a blank line before each `return` statement. Short single-line functions 
 </instructions>
 
 <examples>
-## Bad
-```go
-func resolve(cfg Config) (string, error) {
-    if cfg.Host == "" {
-        return "", errors.New("host required")
-    }
-    return cfg.Host + ":" + cfg.Port, nil
-}
-```
-
 ## Good
 ```go
 func resolve(cfg Config) (string, error) {

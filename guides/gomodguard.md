@@ -7,19 +7,14 @@ Replace the blocked module with the approved alternative specified in `.golangci
 </instructions>
 
 <examples>
-## Bad
-```go
-import "io/ioutil" // deprecated since Go 1.16
-
-func readConfig(path string) ([]byte, error) {
-    return ioutil.ReadFile(path)
-}
-```
-
 ## Good
 ```go
 func readConfig(path string) ([]byte, error) {
-    return os.ReadFile(path)
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("reading config file: %w", err)
+    }
+    return data, nil
 }
 ```
 </examples>

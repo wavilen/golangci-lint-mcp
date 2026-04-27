@@ -7,13 +7,6 @@ Replace the decimal literal with its hex equivalent (e.g., `255` → `0xFF`, `40
 </instructions>
 
 <examples>
-## Bad
-```go
-const mask = 255
-const perm = 493 // octal 0755 in decimal
-const page = 4096
-```
-
 ## Good
 ```go
 const mask = 0xFF
@@ -29,5 +22,5 @@ const page = 0x1000
 </patterns>
 
 <related>
-octalLiteral
+gocritic/octalLiteral
 </related>

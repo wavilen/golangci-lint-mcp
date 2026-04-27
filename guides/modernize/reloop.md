@@ -5,15 +5,6 @@ Detects patterns where a loop can be simplified by using a different range form 
 </instructions>
 
 <examples>
-## Bad
-```go
-if items != nil {
-    for i := range *items {
-        process((*items)[i])
-    }
-}
-```
-
 ## Good
 ```go
 for _, item := range items {
@@ -29,4 +20,5 @@ for _, item := range items {
 </patterns>
 
 <related>
-simplifyrange, loopvar
+modernize/simplifyrange, modernize/loopvar
+</related>

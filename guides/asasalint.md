@@ -5,12 +5,6 @@ Asasalint detects passing `any` values to `fmt.Sprintf`-like functions where the
 </instructions>
 
 <examples>
-## Bad
-```go
-var val any = "hello"
-fmt.Sprintf("%d", val)
-```
-
 ## Good
 ```go
 var val any = "hello"
@@ -26,3 +20,4 @@ fmt.Sprintf("%s", val)
 
 <related>
 errcheck, govet, gosmopolitan
+</related>

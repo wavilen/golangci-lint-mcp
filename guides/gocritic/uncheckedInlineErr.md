@@ -7,12 +7,6 @@ Check the error immediately after the call. Do not defer error handling when the
 </instructions>
 
 <examples>
-## Bad
-```go
-data, _ := os.ReadFile(path) // error ignored
-lines := strings.Split(string(data), "\n")
-```
-
 ## Good
 ```go
 data, err := os.ReadFile(path)
@@ -31,5 +25,5 @@ lines := strings.Split(string(data), "\n")
 </patterns>
 
 <related>
-externalErrorReassign, nilValReturn, sqlQuery
+gocritic/externalErrorReassign, gocritic/nilValReturn, gocritic/sqlQuery
 </related>

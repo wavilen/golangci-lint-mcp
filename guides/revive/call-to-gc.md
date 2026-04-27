@@ -7,16 +7,6 @@ Remove the `runtime.GC()` call. If you need to force a GC cycle for benchmarking
 </instructions>
 
 <examples>
-## Bad
-```go
-func processBatch(items []Item) {
-    for _, item := range items {
-        handle(item)
-        runtime.GC() // forces full GC on every iteration
-    }
-}
-```
-
 ## Good
 ```go
 func processBatch(items []Item) {
@@ -37,4 +27,5 @@ func processBatch(items []Item) {
 </patterns>
 
 <related>
-deep-exit
+revive/deep-exit
+</related>

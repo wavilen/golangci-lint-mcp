@@ -7,13 +7,6 @@ Perform pointer arithmetic in a single expression: `unsafe.Pointer(uintptr(p) + 
 </instructions>
 
 <examples>
-## Bad
-```go
-p := unsafe.Pointer(&x)
-offset := uintptr(p) + 16 // stored uintptr — GC may invalidate
-q := unsafe.Pointer(offset)
-```
-
 ## Good
 ```go
 p := unsafe.Pointer(&x)
@@ -28,5 +21,5 @@ q := unsafe.Pointer(uintptr(p) + 16) // single expression — safe
 </patterns>
 
 <related>
-cgocall, framepointer
+govet/cgocall, govet/framepointer
 </related>

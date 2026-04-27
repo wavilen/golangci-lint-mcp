@@ -7,12 +7,6 @@ Replace `http://` URLs with `https://` equivalents. If the service genuinely req
 </instructions>
 
 <examples>
-## Bad
-```go
-const apiURL = "http://api.example.com/v1/users"
-resp, err := http.Get("http://metadata.internal/role")
-```
-
 ## Good
 ```go
 const apiURL = "https://api.example.com/v1/users"
@@ -29,4 +23,5 @@ resp, err := http.Get("https://metadata.internal/role")
 </patterns>
 
 <related>
-unhandled-error, datarace
+revive/unhandled-error, revive/datarace
+</related>

@@ -7,16 +7,6 @@ Replace `t1 == t2` with `t1.Equal(t2)` and `t1 != t2` with `!t1.Equal(t2)`.
 </instructions>
 
 <examples>
-## Bad
-```go
-if startTime == endTime {
-    return errors.New("zero duration")
-}
-if t != time.Time{} {
-    process(t)
-}
-```
-
 ## Good
 ```go
 if startTime.Equal(endTime) {
@@ -37,4 +27,5 @@ if !t.IsZero() {
 </patterns>
 
 <related>
-time-date, time-naming, staticcheck/SA9004
+revive/time-date, revive/time-naming, staticcheck/SA9004
+</related>

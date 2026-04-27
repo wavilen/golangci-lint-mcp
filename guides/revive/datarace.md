@@ -7,17 +7,6 @@ Protect shared state with `sync.Mutex`, `sync.RWMutex`, channels, or `sync/atomi
 </instructions>
 
 <examples>
-## Bad
-```go
-var counter int
-
-func inc() {
-    go func() {
-        counter++ // data race: unsynchronized write
-    }()
-}
-```
-
 ## Good
 ```go
 var counter int64
@@ -39,4 +28,5 @@ func inc() {
 </patterns>
 
 <related>
-atomic, copyloopvar
+revive/atomic, copyloopvar
+</related>

@@ -7,17 +7,6 @@ Change the receiver to a pointer (`*T`) if mutation is intended, or remove the m
 </instructions>
 
 <examples>
-## Bad
-```go
-type Counter struct {
-    count int
-}
-
-func (c Counter) Increment() {
-    c.count++ // modifies a copy — original unchanged
-}
-```
-
 ## Good
 ```go
 type Counter struct {
@@ -39,4 +28,5 @@ func (c *Counter) Increment() {
 </patterns>
 
 <related>
-modifies-parameter, get-return
+revive/modifies-parameter, revive/get-return
+</related>

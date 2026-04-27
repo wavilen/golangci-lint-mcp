@@ -7,12 +7,6 @@ Use `strconv.Itoa`, `strconv.FormatInt`, `strconv.FormatFloat`, or simple string
 </instructions>
 
 <examples>
-## Bad
-```go
-s := fmt.Sprintf("%d", port)
-s := fmt.Sprintf("%s", name)
-```
-
 ## Good
 ```go
 s := strconv.Itoa(port)
@@ -28,5 +22,5 @@ s := name // no conversion needed
 </patterns>
 
 <related>
-nosprintfhostport, govet, errcheck
+nosprintfhostport, govet/printf, errcheck
 </related>

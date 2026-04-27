@@ -5,13 +5,6 @@ Makezero detects slice declarations with a non-zero initial length passed to `ma
 </instructions>
 
 <examples>
-## Bad
-```go
-items := make([]string, 10)
-items = append(items, "hello")
-// items[0:10] are empty strings, "hello" is at index 10
-```
-
 ## Good
 ```go
 items := make([]string, 0, 10)
@@ -27,3 +20,4 @@ items = append(items, "hello")
 
 <related>
 prealloc, govet, staticcheck
+</related>

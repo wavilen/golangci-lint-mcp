@@ -7,19 +7,6 @@ Remove the comparison to the boolean literal and use the boolean expression dire
 </instructions>
 
 <examples>
-## Bad
-```go
-if isActive == true {
-    process()
-}
-if isEnabled == false {
-    disable()
-}
-if ! (isValid == true) {
-    handleError()
-}
-```
-
 ## Good
 ```go
 if isActive {
@@ -43,4 +30,5 @@ if !isValid {
 </patterns>
 
 <related>
-constant-logical-expr, simplify-computation
+revive/constant-logical-expr
+</related>

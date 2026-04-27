@@ -7,12 +7,6 @@ Use the correct `reflect.Value` method: call `Elem()` to dereference pointer val
 </instructions>
 
 <examples>
-## Bad
-```go
-v := reflect.ValueOf(&x)
-name := v.Type().Name() // returns empty string for pointer
-```
-
 ## Good
 ```go
 v := reflect.ValueOf(&x)
@@ -29,3 +23,4 @@ name := v.Elem().Type().Name() // dereferences pointer first
 
 <related>
 forcetypeassert, musttag, exptostd
+</related>

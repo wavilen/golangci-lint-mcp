@@ -7,18 +7,6 @@ Return a meaningful zero-value, a sentinel error, or a wrapper type instead.
 </instructions>
 
 <examples>
-## Bad
-```go
-func FindUser(id int) (*User, error) {
-    row := db.QueryRow("SELECT ...", id)
-    var u User
-    if err := row.Scan(&u.ID, &u.Name); err != nil {
-        return nil, nil // ambiguous: found nothing? errored?
-    }
-    return &u, nil
-}
-```
-
 ## Good
 ```go
 func FindUser(id int) (*User, error) {
@@ -43,3 +31,4 @@ func FindUser(id int) (*User, error) {
 
 <related>
 nilerr, errcheck, govet
+</related>

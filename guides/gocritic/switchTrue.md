@@ -7,18 +7,6 @@ Remove the `true` from `switch true` — use bare `switch` instead.
 </instructions>
 
 <examples>
-## Bad
-```go
-switch true {
-case x > 0:
-	positive()
-case x < 0:
-	negative()
-default:
-	zero()
-}
-```
-
 ## Good
 ```go
 switch {
@@ -38,5 +26,5 @@ default:
 </patterns>
 
 <related>
-singleCaseSwitch, ifElseChain
+gocritic/singleCaseSwitch, gocritic/ifElseChain
 </related>

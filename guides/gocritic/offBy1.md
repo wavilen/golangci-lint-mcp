@@ -7,11 +7,6 @@ Use the correct index. Remember that Go slices are zero-indexed and the last val
 </instructions>
 
 <examples>
-## Bad
-```go
-last := items[len(items)] // panic: index out of range
-```
-
 ## Good
 ```go
 last := items[len(items)-1]
@@ -26,5 +21,5 @@ last := items[len(items)-1]
 </patterns>
 
 <related>
-truncateCmp, badCond, sloppyLen
+gocritic/truncateCmp, gocritic/badCond, gocritic/sloppyLen
 </related>

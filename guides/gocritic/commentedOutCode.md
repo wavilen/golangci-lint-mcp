@@ -7,14 +7,6 @@ Remove commented-out code. If code might be needed later, rely on git history.
 </instructions>
 
 <examples>
-## Bad
-```go
-// result := process(data)
-// if result.Err != nil {
-//     return result.Err
-// }
-```
-
 ## Good
 ```go
 // Delete the commented code entirely.

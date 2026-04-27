@@ -7,13 +7,6 @@ Use the compound operator form for clarity and brevity.
 </instructions>
 
 <examples>
-## Bad
-```go
-count = count + 1
-name = name + suffix
-bits = bits & mask
-```
-
 ## Good
 ```go
 count += 1
@@ -31,5 +24,5 @@ bits &= mask
 </patterns>
 
 <related>
-stringConcatSimplify, yodaStyleExpr
+gocritic/stringConcatSimplify, gocritic/yodaStyleExpr
 </related>

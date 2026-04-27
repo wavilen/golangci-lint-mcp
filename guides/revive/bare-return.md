@@ -7,15 +7,6 @@ Replace bare `return` with explicit `return` listing the named return values.
 </instructions>
 
 <examples>
-## Bad
-```go
-func divmod(a, b int) (quotient, remainder int) {
-    quotient = a / b
-    remainder = a % b
-    return // what is returned?
-}
-```
-
 ## Good
 ```go
 func divmod(a, b int) (quotient, remainder int) {
@@ -34,4 +25,5 @@ func divmod(a, b int) (quotient, remainder int) {
 </patterns>
 
 <related>
-early-return, if-return, nakedret
+revive/early-return, revive/if-return, nakedret
+</related>

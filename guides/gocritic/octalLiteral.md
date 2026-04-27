@@ -7,12 +7,6 @@ Replace `0`-prefixed octal literals with the `0o` prefix form.
 </instructions>
 
 <examples>
-## Bad
-```go
-os.MkdirAll(dir, 0755)
-os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0644)
-```
-
 ## Good
 ```go
 os.MkdirAll(dir, 0o755)
@@ -27,5 +21,5 @@ os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0o644)
 </patterns>
 
 <related>
-hexLiteral
+gocritic/hexLiteral
 </related>

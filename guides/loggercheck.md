@@ -7,15 +7,6 @@ Ensure logging calls have even numbers of key-value arguments and use string key
 </instructions>
 
 <examples>
-## Bad
-```go
-slog.Info("request completed",
-    "method", req.Method,
-    "status", resp.StatusCode,
-    "duration", // missing value
-)
-```
-
 ## Good
 ```go
 slog.Info("request completed",
@@ -34,4 +25,5 @@ slog.Info("request completed",
 </patterns>
 
 <related>
-sloglint, zerologlint, sloglint
+sloglint, zerologlint
+</related>

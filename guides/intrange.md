@@ -7,13 +7,6 @@ Replace `for i := 0; i < n; i++` with `for i := range n` when the index starts a
 </instructions>
 
 <examples>
-## Bad
-```go
-for i := 0; i < len(items); i++ {
-    process(items[i])
-}
-```
-
 ## Good
 ```go
 for i := range items {
@@ -31,3 +24,4 @@ for i := range items {
 
 <related>
 prealloc, perfsprint, copyloopvar
+</related>

@@ -7,14 +7,6 @@ Rename identifiers to use only ASCII letters, digits, and underscores. Keep Unic
 </instructions>
 
 <examples>
-## Bad
-```go
-func calculateTotal(prix float64) float64 {
-    réduction := 0.1
-    return prix * (1 - réduction)
-}
-```
-
 ## Good
 ```go
 func calculateTotal(price float64) float64 {

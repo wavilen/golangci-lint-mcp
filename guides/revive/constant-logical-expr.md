@@ -7,19 +7,6 @@ Simplify or remove the constant expression. If one side is always true or false,
 </instructions>
 
 <examples>
-## Bad
-```go
-if isValid && !isValid { // always false
-    handleBoth()
-}
-if !hasPermission || hasPermission { // always true
-    proceed()
-}
-if true && isEnabled { // equivalent to just isEnabled
-    activate()
-}
-```
-
 ## Good
 ```go
 if isValid {
@@ -41,4 +28,5 @@ proceed() // always reached anyway
 </patterns>
 
 <related>
-bool-literal-in-expr, identical-branches
+revive/bool-literal-in-expr, revive/identical-branches
+</related>

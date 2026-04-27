@@ -7,22 +7,6 @@ Invert the condition and return immediately. Flatten the remaining code by one o
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(data []byte) error {
-    if len(data) > 0 {
-        if isValid(data) {
-            result := transform(data)
-            return save(result)
-        } else {
-            return errors.New("invalid data")
-        }
-    } else {
-        return errors.New("empty data")
-    }
-}
-```
-
 ## Good
 ```go
 func process(data []byte) error {
@@ -47,4 +31,5 @@ func process(data []byte) error {
 </patterns>
 
 <related>
-indent-error-flow, if-return, cognitive-complexity
+revive/indent-error-flow, revive/if-return, revive/cognitive-complexity
+</related>

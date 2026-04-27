@@ -7,12 +7,6 @@ Remove the explicit `string()` or `[]byte()` conversion where the target accepts
 </instructions>
 
 <examples>
-## Bad
-```go
-data := []byte("hello")
-fmt.Println(string(data)) // unnecessary string() conversion
-```
-
 ## Good
 ```go
 data := []byte("hello")
@@ -28,4 +22,5 @@ fmt.Println(data) // fmt handles []byte natively
 </patterns>
 
 <related>
-equalFold, preferStringWriter, preferFprint
+gocritic/equalFold, gocritic/preferStringWriter, gocritic/preferFprint
+</related>

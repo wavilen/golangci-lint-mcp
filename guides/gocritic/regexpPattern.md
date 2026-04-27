@@ -7,11 +7,6 @@ Simplify the regex pattern to use the canonical form. Prefer `\d`, `\w`, `\s` ov
 </instructions>
 
 <examples>
-## Bad
-```go
-re := regexp.MustCompile(`[\d]+`) // unnecessary character class
-```
-
 ## Good
 ```go
 re := regexp.MustCompile(`\d+`)
@@ -26,5 +21,5 @@ re := regexp.MustCompile(`\d+`)
 </patterns>
 
 <related>
-badRegexp, dynamicFmtString
+gocritic/badRegexp, gocritic/dynamicFmtString
 </related>

@@ -7,13 +7,6 @@ Use correct, recognized Go version numbers in build constraints.
 </instructions>
 
 <examples>
-## Bad
-```go
-//go:build go1.999
-
-package pkg // version 1.999 does not exist
-```
-
 ## Good
 ```go
 //go:build go1.22
@@ -29,5 +22,5 @@ package pkg // recognized Go version
 </patterns>
 
 <related>
-buildtag, directive
+govet/buildtag, govet/directive
 </related>

@@ -7,15 +7,6 @@ Use `t.TempDir()` in tests, which creates a temporary directory and removes it a
 </instructions>
 
 <examples>
-## Bad
-```go
-func TestParse(t *testing.T) {
-    dir := os.MkdirTemp("", "test")
-    defer os.RemoveAll(dir)
-    // ...
-}
-```
-
 ## Good
 ```go
 func TestParse(t *testing.T) {

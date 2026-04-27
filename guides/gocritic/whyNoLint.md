@@ -7,12 +7,6 @@ Add a reason after the `//nolint` directive: `//nolint:gocritic // reason for su
 </instructions>
 
 <examples>
-## Bad
-```go
-//nolint
-result, _ = doSomething()
-```
-
 ## Good
 ```go
 //nolint:errcheck // error is logged inside doSomething, safe to ignore
@@ -27,5 +21,5 @@ result, _ = doSomething()
 </patterns>
 
 <related>
-todoCommentWithoutDetail, commentFormatting
+gocritic/todoCommentWithoutDetail, gocritic/commentFormatting
 </related>

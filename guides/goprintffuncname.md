@@ -7,13 +7,6 @@ Rename logging or formatting functions to follow the `*f` suffix convention when
 </instructions>
 
 <examples>
-## Bad
-```go
-func logMessage(format string, args ...any) {
-    log.Printf(format, args...)
-}
-```
-
 ## Good
 ```go
 func logMessagef(format string, args ...any) {

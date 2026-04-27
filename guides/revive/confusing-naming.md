@@ -7,17 +7,6 @@ Rename one of the conflicting identifiers to be clearly distinct. Follow Go nami
 </instructions>
 
 <examples>
-## Bad
-```go
-type Config struct {
-    HTTPTimeout int
-    HttpTimeout int // easily confused with HTTPTimeout
-}
-
-func (c *Client) readData()  {}
-func (c *Client) ReadData()  {} // differs only by case
-```
-
 ## Good
 ```go
 type Config struct {
@@ -39,4 +28,5 @@ func (c *Client) fetchData()   {} // distinct name
 </patterns>
 
 <related>
-confusing-results, exported
+revive/confusing-results, revive/exported
+</related>

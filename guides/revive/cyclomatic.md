@@ -7,28 +7,6 @@ Break the function into smaller functions with single responsibilities. Use earl
 </instructions>
 
 <examples>
-## Bad
-```go
-func classify(x int) string {
-    if x > 100 {
-        if x%2 == 0 {
-            return "big-even"
-        } else if x%3 == 0 {
-            return "big-multiple-of-3"
-        }
-        return "big-odd"
-    } else if x > 50 {
-        if x%2 == 0 {
-            return "medium-even"
-        }
-        return "medium-odd"
-    } else if x > 0 {
-        return "small"
-    }
-    return "zero-or-negative"
-}
-```
-
 ## Good
 ```go
 func classify(x int) string {
@@ -55,4 +33,5 @@ func classify(x int) string {
 </patterns>
 
 <related>
-cognitive-complexity, function-length, max-control-nesting, gocyclo
+revive/cognitive-complexity, revive/function-length, revive/max-control-nesting, gocyclo
+</related>

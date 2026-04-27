@@ -7,17 +7,6 @@ Simplify range expressions by removing unused variables or blank identifiers to 
 </instructions>
 
 <examples>
-## Bad
-```go
-for i, _ := range items {
-    slog.Info("index", "i", i)
-}
-
-for _, _ = range items {
-    count++
-}
-```
-
 ## Good
 ```go
 for i := range items {
@@ -37,4 +26,5 @@ for range items {
 </patterns>
 
 <related>
-loopvar, reloop, intrange
+modernize/loopvar, modernize/reloop, intrange
+</related>

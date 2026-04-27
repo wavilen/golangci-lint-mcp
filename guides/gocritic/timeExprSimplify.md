@@ -7,12 +7,6 @@ Use the most concise and readable time duration expression.
 </instructions>
 
 <examples>
-## Bad
-```go
-timeout := time.Second * 30
-dur := time.Minute * 60
-```
-
 ## Good
 ```go
 timeout := 30 * time.Second
@@ -28,5 +22,5 @@ dur := time.Hour
 </patterns>
 
 <related>
-assignOp, hexLiteral
+gocritic/assignOp, gocritic/hexLiteral
 </related>

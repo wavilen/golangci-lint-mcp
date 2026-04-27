@@ -5,12 +5,6 @@ Detects `Expect(x == nil).Should(BeTrue())` or `Expect(x).Should(BeNil())` for e
 </instructions>
 
 <examples>
-## Bad
-```go
-Expect(err == nil).Should(BeTrue())
-Expect(x).Should(BeNil())
-```
-
 ## Good
 ```go
 Expect(err).ShouldNot(HaveOccurred())
@@ -25,4 +19,5 @@ Expect(x).To(BeNil())
 </patterns>
 
 <related>
-error-assertion, succeed-matcher
+ginkgolinter/error-assertion, ginkgolinter/succeed-matcher
+</related>

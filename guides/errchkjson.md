@@ -7,16 +7,6 @@ Ensure all struct fields passed to JSON marshaling have serializable types and a
 </instructions>
 
 <examples>
-## Bad
-```go
-type Config struct {
-    Name    string
-    Handler http.HandlerFunc
-    Ch      chan int
-}
-data, _ := json.Marshal(Config{Name: "test"})
-```
-
 ## Good
 ```go
 type Config struct {
@@ -38,3 +28,4 @@ if err != nil {
 
 <related>
 errcheck, govet, musttag
+</related>

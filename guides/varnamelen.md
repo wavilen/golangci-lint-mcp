@@ -7,17 +7,6 @@ Use descriptive names for variables with large or non-obvious scope. Short names
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(r io.Reader) ([]byte, error) {
-    b, e := io.ReadAll(r)
-    if e != nil {
-        return nil, e
-    }
-    return b, nil
-}
-```
-
 ## Good
 ```go
 func process(reader io.Reader) ([]byte, error) {

@@ -7,13 +7,6 @@ Replace `init()` with an explicit setup function called from `main()` or a const
 </instructions>
 
 <examples>
-## Bad
-```go
-func init() {
-    db.Connect("postgres://...")
-}
-```
-
 ## Good
 ```go
 func NewApp() (*App, error) {

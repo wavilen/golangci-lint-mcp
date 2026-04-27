@@ -7,12 +7,6 @@ Replace `*new(T)` with `var x T` or use a composite literal `T{}`.
 </instructions>
 
 <examples>
-## Bad
-```go
-val := *new(int)
-config := *new(http.Client)
-```
-
 ## Good
 ```go
 var val int
@@ -28,5 +22,5 @@ config := http.Client{}
 </patterns>
 
 <related>
-underef, typeUnparen
+gocritic/underef, gocritic/typeUnparen
 </related>

@@ -7,15 +7,6 @@ Add the appropriate struct tag (`json`, `yaml`, `xml`, etc.) to every exported f
 </instructions>
 
 <examples>
-## Bad
-```go
-type User struct {
-    Name  string
-    Email string
-}
-data, _ := json.Marshal(User{Name: "alice"})
-```
-
 ## Good
 ```go
 type User struct {

@@ -5,13 +5,6 @@ Detects `assert.NoError(t, err)` or `assert.True(t, ...)` at the start of a test
 </instructions>
 
 <examples>
-## Bad
-```go
-result, err := Parse(input)
-assert.NoError(t, err)       // test continues even if err != nil
-assert.Equal(t, 5, result.ID) // panics or gives wrong error
-```
-
 ## Good
 ```go
 result, err := Parse(input)
@@ -27,4 +20,5 @@ assert.Equal(t, 5, result.ID)
 </patterns>
 
 <related>
-require-error, error-nil
+testifylint/require-error, testifylint/error-nil
+</related>

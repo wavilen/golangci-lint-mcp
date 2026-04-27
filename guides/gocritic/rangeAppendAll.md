@@ -7,14 +7,6 @@ Use a separate slice for accumulation, or pre-allocate and copy. Never append fr
 </instructions>
 
 <examples>
-## Bad
-```go
-var all []int
-for _, chunk := range chunks {
-    all = append(all, chunk...) // repeated allocations
-}
-```
-
 ## Good
 ```go
 total := 0
@@ -36,5 +28,5 @@ for _, chunk := range chunks {
 </patterns>
 
 <related>
-appendAssign, sloppyLen, rangeAppendAll
+gocritic/appendAssign, gocritic/sloppyLen, gocritic/rangeAppendAll
 </related>

@@ -7,12 +7,6 @@ Always use parameterized queries with bind variables instead of string concatena
 </instructions>
 
 <examples>
-## Bad
-```go
-query := fmt.Sprintf("FOR u IN users FILTER u.name == '%s' RETURN u", name)
-cursor, err := db.Query(ctx, query, nil)
-```
-
 ## Good
 ```go
 query := "FOR u IN users FILTER u.name == @name RETURN u"
@@ -30,3 +24,4 @@ cursor, err := db.Query(ctx, query, bindVars)
 
 <related>
 sqlclosecheck, noctx, rowserrcheck
+</related>

@@ -7,13 +7,6 @@ Reorder methods so exported methods come first, then unexported. Group all metho
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *Server) start() error { /* ... */ }
-func (s *Server) Start() error { /* ... */ }
-func (s *Server) Stop()  error { /* ... */ }
-```
-
 ## Good
 ```go
 func (s *Server) Start() error { /* ... */ }

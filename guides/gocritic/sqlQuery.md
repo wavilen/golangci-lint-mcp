@@ -7,12 +7,6 @@ Use `db.Exec` for INSERT/UPDATE/DELETE. For `db.Query`, always defer `rows.Close
 </instructions>
 
 <examples>
-## Bad
-```go
-_, err := db.Query("DELETE FROM users WHERE active = false")
-// result rows discarded — use db.Exec instead
-```
-
 ## Good
 ```go
 _, err := db.Exec("DELETE FROM users WHERE active = false")
@@ -27,5 +21,5 @@ _, err := db.Exec("DELETE FROM users WHERE active = false")
 </patterns>
 
 <related>
-uncheckedInlineErr, exitAfterDefer
+gocritic/uncheckedInlineErr, gocritic/exitAfterDefer
 </related>

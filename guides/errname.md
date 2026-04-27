@@ -7,15 +7,6 @@ Rename error types and variables to follow the standard naming convention.
 </instructions>
 
 <examples>
-## Bad
-```go
-type NotFound struct {
-    Msg string
-}
-
-var ErrorNotFound = errors.New("not found")
-```
-
 ## Good
 ```go
 type NotFoundError struct {
@@ -34,3 +25,4 @@ var ErrNotFound = errors.New("not found")
 
 <related>
 errcheck, revive, govet
+</related>

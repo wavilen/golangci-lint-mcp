@@ -5,16 +5,6 @@ Detects multiple consecutive `type` declarations that can be grouped into a sing
 </instructions>
 
 <examples>
-## Bad
-```go
-type Config struct {
-    Host string
-    Port int
-}
-type Option func(*Config)
-type OptionList []Option
-```
-
 ## Good
 ```go
 type (
@@ -32,4 +22,5 @@ type (
 </patterns>
 
 <related>
-const, var, import
+grouper/const, grouper/var, grouper/import
+</related>

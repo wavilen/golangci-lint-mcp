@@ -7,15 +7,6 @@ Replace `var x = expr` with `x := expr` inside functions. Keep `var` for zero-va
 </instructions>
 
 <examples>
-## Bad
-```go
-func process() {
-    var name = "Alice"
-    var count = len(items)
-    var err = doSomething()
-}
-```
-
 ## Good
 ```go
 func process() {
@@ -35,4 +26,5 @@ func process() {
 </patterns>
 
 <related>
-var-naming, unnecessary-stmt
+revive/var-naming, revive/unnecessary-stmt
+</related>

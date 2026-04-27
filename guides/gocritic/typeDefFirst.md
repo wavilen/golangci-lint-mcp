@@ -7,14 +7,6 @@ Move the type definition out of the `case` clause to the package level or before
 </instructions>
 
 <examples>
-## Bad
-```go
-switch v := x.(type) {
-case struct{ Name string }:
-	slog.Info("name", "value", v.Name)
-}
-```
-
 ## Good
 ```go
 type namedItem struct{ Name string }
@@ -32,5 +24,5 @@ case namedItem:
 </patterns>
 
 <related>
-typeSwitchVar, typeUnparen
+gocritic/typeSwitchVar, gocritic/typeUnparen
 </related>

@@ -7,11 +7,6 @@ Use `time.Now()` to get the current time. Use `time.Parse` with a layout string 
 </instructions>
 
 <examples>
-## Bad
-```go
-now := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC)
-```
-
 ## Good
 ```go
 now := time.Now().Truncate(24 * time.Hour)
@@ -27,4 +22,5 @@ now := time.Now().Truncate(24 * time.Hour)
 </patterns>
 
 <related>
-time-equal, time-naming
+revive/time-equal, revive/time-naming
+</related>

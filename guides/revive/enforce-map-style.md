@@ -7,12 +7,6 @@ Configure the preferred style in your revive config and apply it uniformly. Use 
 </instructions>
 
 <examples>
-## Bad
-```go
-// Team uses make-style but this file uses literals
-m := map[string]int{}
-```
-
 ## Good
 ```go
 // Consistent with project style: make
@@ -31,4 +25,5 @@ m := map[string]int{}
 </patterns>
 
 <related>
-enforce-slice-style, enforce-switch-style
+revive/enforce-slice-style, revive/enforce-switch-style
+</related>

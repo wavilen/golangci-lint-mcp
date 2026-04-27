@@ -7,13 +7,6 @@ Remove the useless statement entirely, or if it was meant to have side effects, 
 </instructions>
 
 <examples>
-## Bad
-```go
-x + 1           // result discarded
-len(items)      // no side effect
-_ = 42          // assigning constant to blank identifier
-```
-
 ## Good
 ```go
 result := x + 1
@@ -32,4 +25,5 @@ if len(items) > 0 {
 </patterns>
 
 <related>
-unnecessary-if, unreachable-code, unnecessary-format
+revive/unnecessary-if, revive/unreachable-code, revive/unnecessary-format
+</related>

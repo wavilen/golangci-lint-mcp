@@ -7,13 +7,6 @@ Fix the method signature to match the standard interface exactly.
 </instructions>
 
 <examples>
-## Bad
-```go
-func (m MyType) String() int { // should return string
-    return m.id
-}
-```
-
 ## Good
 ```go
 func (m MyType) String() string {
@@ -31,5 +24,5 @@ func (m MyType) String() string {
 </patterns>
 
 <related>
-composites, structtag
+govet/composites, govet/structtag
 </related>

@@ -7,11 +7,6 @@ Use a single style consistently: either key-value pairs (`slog.Info("msg", "key"
 </instructions>
 
 <examples>
-## Bad
-```go
-slog.Info("request failed", "status", resp.StatusCode, slog.String("path", req.URL.Path))
-```
-
 ## Good
 ```go
 slog.Info("request failed",
@@ -29,5 +24,5 @@ slog.Info("request failed",
 </patterns>
 
 <related>
-loggercheck, godot
+loggercheck
 </related>

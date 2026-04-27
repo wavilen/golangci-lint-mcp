@@ -7,12 +7,6 @@ Add a period at the end of each comment sentence. For multi-sentence comments, e
 </instructions>
 
 <examples>
-## Bad
-```go
-// Parse reads the input and returns a structured result
-func Parse(input string) (*Result, error) {
-```
-
 ## Good
 ```go
 // Parse reads the input and returns a structured result.

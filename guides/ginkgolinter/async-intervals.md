@@ -5,13 +5,6 @@ Detects `Eventually(x).WithPolling(interval)` where the polling interval is too 
 </instructions>
 
 <examples>
-## Bad
-```go
-Eventually(func() bool { return ready() }).
-    WithPolling(time.Microsecond).
-    Should(BeTrue())
-```
-
 ## Good
 ```go
 Eventually(func() bool { return ready() }).
@@ -28,4 +21,5 @@ Eventually(func() bool { return ready() }).
 </patterns>
 
 <related>
-async-assertion, expect-to
+ginkgolinter/async-assertion, ginkgolinter/expect-to
+</related>

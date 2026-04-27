@@ -7,12 +7,6 @@ Fix the shift amount to a correct value that is less than the width of the type.
 </instructions>
 
 <examples>
-## Bad
-```go
-var x uint64
-result := x >> 64 // shifting by word size — always 0
-```
-
 ## Good
 ```go
 var x uint64
@@ -27,5 +21,5 @@ result := x >> 63 // shifting by less than word size
 </patterns>
 
 <related>
-stringintconv, assign
+govet/stringintconv, govet/assign
 </related>

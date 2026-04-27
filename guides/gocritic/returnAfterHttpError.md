@@ -7,17 +7,6 @@ Add `return` immediately after `http.Error()` calls to stop handler execution.
 </instructions>
 
 <examples>
-## Bad
-```go
-func handler(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost {
-        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-        // execution continues — may write another response
-    }
-    _, _ = w.Write([]byte("ok"))
-}
-```
-
 ## Good
 ```go
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -38,5 +27,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 </patterns>
 
 <related>
-exitAfterDefer, badCall
+gocritic/exitAfterDefer, gocritic/badCall
 </related>

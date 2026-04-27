@@ -7,26 +7,12 @@ Move defer out of loops — call a helper function or manually manage cleanup. W
 </instructions>
 
 <examples>
-## Bad
-```go
-func processFiles(paths []string) error {
-    for _, p := range paths {
-        f, err := os.Open(p)
-        if err != nil {
-            return err
-        }
-        defer f.Close() // defers accumulate until function returns
-        // process f...
-    }
-    return nil
-}
-```
-
 ## Good
 ```go
 func processFiles(paths []string) error {
     for _, p := range paths {
-        if err := processFile(p); err != nil {
+        err := processFile(p)
+        if err != nil {
             return err
         }
     }
@@ -36,7 +22,7 @@ func processFiles(paths []string) error {
 func processFile(path string) error {
     f, err := os.Open(path)
     if err != nil {
-        return err
+        return fmt.Errorf("opening file: %w", err)
     }
     defer f.Close()
     // process f...
@@ -54,4 +40,5 @@ func processFile(path string) error {
 </patterns>
 
 <related>
-deep-exit, gocritic/deferInLoop
+revive/deep-exit, gocritic/deferInLoop
+</related>

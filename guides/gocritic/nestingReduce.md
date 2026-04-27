@@ -7,22 +7,6 @@ Invert conditions and return early to reduce the nesting level of the main logic
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(data []byte) error {
-	if data != nil {
-		if len(data) > 0 {
-			if isValid(data) {
-				return handle(data)
-			} else {
-				return errors.New("invalid")
-			}
-		}
-	}
-	return nil
-}
-```
-
 ## Good
 ```go
 func process(data []byte) error {
@@ -45,5 +29,5 @@ func process(data []byte) error {
 </patterns>
 
 <related>
-elseif, ifElseChain, unnecessaryBlock
+gocritic/elseif, gocritic/ifElseChain, gocritic/unnecessaryBlock
 </related>

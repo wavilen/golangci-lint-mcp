@@ -7,14 +7,6 @@ Remove unused parameters or replace them with the constant value inside the func
 </instructions>
 
 <examples>
-## Bad
-```go
-func greet(name string, verbose bool) string {
-    // verbose is never used
-    return "Hello, " + name
-}
-```
-
 ## Good
 ```go
 func greet(name string) string {
@@ -32,3 +24,4 @@ func greet(name string) string {
 
 <related>
 unused, ineffassign, govet
+</related>

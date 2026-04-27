@@ -7,16 +7,6 @@ Move the init statement before the `if` when the assignment is reused later or w
 </instructions>
 
 <examples>
-## Bad
-```go
-if err := doSomething(); err != nil {
-	return err
-}
-if result, err := compute(); err == nil {
-	use(result)
-}
-```
-
 ## Good
 ```go
 err := doSomething()
@@ -38,5 +28,5 @@ if err == nil {
 </patterns>
 
 <related>
-unnecessaryBlock, nestingReduce
+gocritic/unnecessaryBlock, gocritic/nestingReduce
 </related>

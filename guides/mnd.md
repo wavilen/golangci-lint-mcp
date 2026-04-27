@@ -7,17 +7,6 @@ Extract the number into a named constant or variable. Use a descriptive name tha
 </instructions>
 
 <examples>
-## Bad
-```go
-func totalPrice(items []Item) float64 {
-    total := 0.0
-    for _, item := range items {
-        total += item.Price * 1.08
-    }
-    return total
-}
-```
-
 ## Good
 ```go
 const taxRate = 1.08

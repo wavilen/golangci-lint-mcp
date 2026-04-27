@@ -7,11 +7,6 @@ Replace long blank identifier runs with a struct return type, an options pattern
 </instructions>
 
 <examples>
-## Bad
-```go
-_, _, _, _, err := parseConfig(data)
-```
-
 ## Good
 ```go
 result, err := parseConfig(data)
@@ -27,5 +22,5 @@ result, err := parseConfig(data)
 </patterns>
 
 <related>
-unparam, errcheck, funlen
+funlen, gocritic/tooManyResultsChecker
 </related>

@@ -7,13 +7,6 @@ Replace manual index loops with `for i := range` or `for _, v := range` forms. U
 </instructions>
 
 <examples>
-## Bad
-```go
-for i := 0; i < len(items); i++ {
-    total += items[i]
-}
-```
-
 ## Good
 ```go
 for _, item := range items {
@@ -31,4 +24,5 @@ for _, item := range items {
 </patterns>
 
 <related>
-range-val-address, range-val-in-closure
+revive/range-val-address, revive/range-val-in-closure
+</related>

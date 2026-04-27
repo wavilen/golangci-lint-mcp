@@ -7,15 +7,6 @@ Use the type-switch variable directly instead of asserting `x.(Type)` again insi
 </instructions>
 
 <examples>
-## Bad
-```go
-switch x.(type) {
-case int:
-	v := x.(int)
-	slog.Info("result", "value", v+1)
-}
-```
-
 ## Good
 ```go
 switch v := x.(type) {
@@ -32,5 +23,5 @@ case int:
 </patterns>
 
 <related>
-typeAssertChain, typeDefFirst
+gocritic/typeAssertChain, gocritic/typeDefFirst
 </related>

@@ -7,15 +7,6 @@ Remove the unused assignment or use the value before it is overwritten.
 </instructions>
 
 <examples>
-## Bad
-```go
-func calc(a, b int) int {
-    result := a + b
-    result = a * b // previous assignment never used
-    return result
-}
-```
-
 ## Good
 ```go
 func calc(a, b int) int {
@@ -33,4 +24,5 @@ func calc(a, b int) int {
 </patterns>
 
 <related>
-unused, wastedassign, govet
+unused, wastedassign, govet, prealloc
+</related>

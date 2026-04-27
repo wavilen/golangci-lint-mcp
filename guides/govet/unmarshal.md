@@ -7,12 +7,6 @@ Pass a pointer to the target: `json.Unmarshal(data, &target)`.
 </instructions>
 
 <examples>
-## Bad
-```go
-var cfg Config
-json.Unmarshal(data, cfg) // value, not pointer — compile error at runtime
-```
-
 ## Good
 ```go
 var cfg Config
@@ -27,5 +21,5 @@ json.Unmarshal(data, &cfg) // pointer to target
 </patterns>
 
 <related>
-structtag, composites
+govet/structtag, govet/composites
 </related>

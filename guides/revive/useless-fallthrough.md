@@ -7,20 +7,6 @@ Remove the unnecessary `fallthrough`. If both cases should execute the same logi
 </instructions>
 
 <examples>
-## Bad
-```go
-switch status {
-case "active":
-    log.Println("active")
-    fallthrough
-case "pending":
-    log.Println("pending")
-    fallthrough // useless — last case
-default:
-    log.Println("unknown")
-}
-```
-
 ## Good
 ```go
 switch status {
@@ -41,4 +27,5 @@ default:
 </patterns>
 
 <related>
-useless-break, unnecessary-stmt
+revive/useless-break, revive/unnecessary-stmt
+</related>

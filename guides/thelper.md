@@ -7,17 +7,6 @@ Add `t.Helper()` at the start of every test helper function that calls `t.Error`
 </instructions>
 
 <examples>
-## Bad
-```go
-func setupDB(t *testing.T) *sql.DB {
-    db, err := sql.Open("sqlite3", ":memory:")
-    if err != nil {
-        t.Fatalf("failed to open db: %v", err)
-    }
-    return db
-}
-```
-
 ## Good
 ```go
 func setupDB(t *testing.T) *sql.DB {
@@ -39,5 +28,5 @@ func setupDB(t *testing.T) *sql.DB {
 </patterns>
 
 <related>
-paralleltest, tparallel, testpackage
+paralleltest, tparallel, testpackage, usetesting, testifylint/suite-thelper
 </related>

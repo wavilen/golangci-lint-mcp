@@ -7,15 +7,6 @@ Ensure every exported field has appropriate tags, the tag key matches the expect
 </instructions>
 
 <examples>
-## Bad
-```go
-type User struct {
-    Name  string `json:name`        // missing quotes
-    Email string `json:"email" xml:"email"` // inconsistent naming
-    age   int    `json:"age"`       // unexported field with tag (ignored)
-}
-```
-
 ## Good
 ```go
 type User struct {
@@ -34,4 +25,5 @@ type User struct {
 </patterns>
 
 <related>
-nested-structs, enforce-map-style, enforce-slice-style
+revive/nested-structs, revive/enforce-map-style, revive/enforce-slice-style
+</related>

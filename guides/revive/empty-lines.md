@@ -7,18 +7,6 @@ Remove the extra blank lines. Keep at most one blank line between declarations a
 </instructions>
 
 <examples>
-## Bad
-```go
-func process() {
-
-
-    // two blank lines above
-
-    data := load()
-    return data
-}
-```
-
 ## Good
 ```go
 func process() {
@@ -37,4 +25,5 @@ func process() {
 </patterns>
 
 <related>
-empty-block, comment-spacings
+revive/empty-block, revive/comment-spacings
+</related>

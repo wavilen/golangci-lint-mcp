@@ -7,14 +7,6 @@ Remove the alias and use the plain import path, letting Go use the default packa
 </instructions>
 
 <examples>
-## Bad
-```go
-import (
-    fmt "fmt"
-    http "net/http"
-)
-```
-
 ## Good
 ```go
 import (
@@ -33,4 +25,5 @@ import (
 </patterns>
 
 <related>
-redundant-build-tag, redundant-test-main-exit, dot-imports
+revive/redundant-build-tag, revive/redundant-test-main-exit, revive/dot-imports
+</related>

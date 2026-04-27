@@ -7,13 +7,6 @@ Remove any bidirectional control characters (U+202A–U+202E, U+2066–U+2069, U
 </instructions>
 
 <examples>
-## Bad
-```go
-// Source contains hidden bidirectional override characters
-// "admin" ← contains U+202E RTL override before text
-if user == "admin" {
-```
-
 ## Good
 ```go
 // Clean source with no hidden Unicode control characters
@@ -30,3 +23,4 @@ if user == "admin" {
 
 <related>
 asciicheck, goheader, godot
+</related>

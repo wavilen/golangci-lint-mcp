@@ -7,15 +7,6 @@ Rename import aliases to match the project convention. Only use aliases when nee
 </instructions>
 
 <examples>
-## Bad
-```go
-import (
-    f "fmt"                    // unnecessary alias
-    http_utils "net/http"      // underscores not allowed
-    MyLib "github.com/x/y"     // PascalCase not allowed
-)
-```
-
 ## Good
 ```go
 import (
@@ -35,4 +26,5 @@ import (
 </patterns>
 
 <related>
-import-shadowing, duplicated-imports, dot-imports
+revive/import-shadowing, revive/duplicated-imports, revive/dot-imports
+</related>

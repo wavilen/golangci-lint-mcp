@@ -7,13 +7,6 @@ Replace magic numbers and strings with their stdlib equivalents: HTTP status cod
 </instructions>
 
 <examples>
-## Bad
-```go
-w.WriteHeader(200)
-fmt.Sprintf("200 OK")
-os.Open("/dev/null")
-```
-
 ## Good
 ```go
 w.WriteHeader(http.StatusOK)

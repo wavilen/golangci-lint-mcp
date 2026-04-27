@@ -7,13 +7,6 @@ Always call `span.End()` immediately after creating the span, usually with `defe
 </instructions>
 
 <examples>
-## Bad
-```go
-ctx, span := tracer.Start(ctx, "operation")
-result := doWork(ctx)
-return result
-```
-
 ## Good
 ```go
 ctx, span := tracer.Start(ctx, "operation")

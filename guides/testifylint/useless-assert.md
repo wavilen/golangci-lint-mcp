@@ -5,13 +5,6 @@ Detects assertions that always pass or always fail: `assert.True(t, true)`, `ass
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.True(t, true)
-assert.Equal(t, 42, 42)
-assert.False(t, false)
-```
-
 ## Good
 ```go
 assert.True(t, isValid)
@@ -27,4 +20,5 @@ assert.False(t, hasError)
 </patterns>
 
 <related>
-blank-import, expected-actual
+testifylint/blank-import, testifylint/expected-actual
+</related>

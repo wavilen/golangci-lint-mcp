@@ -7,14 +7,6 @@ Use camelCase starting with a lowercase letter for all local variables.
 </instructions>
 
 <examples>
-## Bad
-```go
-func calculate() int {
-	Result := 42
-	return Result
-}
-```
-
 ## Good
 ```go
 func calculate() int {
@@ -32,5 +24,5 @@ func calculate() int {
 </patterns>
 
 <related>
-docStub, exposedSyncMutex
+gocritic/docStub, gocritic/exposedSyncMutex
 </related>

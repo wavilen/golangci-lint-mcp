@@ -1,4 +1,4 @@
-.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version
+.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js
 
 BINARY := golangci-lint-mcp
 VERSION := $(shell git describe --tags --always 2>/dev/null | sed 's/^v//')
@@ -90,13 +90,19 @@ install-claude-shared: ## Install shared nudge module for Claude Code hook
 	@cp shared/nudge.js .claude/shared/nudge.js
 	@echo "✓ Shared nudge module installed to .claude/shared/"
 
-install-all: ## Install all opencode resources (commands, rules, hook, shared)
+install-agent: ## Deploy pre-publish agent to .opencode/agents/
+	@mkdir -p .opencode/agents
+	cp agents/pre-publish.md .opencode/agents/pre-publish.md
+	@echo "✓ Agent installed to .opencode/agents/"
+
+install-all: ## Install all opencode resources (commands, rules, hook, shared, agents)
 	@$(MAKE) install-commands
 	@$(MAKE) install-rules
 	@$(MAKE) install-hook
 	@$(MAKE) install-claude-shared
 	@$(MAKE) install-plugin
 	@$(MAKE) install-skill
+	@$(MAKE) install-agent
 	@echo "✓ All resources installed"
 
 sync-deployed: ## Sync all source files to deployed locations (.claude/, .cursor/, .opencode/)
@@ -119,3 +125,6 @@ sync-version: ## Update package.json version from git tag
 	@V=$$(git describe --tags --always 2>/dev/null | sed 's/^v//'); \
 	sed -i '0,/"version": "[^"]*"/s//"version": "'$$V'"/' package.json && \
 	echo "✓ package.json version updated to $$V"
+
+lint-js: ## Run ESLint on JavaScript source files
+	npx eslint plugins/ shared/ hooks/ bin/install.js

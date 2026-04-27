@@ -7,16 +7,6 @@ Pass the parent context as the first argument to every function that needs it.
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *Service) Fetch(ctx context.Context) error {
-    req, _ := http.NewRequest("GET", url, nil)
-    // context not passed to the request
-    resp, err := http.DefaultClient.Do(req)
-    return err
-}
-```
-
 ## Good
 ```go
 func (s *Service) Fetch(ctx context.Context) error {
@@ -38,4 +28,5 @@ func (s *Service) Fetch(ctx context.Context) error {
 </patterns>
 
 <related>
-errcheck, govet, revive
+errcheck, govet, noctx, bodyclose, govet/lostcancel
+</related>

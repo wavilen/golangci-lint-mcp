@@ -7,12 +7,6 @@ Use the pointer directly and dereference only after `flag.Parse()`, or call `fla
 </instructions>
 
 <examples>
-## Bad
-```go
-var port = *flag.Int("port", 8080, "listen port")
-// port is always 0 — flag.Parse hasn't been called yet
-```
-
 ## Good
 ```go
 var port = flag.Int("port", 8080, "listen port")
@@ -32,5 +26,5 @@ func main() {
 </patterns>
 
 <related>
-flagName, badCall
+gocritic/flagName, gocritic/badCall
 </related>

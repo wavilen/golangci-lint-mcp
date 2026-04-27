@@ -7,13 +7,6 @@ Use the first letter or a meaningful short abbreviation of the type name. Apply 
 </instructions>
 
 <examples>
-## Bad
-```go
-func (this *Server) Start() error { ... }
-func (s *Server) Stop() error  { ... } // inconsistent with 'this' above
-func (self *Client) Send() error { ... }
-```
-
 ## Good
 ```go
 func (s *Server) Start() error { ... }
@@ -31,4 +24,5 @@ func (c *Client) Send() error  { ... }
 </patterns>
 
 <related>
-unexported-naming, unexported-return, var-naming
+revive/unexported-naming, revive/unexported-return, revive/var-naming
+</related>

@@ -7,17 +7,6 @@ Return the checked error variable, not nil or a different error.
 </instructions>
 
 <examples>
-## Bad
-```go
-func process() error {
-    result, err := doWork()
-    if err != nil {
-        return nil // should return err
-    }
-    return result.Save()
-}
-```
-
 ## Good
 ```go
 func process() error {
@@ -37,4 +26,5 @@ func process() error {
 </patterns>
 
 <related>
-errcheck, govet, staticcheck
+errcheck, govet, staticcheck, nilnesserr
+</related>

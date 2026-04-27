@@ -7,16 +7,9 @@ Fix the function name and signature to match the expected pattern.
 </instructions>
 
 <examples>
-## Bad
-```go
-func TestMyFunc(t testing.T) { // missing pointer — *testing.T required
-    // ...
-}
-```
-
 ## Good
 ```go
-func TestMyFunc(t *testing.T) {
+func TestMyFunc(_ *testing.T) {
     // ...
 }
 ```
@@ -30,5 +23,5 @@ func TestMyFunc(t *testing.T) {
 </patterns>
 
 <related>
-testinggoroutine, unreachable
+govet/testinggoroutine, govet/unreachable
 </related>

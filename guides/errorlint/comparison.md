@@ -5,13 +5,6 @@ Detects direct error comparison like `err == io.EOF` or `err != nil` using `==`/
 </instructions>
 
 <examples>
-## Bad
-```go
-if err == io.EOF {
-    return nil
-}
-```
-
 ## Good
 ```go
 if errors.Is(err, io.EOF) {
@@ -27,4 +20,5 @@ if errors.Is(err, io.EOF) {
 </patterns>
 
 <related>
-errorf, asserts
+errorlint/errorf, errorlint/asserts, err113
+</related>

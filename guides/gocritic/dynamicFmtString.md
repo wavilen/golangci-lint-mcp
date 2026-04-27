@@ -7,11 +7,6 @@ Use a literal format string whenever possible. If the string must be dynamic, us
 </instructions>
 
 <examples>
-## Bad
-```go
-msg := fmt.Sprintf(userInput, data) // format string is dynamic
-```
-
 ## Good
 ```go
 msg := fmt.Sprintf("%s", userInput) // literal format string
@@ -28,5 +23,5 @@ msg := userInput
 </patterns>
 
 <related>
-sprintfQuotedString, badCall
+gocritic/sprintfQuotedString, gocritic/badCall
 </related>

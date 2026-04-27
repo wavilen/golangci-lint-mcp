@@ -7,15 +7,6 @@ Create a local copy of the loop variable inside the loop body, or pass it as a p
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, item := range items {
-    go func() {
-        process(item) // captures loop variable
-    }()
-}
-```
-
 ## Good
 ```go
 for _, item := range items {
@@ -36,4 +27,5 @@ for _, item := range items {
 </patterns>
 
 <related>
-range-val-address, datarace
+revive/range-val-address, revive/datarace
+</related>

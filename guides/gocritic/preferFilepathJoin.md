@@ -7,12 +7,6 @@ Use `filepath.Join` to construct file paths safely across operating systems.
 </instructions>
 
 <examples>
-## Bad
-```go
-path := dir + "/" + filename
-path := fmt.Sprintf("%s/%s", dir, file)
-```
-
 ## Good
 ```go
 path := filepath.Join(dir, filename)
@@ -26,5 +20,5 @@ path := filepath.Join(dir, filename)
 </patterns>
 
 <related>
-filepathJoin, stringConcatSimplify
+gocritic/filepathJoin, gocritic/stringConcatSimplify
 </related>

@@ -7,13 +7,6 @@ Use `time.UTC` explicitly. For user-facing times, accept a `time.Location` param
 </instructions>
 
 <examples>
-## Bad
-```go
-func schedule() time.Time {
-    return time.Now().Truncate(24 * time.Hour)
-}
-```
-
 ## Good
 ```go
 func schedule(loc *time.Location) time.Time {

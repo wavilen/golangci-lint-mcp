@@ -7,14 +7,6 @@ Group related return values into a result struct. Keep the function focused on r
 </instructions>
 
 <examples>
-## Bad
-```go
-func ParseHeader(raw string) (proto string, version float64, headers map[string]string, body string, err error) {
-    // 5 return values — easy to mix up at call site
-    return proto, ver, hdrs, body, nil
-}
-```
-
 ## Good
 ```go
 type HeaderResult struct {
@@ -39,4 +31,5 @@ func ParseHeader(raw string) (HeaderResult, error) {
 </patterns>
 
 <related>
-argument-limit, function-length, confusing-results
+revive/argument-limit, revive/function-length, revive/confusing-results
+</related>

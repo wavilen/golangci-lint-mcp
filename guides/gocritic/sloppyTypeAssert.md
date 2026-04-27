@@ -7,14 +7,6 @@ Use the comma-ok form for type assertions unless a panic on wrong type is truly 
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(v interface{}) {
-    s := v.(string) // panics if v is not a string
-    slog.Info("value", "s", s)
-}
-```
-
 ## Good
 ```go
 func process(v interface{}) {
@@ -35,5 +27,5 @@ func process(v interface{}) {
 </patterns>
 
 <related>
-sloppyReassign, sloppyLen, badCond
+gocritic/sloppyReassign, gocritic/sloppyLen, gocritic/badCond
 </related>

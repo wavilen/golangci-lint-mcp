@@ -7,13 +7,6 @@ Replace any `strings.ToLower(x) == strings.ToLower(y)` or `ToUpper` variant with
 </instructions>
 
 <examples>
-## Bad
-```go
-if strings.ToLower(s1) == strings.ToLower(s2) {
-    slog.Info("equal")
-}
-```
-
 ## Good
 ```go
 if strings.EqualFold(s1, s2) {
@@ -30,4 +23,5 @@ if strings.EqualFold(s1, s2) {
 </patterns>
 
 <related>
-stringXbytes, preferStringWriter, unconvenName
+gocritic/stringXbytes, gocritic/preferStringWriter
+</related>

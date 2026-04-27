@@ -7,17 +7,6 @@ Assign errors to a named return variable before returning.
 </instructions>
 
 <examples>
-## Bad
-```go
-func load() error {
-    data, err := os.ReadFile("cfg.toml")
-    if err != nil {
-        return errors.Wrap(err, "load config")
-    }
-    return nil
-}
-```
-
 ## Good
 ```go
 func load() (err error) {
@@ -38,3 +27,4 @@ func load() (err error) {
 
 <related>
 errcheck, wrapcheck, govet
+</related>

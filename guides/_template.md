@@ -7,11 +7,6 @@
 
 <examples>
 <!-- One Bad/Good code pair for simple linters. Use realistic Go code. -->
-## Bad
-```go
-// Code that triggers the diagnostic
-```
-
 ## Good
 ```go
 // Corrected code

@@ -7,13 +7,6 @@ Rename the package to a single lowercase word. Avoid `common`, `util`, `helpers`
 </instructions>
 
 <examples>
-## Bad
-```go
-package my_package
-package UserAPI
-package commonUtils
-```
-
 ## Good
 ```go
 package user
@@ -31,4 +24,5 @@ package auth
 </patterns>
 
 <related>
-package-comments, package-directory-mismatch, var-naming
+revive/package-comments, revive/package-directory-mismatch, revive/var-naming
+</related>

@@ -5,14 +5,6 @@ Detects incorrect usage of `t.Helper()` or missing helper patterns in testify su
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *MySuite) TestFeature() {
-    s.T().Helper()
-    s.Equal(expected, actual)
-}
-```
-
 ## Good
 ```go
 func (s *MySuite) TestFeature() {
@@ -33,4 +25,5 @@ func (s *MySuite) helperMethod() {
 </patterns>
 
 <related>
-suite-method-signature, suite-extra-assert-call
+testifylint/suite-method-signature, testifylint/suite-extra-assert-call
+</related>

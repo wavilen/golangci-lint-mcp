@@ -7,16 +7,6 @@ Remove the duplicate case or consolidate the logic into a single case.
 </instructions>
 
 <examples>
-## Bad
-```go
-switch status {
-case http.StatusOK:
-    handleOK()
-case http.StatusOK: // duplicate
-    handleSuccess()
-}
-```
-
 ## Good
 ```go
 switch status {
@@ -36,5 +26,5 @@ case http.Created:
 </patterns>
 
 <related>
-dupBranchBody, dupArg, caseOrder
+gocritic/dupBranchBody, gocritic/dupArg, gocritic/caseOrder
 </related>

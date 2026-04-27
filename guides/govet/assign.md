@@ -7,12 +7,6 @@ Remove the redundant assignment entirely.
 </instructions>
 
 <examples>
-## Bad
-```go
-x := 10
-x = x // useless assignment
-```
-
 ## Good
 ```go
 x := 10
@@ -27,5 +21,5 @@ x := 10
 </patterns>
 
 <related>
-unusedresult, appends
+govet/unusedresult, govet/appends
 </related>

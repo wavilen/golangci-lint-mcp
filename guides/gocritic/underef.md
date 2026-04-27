@@ -7,12 +7,6 @@ Remove the explicit dereference and let Go handle the pointer indirection.
 </instructions>
 
 <examples>
-## Bad
-```go
-(*ptr).Method()
-val := (*ptr).Field
-```
-
 ## Good
 ```go
 ptr.Method()
@@ -27,5 +21,5 @@ val := ptr.Field
 </patterns>
 
 <related>
-newDeref, methodExprCall, ptrToRefParam
+gocritic/newDeref, gocritic/methodExprCall, gocritic/ptrToRefParam
 </related>

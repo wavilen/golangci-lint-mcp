@@ -7,13 +7,6 @@ Use the correct slice elements in the comparison function, and prefer specialize
 </instructions>
 
 <examples>
-## Bad
-```go
-sort.Slice(names, func(i, j int) bool {
-    return i < j // comparing indices, not values
-})
-```
-
 ## Good
 ```go
 sort.Slice(names, func(i, j int) bool {
@@ -30,5 +23,5 @@ sort.Slice(names, func(i, j int) bool {
 </patterns>
 
 <related>
-badSorting, sloppyLen, offBy1
+gocritic/badSorting, gocritic/sloppyLen, gocritic/offBy1
 </related>

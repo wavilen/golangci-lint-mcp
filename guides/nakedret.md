@@ -7,18 +7,6 @@ Use explicit returns specifying the values being returned. Naked returns in shor
 </instructions>
 
 <examples>
-## Bad
-```go
-func compute(a, b int) (sum, diff int) {
-    sum = a + b
-    diff = a - b
-    if diff < 0 {
-        diff = -diff
-    }
-    return
-}
-```
-
 ## Good
 ```go
 func compute(a, b int) (sum, diff int) {
@@ -40,5 +28,5 @@ func compute(a, b int) (sum, diff int) {
 </patterns>
 
 <related>
-nonamedreturns, nlreturn, errname
+nonamedreturns, nlreturn, errname, errcheck
 </related>

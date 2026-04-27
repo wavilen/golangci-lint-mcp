@@ -7,16 +7,6 @@ Remove the `os.Exit` call. Just call `m.Run()` and let the test framework handle
 </instructions>
 
 <examples>
-## Bad
-```go
-func TestMain(m *testing.M) {
-    setup()
-    code := m.Run()
-    teardown()
-    os.Exit(code)
-}
-```
-
 ## Good
 ```go
 func TestMain(m *testing.M) {
@@ -36,4 +26,5 @@ func TestMain(m *testing.M) {
 </patterns>
 
 <related>
-redundant-build-tag, redundant-import-alias, deep-exit
+revive/redundant-build-tag, revive/redundant-import-alias, revive/deep-exit
+</related>

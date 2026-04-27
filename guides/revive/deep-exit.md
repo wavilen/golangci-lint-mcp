@@ -7,17 +7,6 @@ Return errors up the call stack instead. Let `main` or the top-level handler dec
 </instructions>
 
 <examples>
-## Bad
-```go
-func processFile(path string) {
-    data, err := os.ReadFile(path)
-    if err != nil {
-        log.Fatalf("failed to read %s: %v", path, err) // kills the process
-    }
-    handle(data)
-}
-```
-
 ## Good
 ```go
 func processFile(path string) error {
@@ -39,4 +28,5 @@ func processFile(path string) error {
 </patterns>
 
 <related>
-defer, error-return
+revive/defer, revive/error-return
+</related>

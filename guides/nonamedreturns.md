@@ -7,15 +7,6 @@ Remove named return values and use explicit returns instead. Only use named retu
 </instructions>
 
 <examples>
-## Bad
-```go
-func parse(input string) (result *Config, err error) {
-    result = &Config{}
-    err = json.Unmarshal([]byte(input), result)
-    return
-}
-```
-
 ## Good
 ```go
 func parse(input string) (*Config, error) {

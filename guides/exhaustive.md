@@ -7,26 +7,6 @@ Add a case for every enum member, or use a `default` case explicitly if that is 
 </instructions>
 
 <examples>
-## Bad
-```go
-type Status int
-
-const (
-    StatusNew Status = iota
-    StatusPending
-    StatusDone
-)
-
-func handle(s Status) {
-    switch s {
-    case StatusNew:
-        slog.Info("new")
-    case StatusDone:
-        slog.Info("done")
-    }
-}
-```
-
 ## Good
 ```go
 func handle(s Status) {

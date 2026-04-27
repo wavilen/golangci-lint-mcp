@@ -7,13 +7,6 @@ Reduce the number of return values by grouping related values into a struct, or 
 </instructions>
 
 <examples>
-## Bad
-```go
-func parseConfig() (host string, port int, user string, pass string, db string, ssl bool, timeout int, err error) {
-	return "localhost", 5432, "admin", "secret", "mydb", true, 30, nil
-}
-```
-
 ## Good
 ```go
 type Config struct {
@@ -42,5 +35,5 @@ func parseConfig() (*Config, error) {
 </patterns>
 
 <related>
-unnamedResult, paramTypeCombine
+gocritic/unnamedResult, gocritic/paramTypeCombine
 </related>

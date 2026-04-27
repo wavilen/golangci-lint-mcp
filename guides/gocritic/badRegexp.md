@@ -7,13 +7,6 @@ Fix the regex pattern to correctly express the intended match. Review character 
 </instructions>
 
 <examples>
-## Bad
-```go
-// Empty character class — matches nothing
-re := regexp.MustCompile(`[^a]`) // fine, but `[]` is empty
-re := regexp.MustCompile(`a|a`)  // duplicate alternative
-```
-
 ## Good
 ```go
 re := regexp.MustCompile(`[a-z]+`)
@@ -28,5 +21,5 @@ re := regexp.MustCompile(`[a-z]+`)
 </patterns>
 
 <related>
-regexpPattern, dupSubExpr
+gocritic/regexpPattern, gocritic/dupSubExpr
 </related>

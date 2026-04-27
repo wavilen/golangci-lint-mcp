@@ -7,13 +7,6 @@ Remove the unnecessary slice operation and use the value directly.
 </instructions>
 
 <examples>
-## Bad
-```go
-header := strings.Split(line, ":")
-key := strings.TrimSpace(header[0][:])
-data := string(bytes[:])
-```
-
 ## Good
 ```go
 header := strings.Split(line, ":")
@@ -30,5 +23,5 @@ data := string(bytes)
 </patterns>
 
 <related>
-typeUnparen, underef
+gocritic/typeUnparen, gocritic/underef
 </related>

@@ -7,12 +7,6 @@ Review the flagged call and verify the argument order matches the function signa
 </instructions>
 
 <examples>
-## Bad
-```go
-// copy expects (dst, src), but arguments look swapped
-n := copy(src, dst)
-```
-
 ## Good
 ```go
 n := copy(dst, src)
@@ -28,5 +22,5 @@ n := copy(dst, src)
 </patterns>
 
 <related>
-badCall, evalOrder, dupArg
+gocritic/badCall, gocritic/evalOrder, gocritic/dupArg
 </related>

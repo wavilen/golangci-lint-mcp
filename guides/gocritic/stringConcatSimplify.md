@@ -7,12 +7,6 @@ Remove empty-string concatenations and simplify the expression to its minimal fo
 </instructions>
 
 <examples>
-## Bad
-```go
-msg := "" + name + ""
-msg := "Hello" + " " + name
-```
-
 ## Good
 ```go
 msg := name
@@ -28,5 +22,5 @@ msg := "Hello " + name
 </patterns>
 
 <related>
-redundantSprint, emptyStringTest, assignOp
+gocritic/redundantSprint, gocritic/emptyStringTest, gocritic/assignOp
 </related>

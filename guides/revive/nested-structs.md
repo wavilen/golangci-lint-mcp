@@ -7,17 +7,6 @@ Move the anonymous struct definition out of the enclosing struct and give it a d
 </instructions>
 
 <examples>
-## Bad
-```go
-type Server struct {
-    Config struct {
-        Host string
-        Port int
-    }
-    Logger *log.Logger
-}
-```
-
 ## Good
 ```go
 type ServerConfig struct {
@@ -41,4 +30,5 @@ type Server struct {
 </patterns>
 
 <related>
-struct-tag, optimize-operands-order
+revive/struct-tag, revive/optimize-operands-order
+</related>

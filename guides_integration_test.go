@@ -99,8 +99,6 @@ func TestContentQualitySpotCheck(t *testing.T) {
 			assert.True(t, hasAction,
 				"guide %q instructions should contain at least one action verb", linter)
 
-			assert.Contains(t, guide.Examples, "Bad",
-				"guide %q examples should have a Bad section", linter)
 			assert.Contains(t, guide.Examples, "Good",
 				"guide %q examples should have a Good section", linter)
 
@@ -325,8 +323,6 @@ func TestCompoundContentQualitySpotCheck(t *testing.T) {
 				"%s/%s instructions should contain at least one action verb",
 				sample.linter, sample.rule)
 
-			assert.Contains(t, guide.Examples, "Bad",
-				"%s/%s examples should have a Bad section", sample.linter, sample.rule)
 			assert.Contains(t, guide.Examples, "Good",
 				"%s/%s examples should have a Good section", sample.linter, sample.rule)
 

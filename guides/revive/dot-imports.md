@@ -7,17 +7,6 @@ Use qualified imports (`import pkg "..."`) unless in test files importing the pa
 </instructions>
 
 <examples>
-## Bad
-```go
-package handler
-
-import . "net/http"
-
-func setup() {
-    Handle("/api", HandlerFunc(mux)) // where does Handle come from?
-}
-```
-
 ## Good
 ```go
 package handler
@@ -39,4 +28,5 @@ func setup() {
 </patterns>
 
 <related>
-blank-imports, duplicated-imports, staticcheck ST1001
+revive/blank-imports, revive/duplicated-imports, staticcheck/ST1001
+</related>

@@ -5,12 +5,6 @@ Detects `assert.True(t, a == b)` or `assert.False(t, a != b)` where a dedicated 
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.True(t, result == expected)
-assert.False(t, result != expected)
-```
-
 ## Good
 ```go
 assert.Equal(t, expected, result)
@@ -25,4 +19,5 @@ assert.Equal(t, expected, result)
 </patterns>
 
 <related>
-compares, float-compare
+testifylint/compares, testifylint/float-compare
+</related>

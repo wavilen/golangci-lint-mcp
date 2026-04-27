@@ -7,20 +7,6 @@ Change the parameter type from `T` to `*T` when `T` is a large struct and the fu
 </instructions>
 
 <examples>
-## Bad
-```go
-type BigConfig struct {
-    Data [1024]byte
-    Name string
-    Tags []string
-}
-
-func Process(cfg BigConfig) error {
-    // cfg is copied — 1024+ bytes per call
-    return nil
-}
-```
-
 ## Good
 ```go
 func Process(cfg *BigConfig) error {
@@ -38,4 +24,5 @@ func Process(cfg *BigConfig) error {
 </patterns>
 
 <related>
-rangeValCopy, rangeExprCopy, unexportedCall
+gocritic/rangeValCopy, gocritic/rangeExprCopy, prealloc
+</related>

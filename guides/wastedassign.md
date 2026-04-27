@@ -7,17 +7,6 @@ Use the assigned value, return it, or remove the assignment entirely.
 </instructions>
 
 <examples>
-## Bad
-```go
-func compute(n int) int {
-    result := n * 2
-    if n > 10 {
-        result = n * 3 // first assignment wasted
-    }
-    return result
-}
-```
-
 ## Good
 ```go
 func compute(n int) int {
@@ -36,4 +25,5 @@ func compute(n int) int {
 </patterns>
 
 <related>
-ineffassign, unused, govet
+ineffassign, unused, govet, prealloc
+</related>

@@ -2,12 +2,13 @@ package guides
 
 // Guide represents a parsed linter guide with XML-tagged sections.
 type Guide struct {
-	Linter       string // linter name (e.g., "errcheck", "gocritic")
-	Rule         string // rule ID for compound linters (e.g., "badcall"), empty for simple linters
-	RawBody      string // complete raw markdown content
-	Instructions string // content from <instructions> tag
-	Examples     string // content from <examples> tag
-	Patterns     string // content from <patterns> tag
+	Linter       string   // linter name (e.g., "errcheck", "gocritic")
+	Rule         string   // rule ID for compound linters (e.g., "badcall"), empty for simple linters
+	RawBody      string   // complete raw markdown content
+	Instructions string   // content from <instructions> tag
+	Examples     string   // content from <examples> tag
+	Patterns     string   // content from <patterns> tag
+	Related      []string // Related linter/rule references from <related> tag (e.g., "errcheck", "gosec/G204")
 }
 
 // Key returns the lookup key: "linter" for simple, "linter/rule" for compound.

@@ -7,19 +7,6 @@ Remove redundant boolean operations and use the boolean value directly.
 </instructions>
 
 <examples>
-## Bad
-```go
-if enabled == true {
-	return
-}
-if !(!ok) {
-	return
-}
-if a || (!a && b) {
-	return
-}
-```
-
 ## Good
 ```go
 if enabled {
@@ -43,5 +30,5 @@ if a || b {
 </patterns>
 
 <related>
-yodaStyleExpr, elseif
+gocritic/yodaStyleExpr, gocritic/elseif
 </related>

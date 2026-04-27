@@ -5,14 +5,6 @@ Detects double map lookup patterns where the same key is accessed twice: once to
 </instructions>
 
 <examples>
-## Bad
-```go
-if _, ok := cache[key]; ok {
-    result := cache[key] // second lookup
-    process(result)
-}
-```
-
 ## Good
 ```go
 if v, ok := cache[key]; ok {
@@ -28,4 +20,5 @@ if v, ok := cache[key]; ok {
 </patterns>
 
 <related>
-maprange, errorf
+modernize/maprange, modernize/errorf
+</related>

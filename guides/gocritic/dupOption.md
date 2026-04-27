@@ -7,15 +7,6 @@ Remove the duplicate option application. If both are needed with different value
 </instructions>
 
 <examples>
-## Bad
-```go
-server := NewServer(
-    WithPort(8080),
-    WithTimeout(30*time.Second),
-    WithPort(9090), // overwrites first WithPort
-)
-```
-
 ## Good
 ```go
 server := NewServer(
@@ -33,5 +24,5 @@ server := NewServer(
 </patterns>
 
 <related>
-dupArg, dupSubExpr, dupBranchBody
+gocritic/dupArg, gocritic/dupSubExpr, gocritic/dupBranchBody
 </related>

@@ -7,14 +7,6 @@ Consolidate duplicate imports into a single import declaration. If aliases diffe
 </instructions>
 
 <examples>
-## Bad
-```go
-import (
-	"fmt"
-	"fmt" // duplicate
-)
-```
-
 ## Good
 ```go
 import (
@@ -30,5 +22,5 @@ import (
 </patterns>
 
 <related>
-commentedOutImport, importShadow
+gocritic/commentedOutImport, gocritic/importShadow
 </related>

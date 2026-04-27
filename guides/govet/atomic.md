@@ -7,13 +7,6 @@ Use `atomic.AddInt32`, `atomic.LoadInt32`, `atomic.StoreInt32`, etc. consistentl
 </instructions>
 
 <examples>
-## Bad
-```go
-var counter int64
-counter++                    // non-atomic access
-_ = atomic.AddInt64(&counter, 1) // mixing atomic and non-atomic
-```
-
 ## Good
 ```go
 var counter int64
@@ -30,5 +23,5 @@ val := atomic.LoadInt64(&counter)
 </patterns>
 
 <related>
-copylocks, defers
+govet/copylocks, govet/defers, gocritic/badLock
 </related>

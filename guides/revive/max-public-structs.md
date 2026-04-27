@@ -7,16 +7,6 @@ Split the file into multiple files, grouping related types by domain, feature, o
 </instructions>
 
 <examples>
-## Bad
-```go
-// models.go — 25 exported structs covering users, orders,
-// products, payments, and notifications
-type User struct { ... }
-type Order struct { ... }
-type Product struct { ... }
-// ... 22 more structs
-```
-
 ## Good
 ```go
 // user.go
@@ -42,4 +32,5 @@ type ProductCategory struct { ... }
 </patterns>
 
 <related>
-file-length-limit, function-length
+revive/file-length-limit, revive/function-length
+</related>

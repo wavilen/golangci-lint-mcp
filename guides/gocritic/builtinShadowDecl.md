@@ -7,17 +7,6 @@ Rename the declaration to avoid shadowing the builtin. Use a more descriptive na
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(items []string) {
-    len := 0 // shadows builtin len
-    for range items {
-        len++
-    }
-    slog.Info("value", "count", len)
-}
-```
-
 ## Good
 ```go
 func process(items []string) {
@@ -38,5 +27,5 @@ func process(items []string) {
 </patterns>
 
 <related>
-dupArg, sloppyReassign
+gocritic/dupArg, gocritic/sloppyReassign
 </related>

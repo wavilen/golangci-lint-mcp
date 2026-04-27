@@ -7,20 +7,6 @@ Add or remove blank lines to match the enforced style. Blocks should have a blan
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(data []byte) error {
-    if len(data) == 0 {
-        return errors.New("empty")
-    }
-    result := parse(data)
-    if result.Invalid {
-        return errors.New("invalid")
-    }
-    return nil
-}
-```
-
 ## Good
 ```go
 func process(data []byte) error {

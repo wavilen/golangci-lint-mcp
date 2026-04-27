@@ -7,15 +7,6 @@ Assign the derived context to a new variable instead of shadowing the loop varia
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, item := range items {
-    ctx, cancel := context.WithTimeout(ctx, time.Second)
-    defer cancel()
-    process(ctx, item)
-}
-```
-
 ## Good
 ```go
 for _, item := range items {
@@ -34,4 +25,5 @@ for _, item := range items {
 </patterns>
 
 <related>
-contextcheck, noctx, spancheck
+contextcheck, noctx, spancheck, gocritic/hugeParam, gocritic/rangeValCopy
+</related>

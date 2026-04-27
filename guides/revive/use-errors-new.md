@@ -7,12 +7,6 @@ Replace `fmt.Errorf("static message")` with `errors.New("static message")`. For 
 </instructions>
 
 <examples>
-## Bad
-```go
-return fmt.Errorf("not found")
-return fmt.Errorf("connection refused")
-```
-
 ## Good
 ```go
 return errors.New("not found")
@@ -33,4 +27,5 @@ return errors.Wrap(err, "query")
 </patterns>
 
 <related>
-use-any, use-fmt-print, errorf, error-strings
+revive/use-any, revive/use-fmt-print, revive/errorf, revive/error-strings
+</related>

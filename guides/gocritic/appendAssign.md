@@ -7,16 +7,10 @@ Always assign the result of `append` back to the same variable: `s = append(s, x
 </instructions>
 
 <examples>
-## Bad
-```go
-items := []string{"a", "b"}
-more := append(items, "c") // items and more share backing array
-```
-
 ## Good
 ```go
-items := []string{"a", "b"}
-items = append(items, "c")
+items := make([]string, 0, 3)
+items = append(items, "a", "b", "c")
 ```
 </examples>
 
@@ -27,5 +21,5 @@ items = append(items, "c")
 </patterns>
 
 <related>
-appendCombine, rangeExprCopy
+gocritic/appendCombine, gocritic/rangeExprCopy
 </related>

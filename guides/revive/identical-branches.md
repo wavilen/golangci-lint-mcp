@@ -7,17 +7,6 @@ Either remove the duplicate branch (if it is truly identical behavior) or fix th
 </instructions>
 
 <examples>
-## Bad
-```go
-if isPriority {
-    process(item)
-    notify(item)
-} else {
-    process(item)
-    notify(item) // copy-paste — should this do something different?
-}
-```
-
 ## Good
 ```go
 if isPriority {
@@ -38,4 +27,5 @@ if isPriority {
 </patterns>
 
 <related>
-identical-ifelseif-branches, identical-switch-branches, constant-logical-expr
+revive/identical-ifelseif-branches, revive/identical-switch-branches, revive/constant-logical-expr
+</related>

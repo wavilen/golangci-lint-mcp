@@ -7,17 +7,6 @@ Wrap all errors from external packages with `errors.Wrap(err, "context")` from `
 </instructions>
 
 <examples>
-## Bad
-```go
-func loadConfig() error {
-    data, err := os.ReadFile("config.yaml")
-    if err != nil {
-        return err
-    }
-    return nil
-}
-```
-
 ## Good
 ```go
 func loadConfig() error {
@@ -39,3 +28,4 @@ func loadConfig() error {
 
 <related>
 errcheck, err113, govet
+</related>

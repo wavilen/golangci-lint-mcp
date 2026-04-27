@@ -5,14 +5,6 @@ Detects blank imports of testify packages (`_ "github.com/stretchr/testify/..."`
 </instructions>
 
 <examples>
-## Bad
-```go
-import (
-    _ "github.com/stretchr/testify/assert"
-    "testing"
-)
-```
-
 ## Good
 ```go
 import (
@@ -29,4 +21,5 @@ import (
 </patterns>
 
 <related>
-useless-assert, suite-dont-use-pkg
+testifylint/useless-assert, testifylint/suite-dont-use-pkg
+</related>

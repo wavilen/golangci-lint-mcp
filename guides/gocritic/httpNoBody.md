@@ -7,12 +7,6 @@ Replace `nil` body arguments with `http.NoBody`.
 </instructions>
 
 <examples>
-## Bad
-```go
-req, err := http.NewRequest("GET", url, nil)
-resp := &http.Response{StatusCode: 200, Body: nil}
-```
-
 ## Good
 ```go
 req, err := http.NewRequest("GET", url, http.NoBody)
@@ -27,5 +21,5 @@ resp := &http.Response{StatusCode: 200, Body: http.NoBody}
 </patterns>
 
 <related>
-wrapperFunc
+gocritic/wrapperFunc
 </related>

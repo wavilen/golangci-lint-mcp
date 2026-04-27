@@ -5,11 +5,6 @@ Detects `assert.Equal(t, fmt.Sprintf("msg: %s", x), y)` where `fmt.Sprintf` is u
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Equal(t, expected, actual, fmt.Sprintf("item %d failed", i))
-```
-
 ## Good
 ```go
 assert.Equalf(t, expected, actual, "item %d failed", i)
@@ -23,4 +18,5 @@ assert.Equalf(t, expected, actual, "item %d failed", i)
 </patterns>
 
 <related>
-contains-unnecessary-format, expected-actual
+testifylint/contains-unnecessary-format, testifylint/expected-actual
+</related>

@@ -7,13 +7,6 @@ Start every `//` comment with `// ` (double-slash followed by a single space). K
 </instructions>
 
 <examples>
-## Bad
-```go
-//this is missing a space
-//  this has extra spaces
-/*this block comment lacks spacing*/
-```
-
 ## Good
 ```go
 // this is properly formatted
@@ -30,5 +23,5 @@ Start every `//` comment with `// ` (double-slash followed by a single space). K
 </patterns>
 
 <related>
-todoCommentWithoutDetail, docStub
+gocritic/todoCommentWithoutDetail, gocritic/docStub
 </related>

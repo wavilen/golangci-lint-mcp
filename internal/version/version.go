@@ -5,24 +5,27 @@ import (
 	"strings"
 )
 
+const shortHashLen = 9
+
 func init() {
 	if Server != "dev" {
 		return
 	}
-	bi, ok := debug.ReadBuildInfo()
+	buildInfo, ok := debug.ReadBuildInfo()
 	if !ok {
 		return
 	}
-	for _, s := range bi.Settings {
+	for _, s := range buildInfo.Settings {
 		if s.Key == "vcs.revision" {
-			Server = s.Value[:9]
-			if len(s.Value) < 9 {
+			if len(s.Value) < shortHashLen {
 				Server = s.Value
+			} else {
+				Server = s.Value[:shortHashLen]
 			}
 			break
 		}
 	}
-	for _, s := range bi.Settings {
+	for _, s := range buildInfo.Settings {
 		if s.Key == "vcs.tag" && strings.HasPrefix(s.Value, "v") {
 			Server = strings.TrimPrefix(s.Value, "v")
 			break

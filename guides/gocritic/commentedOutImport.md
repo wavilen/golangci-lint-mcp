@@ -7,15 +7,6 @@ Remove commented-out imports entirely. Use version control history if you need t
 </instructions>
 
 <examples>
-## Bad
-```go
-import (
-	"fmt"
-	// "os"
-	"strings"
-)
-```
-
 ## Good
 ```go
 import (
@@ -31,5 +22,5 @@ import (
 </patterns>
 
 <related>
-commentedOutCode, dupImport
+gocritic/commentedOutCode, gocritic/dupImport
 </related>

@@ -7,16 +7,6 @@ Copy the parameter to a local variable if mutation is needed, or restructure the
 </instructions>
 
 <examples>
-## Bad
-```go
-func normalize(items []string) []string {
-    for i := range items {
-        items[i] = strings.TrimSpace(items[i]) // modifies caller's slice
-    }
-    return items
-}
-```
-
 ## Good
 ```go
 func normalize(items []string) []string {
@@ -38,4 +28,5 @@ func normalize(items []string) []string {
 </patterns>
 
 <related>
-modifies-value-receiver, confusing-results
+revive/modifies-value-receiver, revive/confusing-results
+</related>

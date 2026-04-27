@@ -7,12 +7,6 @@ Fix the spelling mistake. Configure the locale (US/UK) if needed via golangci-li
 </instructions>
 
 <examples>
-## Bad
-```go
-// This is a seperated list of recieved values
-var succesfully = "occured"
-```
-
 ## Good
 ```go
 // This is a separated list of received values.

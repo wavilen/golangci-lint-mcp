@@ -7,12 +7,6 @@ Use the exact `// Deprecated: explanation` format. The colon and capitalization 
 </instructions>
 
 <examples>
-## Bad
-```go
-// deprecated — use NewClient instead
-func OldClient() *Client { ... }
-```
-
 ## Good
 ```go
 // Deprecated: Use NewClient instead.
@@ -29,5 +23,5 @@ func OldClient() *Client { ... }
 </patterns>
 
 <related>
-codegenComment, commentedOutCode
+gocritic/codegenComment, gocritic/commentedOutCode
 </related>

@@ -7,11 +7,6 @@ Pass the correct distinct arguments to each parameter. If the duplication is int
 </instructions>
 
 <examples>
-## Bad
-```go
-strings.ReplaceAll(s, "-", "-") // old and new are identical
-```
-
 ## Good
 ```go
 strings.ReplaceAll(s, "-", "_")
@@ -27,5 +22,5 @@ strings.ReplaceAll(s, "-", "_")
 </patterns>
 
 <related>
-dupSubExpr, dupBranchBody, argOrder
+gocritic/dupSubExpr, gocritic/dupBranchBody, gocritic/argOrder
 </related>

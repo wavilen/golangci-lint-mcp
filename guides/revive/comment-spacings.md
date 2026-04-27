@@ -7,13 +7,6 @@ Add a space after `//` in all comments. For special directives, follow the speci
 </instructions>
 
 <examples>
-## Bad
-```go
-//this lacks a space
-x := compute() //also here
-//TODO: fix this later
-```
-
 ## Good
 ```go
 // This has a space
@@ -31,4 +24,5 @@ x := compute() // also here
 </patterns>
 
 <related>
-comments-density, godot
+revive/comments-density, godot
+</related>

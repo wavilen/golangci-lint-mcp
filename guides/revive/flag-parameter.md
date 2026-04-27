@@ -7,16 +7,6 @@ Split the function into two clearly named functions, or use an options struct. I
 </instructions>
 
 <examples>
-## Bad
-```go
-func render(data []byte, pretty bool) string {
-    if pretty {
-        return formatIndented(data)
-    }
-    return formatCompact(data)
-}
-```
-
 ## Good
 ```go
 func render(data []byte) string {
@@ -38,4 +28,5 @@ func renderPretty(data []byte) string {
 </patterns>
 
 <related>
-function-result-limit, argument-limit
+revive/function-result-limit, revive/argument-limit
+</related>

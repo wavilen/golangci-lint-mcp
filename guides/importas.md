@@ -7,14 +7,6 @@ Set the enforced alias in `.golangci.yml` under `linters.settings.importas.alias
 </instructions>
 
 <examples>
-## Bad
-```go
-// file_a.go
-import http "net/http"
-// file_b.go
-import httplib "net/http"
-```
-
 ## Good
 ```go
 // file_a.go

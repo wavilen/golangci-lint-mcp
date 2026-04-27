@@ -7,12 +7,6 @@ Replace `x += 1` with `x++` and `x -= 1` with `x--`.
 </instructions>
 
 <examples>
-## Bad
-```go
-i += 1
-count -= 1
-```
-
 ## Good
 ```go
 i++
@@ -29,4 +23,5 @@ count--
 </patterns>
 
 <related>
-bool-literal-in-expr
+revive/bool-literal-in-expr
+</related>

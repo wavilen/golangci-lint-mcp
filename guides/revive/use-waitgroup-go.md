@@ -7,18 +7,6 @@ Call `wg.Add(1)` immediately before the `go` statement that launches the gorouti
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, item := range items {
-    go func() {
-        wg.Add(1) // too late — race with Wait
-        defer wg.Done()
-        process(item)
-    }()
-}
-wg.Wait()
-```
-
 ## Good
 ```go
 for _, item := range items {
@@ -41,4 +29,5 @@ wg.Wait()
 </patterns>
 
 <related>
-waitgroup-by-value, datarace
+revive/waitgroup-by-value, revive/datarace
+</related>

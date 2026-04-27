@@ -7,13 +7,6 @@ Rename metrics to follow the `[namespace]_[subsystem]_[name]_[unit]` convention.
 </instructions>
 
 <examples>
-## Bad
-```go
-var httpRequestDuration = prometheus.NewHistogram(prometheus.HistogramOpts{
-    Name: "http_request_duration",
-})
-```
-
 ## Good
 ```go
 var httpRequestDuration = prometheus.NewHistogram(prometheus.HistogramOpts{

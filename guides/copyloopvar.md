@@ -7,14 +7,6 @@ Remove the unnecessary copy and use the loop variable directly.
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, item := range items {
-    item := item // unnecessary copy
-    process(item)
-}
-```
-
 ## Good
 ```go
 for _, item := range items {
@@ -30,4 +22,5 @@ for _, item := range items {
 </patterns>
 
 <related>
-gosimple, staticcheck, govet
+staticcheck, govet
+</related>

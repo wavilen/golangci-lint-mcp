@@ -7,18 +7,6 @@ Remove the trailing `break` from the case clause. Only keep `break` when you nee
 </instructions>
 
 <examples>
-## Bad
-```go
-switch color {
-case "red":
-    handleRed()
-    break // unnecessary
-case "blue":
-    handleBlue()
-    break
-}
-```
-
 ## Good
 ```go
 switch color {
@@ -39,4 +27,5 @@ case "blue":
 </patterns>
 
 <related>
-useless-fallthrough, unnecessary-stmt, unnecessary-if
+revive/useless-fallthrough, revive/unnecessary-stmt, revive/unnecessary-if
+</related>

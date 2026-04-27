@@ -7,12 +7,6 @@ Simplify the regex pattern to its most concise equivalent form.
 </instructions>
 
 <examples>
-## Bad
-```go
-re := regexp.MustCompile(`[0-9]`)
-re := regexp.MustCompile(`a{0,1}b`)
-```
-
 ## Good
 ```go
 re := regexp.MustCompile(`\d`)
@@ -28,5 +22,5 @@ re := regexp.MustCompile(`a?b`)
 </patterns>
 
 <related>
-regexpMust, regexpPattern
+gocritic/regexpMust, gocritic/regexpPattern
 </related>

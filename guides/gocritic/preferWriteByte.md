@@ -7,12 +7,6 @@ Replace `w.Write([]byte{b})` with `w.WriteByte(b)` when writing a single byte.
 </instructions>
 
 <examples>
-## Bad
-```go
-var buf bytes.Buffer
-buf.Write([]byte{'\n'})
-```
-
 ## Good
 ```go
 var buf bytes.Buffer
@@ -28,4 +22,5 @@ buf.WriteByte('\n')
 </patterns>
 
 <related>
-preferStringWriter, preferFprint, zeroByteRepeat
+gocritic/preferStringWriter, gocritic/preferFprint, gocritic/zeroByteRepeat
+</related>

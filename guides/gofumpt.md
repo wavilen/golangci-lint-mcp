@@ -7,18 +7,6 @@ Run `gofumpt -w .` to auto-fix all formatting issues.
 </instructions>
 
 <examples>
-## Bad
-```go
-import(
-"os"
-"fmt"
-)
-func main(){
-if  x  >  0  {
-fmt.Println("positive")}
-}
-```
-
 ## Good
 ```go
 import (

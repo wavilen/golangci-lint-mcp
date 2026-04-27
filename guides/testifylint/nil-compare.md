@@ -5,12 +5,6 @@ Detects `assert.Nil(t, x)` for non-error types where a more specific assertion i
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Nil(t, err)
-assert.Nil(t, []int{})
-```
-
 ## Good
 ```go
 assert.NoError(t, err)
@@ -25,4 +19,5 @@ assert.Empty(t, []int{})
 </patterns>
 
 <related>
-error-nil, empty, len
+testifylint/error-nil, testifylint/empty, testifylint/len, testifylint/bool-compare
+</related>

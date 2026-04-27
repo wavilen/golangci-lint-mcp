@@ -7,14 +7,6 @@ Store the result of `sync.OnceValue(fn)` in a package-level or struct-level vari
 </instructions>
 
 <examples>
-## Bad
-```go
-func getConfig() Config {
-    // Wraps every call — no memoization benefit
-    return sync.OnceValue(loadConfig)()
-}
-```
-
 ## Good
 ```go
 var getConfig = sync.OnceValue(loadConfig)
@@ -30,5 +22,5 @@ var getConfig = sync.OnceValue(loadConfig)
 </patterns>
 
 <related>
-badLock, unnecessaryDefer
+gocritic/badLock, gocritic/unnecessaryDefer
 </related>

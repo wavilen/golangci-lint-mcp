@@ -7,15 +7,6 @@ Remove unnecessary parentheses from type expressions.
 </instructions>
 
 <examples>
-## Bad
-```go
-func getValue() (int) {
-	return 42
-}
-var nums [](int)
-var data map[string](int)
-```
-
 ## Good
 ```go
 func getValue() int {
@@ -34,5 +25,5 @@ var data map[string]int
 </patterns>
 
 <related>
-typeDefFirst, underef
+gocritic/typeDefFirst, gocritic/underef
 </related>

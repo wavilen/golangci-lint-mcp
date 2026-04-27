@@ -7,11 +7,6 @@ Add a comment starting with `// Package {name} ...` directly above the package d
 </instructions>
 
 <examples>
-## Bad
-```go
-package user
-```
-
 ## Good
 ```go
 // Package user provides types and functions for managing user accounts
@@ -29,4 +24,5 @@ package user
 </patterns>
 
 <related>
-package-naming, package-directory-mismatch, comment-spacings
+revive/package-naming, revive/package-directory-mismatch, revive/comment-spacings
+</related>

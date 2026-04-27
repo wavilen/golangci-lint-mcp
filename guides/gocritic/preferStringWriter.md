@@ -7,12 +7,6 @@ Use `WriteString(s)` (or `fmt.Fprint(w, s)`) instead of `w.Write([]byte(s))` whe
 </instructions>
 
 <examples>
-## Bad
-```go
-var buf bytes.Buffer
-buf.Write([]byte("hello world"))
-```
-
 ## Good
 ```go
 var buf bytes.Buffer
@@ -28,4 +22,5 @@ buf.WriteString("hello world")
 </patterns>
 
 <related>
-preferFprint, preferWriteByte, stringXbytes
+gocritic/preferFprint, gocritic/preferWriteByte, gocritic/stringXbytes
+</related>

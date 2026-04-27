@@ -7,11 +7,6 @@ Break long lines at natural points: after operators, before function arguments, 
 </instructions>
 
 <examples>
-## Bad
-```go
-result, err := someService.DoSomethingVeryComplex(ctx, param1, param2, param3, param4, param5, param6, param7)
-```
-
 ## Good
 ```go
 result, err := someService.DoSomethingVeryComplex(
@@ -34,4 +29,5 @@ result, err := someService.DoSomethingVeryComplex(
 </patterns>
 
 <related>
-file-length-limit, function-length, lll
+revive/file-length-limit, revive/function-length, lll
+</related>

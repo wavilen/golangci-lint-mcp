@@ -7,23 +7,12 @@ Return concrete types and let the caller decide whether to accept them as interf
 </instructions>
 
 <examples>
-## Bad
-```go
-func NewStore(path string) (io.Closer, error) {
-    f, err := os.Open(path)
-    if err != nil {
-        return nil, err
-    }
-    return f, nil
-}
-```
-
 ## Good
 ```go
 func NewStore(path string) (*os.File, error) {
     f, err := os.Open(path)
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("opening store: %w", err)
     }
     return f, nil
 }
@@ -38,5 +27,5 @@ func NewStore(path string) (*os.File, error) {
 </patterns>
 
 <related>
-interfacebloat, revive, gocritic
+interfacebloat, revive/max-public-structs, gocritic/unnamedResult
 </related>

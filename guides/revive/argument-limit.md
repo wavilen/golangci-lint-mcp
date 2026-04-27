@@ -7,14 +7,6 @@ Refactor by grouping related parameters into a struct, using the options pattern
 </instructions>
 
 <examples>
-## Bad
-```go
-func CreateUser(name, email, phone, address, city, state, zip, country, role string, age int) error {
-    // 10 parameters — easy to mix up order
-    return nil
-}
-```
-
 ## Good
 ```go
 type CreateUserParams struct {
@@ -41,4 +33,5 @@ func CreateUser(p CreateUserParams) error {
 </patterns>
 
 <related>
-function-result-limit, function-length
+revive/function-result-limit, revive/function-length
+</related>

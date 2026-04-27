@@ -7,13 +7,6 @@ Use value receivers and parameters unless the function needs to modify the calle
 </instructions>
 
 <examples>
-## Bad
-```go
-func greet(name *string) {
-	slog.Info("greeting", "name", *name)
-}
-```
-
 ## Good
 ```go
 func greet(name string) {
@@ -29,5 +22,5 @@ func greet(name string) {
 </patterns>
 
 <related>
-underef, exposedSyncMutex
+gocritic/underef, gocritic/exposedSyncMutex
 </related>

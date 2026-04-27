@@ -5,13 +5,6 @@ Detects multiple consecutive `const` declarations that can be grouped into a sin
 </instructions>
 
 <examples>
-## Bad
-```go
-const StatusOK = 200
-const StatusNotFound = 404
-const StatusError = 500
-```
-
 ## Good
 ```go
 const (
@@ -29,4 +22,5 @@ const (
 </patterns>
 
 <related>
-var, type, import
+grouper/var, grouper/type, grouper/import
+</related>

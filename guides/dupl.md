@@ -7,29 +7,6 @@ Extract the duplicated logic into a shared function, method, or helper, then cal
 </instructions>
 
 <examples>
-## Bad
-```go
-func validateName(name string) error {
-    if len(name) == 0 {
-        return fmt.Errorf("name is required")
-    }
-    if len(name) > 100 {
-        return fmt.Errorf("name too long")
-    }
-    return nil
-}
-
-func validateEmail(email string) error {
-    if len(email) == 0 {
-        return fmt.Errorf("email is required")
-    }
-    if len(email) > 100 {
-        return fmt.Errorf("email too long")
-    }
-    return nil
-}
-```
-
 ## Good
 ```go
 func validateField(name, value string, maxLen int) error {

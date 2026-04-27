@@ -5,21 +5,6 @@ Detects mutable state shared across Ginkgo specs that can cause test pollution. 
 </instructions>
 
 <examples>
-## Bad
-```go
-var cache *Cache
-
-var _ = Describe("cache", func() {
-    BeforeEach(func() {
-        cache = NewCache()
-        cache.Set("key", "value") // modifies shared state
-    })
-    It("is empty", func() {
-        Expect(cache.Get("key")).To(BeEmpty()) // polluted by BeforeEach!
-    })
-})
-```
-
 ## Good
 ```go
 var _ = Describe("cache", func() {
@@ -42,4 +27,5 @@ var _ = Describe("cache", func() {
 </patterns>
 
 <related>
-focus-container, nil-assertion
+ginkgolinter/focus-container, ginkgolinter/nil-assertion
+</related>

@@ -7,13 +7,6 @@ Fix the constraint syntax and ensure the directive is at the very top of the fil
 </instructions>
 
 <examples>
-## Bad
-```go
-package main // build tag after package clause
-
-//go:build linux
-```
-
 ## Good
 ```go
 //go:build linux
@@ -30,5 +23,5 @@ package main
 </patterns>
 
 <related>
-directive, stdversion
+govet/directive, govet/stdversion
 </related>

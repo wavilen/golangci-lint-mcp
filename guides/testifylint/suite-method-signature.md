@@ -5,13 +5,6 @@ Detects suite test methods with incorrect signatures. Testify suite methods must
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *MySuite) TestFoo(t *testing.T) {
-    assert.Equal(t, expected, actual)
-}
-```
-
 ## Good
 ```go
 func (s *MySuite) TestFoo() {
@@ -27,4 +20,5 @@ func (s *MySuite) TestFoo() {
 </patterns>
 
 <related>
-suite-thelper, suite-dont-use-pkg
+testifylint/suite-thelper, testifylint/suite-dont-use-pkg
+</related>

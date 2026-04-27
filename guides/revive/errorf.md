@@ -7,12 +7,6 @@ Replace `errors.New(fmt.Sprintf(...))` with `fmt.Errorf(...)`. If wrapping an er
 </instructions>
 
 <examples>
-## Bad
-```go
-return errors.New(fmt.Sprintf("invalid id %d", id))
-return errors.New(fmt.Sprintf("lookup failed: %v", err))
-```
-
 ## Good
 ```go
 return fmt.Errorf("invalid id %d", id)
@@ -29,4 +23,5 @@ return errors.Wrap(err, "lookup failed")
 </patterns>
 
 <related>
-error-naming, error-return, error-strings
+revive/error-naming, revive/error-return, revive/error-strings
+</related>

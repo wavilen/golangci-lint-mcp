@@ -7,24 +7,13 @@ Move the `context.Context` parameter to the first position. Do not wrap it in an
 </instructions>
 
 <examples>
-## Bad
-```go
-func Process(data []byte, ctx context.Context) error {
-    return nil
-}
-
-func Handle(*CustomContext) error { // custom wrapper
-    return nil
-}
-```
-
 ## Good
 ```go
-func Process(ctx context.Context, data []byte) error {
+func Process(_ context.Context, _ []byte) error {
     return nil
 }
 
-func Handle(ctx context.Context) error {
+func Handle(_ context.Context) error {
     return nil
 }
 ```
@@ -39,4 +28,5 @@ func Handle(ctx context.Context) error {
 </patterns>
 
 <related>
-context-keys-type, inamedparam
+revive/context-keys-type, inamedparam
+</related>

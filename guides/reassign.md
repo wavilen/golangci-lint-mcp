@@ -7,15 +7,6 @@ Convert the variable to `const` if the value is known at compile time, or docume
 </instructions>
 
 <examples>
-## Bad
-```go
-var MaxRetries = 3
-
-func init() {
-    MaxRetries = 5 // accidental override
-}
-```
-
 ## Good
 ```go
 const MaxRetries = 3
@@ -33,3 +24,4 @@ var MaxRetries = 3 //nolint:reassign // configurable via config file
 
 <related>
 goconst, govet, staticcheck
+</related>

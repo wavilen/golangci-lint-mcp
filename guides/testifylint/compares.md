@@ -5,12 +5,6 @@ Detects `assert.True(t, a > b)` or `assert.False(t, a < b)` where dedicated comp
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.True(t, score > passingGrade)
-assert.False(t, age < minimumAge)
-```
-
 ## Good
 ```go
 assert.Greater(t, score, passingGrade)
@@ -26,4 +20,5 @@ assert.GreaterOrEqual(t, age, minimumAge)
 </patterns>
 
 <related>
-bool-compare, float-compare
+testifylint/bool-compare, testifylint/float-compare
+</related>

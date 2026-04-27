@@ -7,13 +7,6 @@ Name all parameters in interface method signatures. Use descriptive names that c
 </instructions>
 
 <examples>
-## Bad
-```go
-type Processor interface {
-    Process(context.Context, []byte) error
-}
-```
-
 ## Good
 ```go
 type Processor interface {

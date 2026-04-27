@@ -7,14 +7,6 @@ Consolidate to a single import. If you need different names, pick one clear alia
 </instructions>
 
 <examples>
-## Bad
-```go
-import (
-    "encoding/json"
-    j "encoding/json" // same package imported twice
-)
-```
-
 ## Good
 ```go
 import (
@@ -32,4 +24,5 @@ import (
 </patterns>
 
 <related>
-dot-imports, import-alias-naming
+revive/dot-imports, revive/import-alias-naming
+</related>

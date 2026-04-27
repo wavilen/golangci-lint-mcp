@@ -5,29 +5,6 @@ Gocognit measures cognitive complexity — how hard code is to read, penalizing 
 </instructions>
 
 <examples>
-## Bad
-```go
-func HandleCreateOrder(w http.ResponseWriter, r *http.Request) {
-    var req OrderRequest
-    if json.NewDecoder(r.Body).Decode(&req) != nil {
-        w.WriteHeader(400)
-        return
-    }
-    if req.Customer == "" {
-        w.WriteHeader(400)
-        return
-    }
-    total := 0.0
-    for _, i := range req.Items {
-        total += float64(i.Qty) * i.Price
-    }
-    order := Order{Customer: req.Customer, Total: total * 1.08}
-    db.Save(&order)
-    w.WriteHeader(201)
-    json.NewEncoder(w).Encode(order)
-}
-```
-
 ## Good
 ```go
 func HandleCreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -55,5 +32,5 @@ func HandleCreateOrder(w http.ResponseWriter, r *http.Request) {
 </patterns>
 
 <related>
-gocyclo, cyclop, maintidx, nestif
+gocyclo, cyclop, maintidx, nestif, revive/cognitive-complexity
 </related>

@@ -7,12 +7,6 @@ Remove or replace the banned character with an allowed alternative as configured
 </instructions>
 
 <examples>
-## Bad
-```go
-// Assuming "Ω" is banned
-const maxOmega = 3.14 // Ω character in identifier suffix
-```
-
 ## Good
 ```go
 const maxOmega = 3.14 // use plain ASCII identifier
@@ -28,4 +22,5 @@ const maxOmega = 3.14 // use plain ASCII identifier
 </patterns>
 
 <related>
-filename-format
+revive/filename-format
+</related>

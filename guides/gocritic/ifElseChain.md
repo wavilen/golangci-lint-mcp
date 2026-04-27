@@ -7,19 +7,6 @@ Convert the chain to a `switch` statement on the repeated expression.
 </instructions>
 
 <examples>
-## Bad
-```go
-if color == "red" {
-	red()
-} else if color == "green" {
-	green()
-} else if color == "blue" {
-	blue()
-} else {
-	other()
-}
-```
-
 ## Good
 ```go
 switch color {
@@ -42,5 +29,5 @@ default:
 </patterns>
 
 <related>
-elseif, singleCaseSwitch, switchTrue
+gocritic/elseif, gocritic/singleCaseSwitch, gocritic/switchTrue
 </related>

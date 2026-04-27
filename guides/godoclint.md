@@ -7,14 +7,6 @@ Add a doc comment starting with the declared name immediately before each export
 </instructions>
 
 <examples>
-## Bad
-```go
-// This function parses config
-func ParseConfig(path string) (*Config, error) {
-    return nil, nil
-}
-```
-
 ## Good
 ```go
 // ParseConfig reads and parses the configuration file at path.

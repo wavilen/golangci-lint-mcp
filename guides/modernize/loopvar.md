@@ -5,15 +5,6 @@ Detects loop variable capture patterns where `for i, v := range` variables are r
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, v := range values {
-    go func() {
-        process(v) // all goroutines see last value (pre-Go 1.22)
-    }()
-}
-```
-
 ## Good
 ```go
 for _, v := range values {
@@ -32,4 +23,5 @@ for _, v := range values {
 </patterns>
 
 <related>
-simplifyrange, reloop
+modernize/simplifyrange, modernize/reloop
+</related>

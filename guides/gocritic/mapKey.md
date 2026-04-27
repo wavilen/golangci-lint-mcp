@@ -7,15 +7,6 @@ Ensure map key types are comparable and remove duplicate keys from map literals.
 </instructions>
 
 <examples>
-## Bad
-```go
-_ = map[string]int{
-    "a": 1,
-    "b": 2,
-    "a": 3, // duplicate key — overwrites value 1
-}
-```
-
 ## Good
 ```go
 _ = map[string]int{
@@ -33,5 +24,5 @@ _ = map[string]int{
 </patterns>
 
 <related>
-dupArg, dupCase, dupSubExpr
+gocritic/dupArg, gocritic/dupCase, gocritic/dupSubExpr
 </related>

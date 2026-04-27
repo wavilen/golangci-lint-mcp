@@ -7,12 +7,6 @@ Pass the host and port as separate arguments. If you already have a combined add
 </instructions>
 
 <examples>
-## Bad
-```go
-addr := net.JoinHostPort("example.com:8080", "443")
-// produces "example.com:8080:443" — malformed
-```
-
 ## Good
 ```go
 addr := net.JoinHostPort("example.com", "443")
@@ -27,5 +21,5 @@ addr := net.JoinHostPort("example.com", "443")
 </patterns>
 
 <related>
-httpresponse, nosprintfhostport
+govet/httpresponse, nosprintfhostport
 </related>

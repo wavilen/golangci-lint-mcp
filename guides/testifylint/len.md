@@ -5,12 +5,6 @@ Detects `assert.Equal(t, 5, len(x))` or `assert.NotEqual(t, 0, len(x))` where `a
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Equal(t, 3, len(items))
-assert.NotEqual(t, 0, len(results))
-```
-
 ## Good
 ```go
 assert.Len(t, items, 3)
@@ -25,4 +19,5 @@ assert.NotEmpty(t, results)
 </patterns>
 
 <related>
-empty, nil-compare
+testifylint/empty, testifylint/nil-compare
+</related>

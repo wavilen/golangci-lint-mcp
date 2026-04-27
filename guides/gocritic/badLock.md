@@ -7,15 +7,6 @@ Always lock and unlock the same mutex instance, and ensure mutexes are accessed 
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s Server) Process() {
-    s.mu.Lock()
-    defer s.mu2.Unlock() // wrong mutex unlocked
-    // ...
-}
-```
-
 ## Good
 ```go
 func (s *Server) Process() {
@@ -34,5 +25,5 @@ func (s *Server) Process() {
 </patterns>
 
 <related>
-badSyncOnceFunc, unnecessaryDefer, deferInLoop
+gocritic/badSyncOnceFunc, gocritic/unnecessaryDefer, gocritic/deferInLoop
 </related>

@@ -7,13 +7,6 @@ Use `clear(s)` (Go 1.21+) to zero all elements and release references, or `s = s
 </instructions>
 
 <examples>
-## Bad
-```go
-s = s[:0]          // elements still referenced, not zeroed
-s = nil             // loses capacity
-s = make([]int, 0)  // discards backing array entirely
-```
-
 ## Good
 ```go
 clear(s)  // Go 1.21+: zeroes elements, keeps length/capacity
@@ -28,4 +21,5 @@ clear(s)  // Go 1.21+: zeroes elements, keeps length/capacity
 </patterns>
 
 <related>
-zeroByteRepeat, appendCombine, makeLen
+gocritic/zeroByteRepeat, gocritic/appendCombine
+</related>

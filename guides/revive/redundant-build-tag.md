@@ -7,14 +7,6 @@ Remove the redundant build tag, or consolidate multiple tags into a single corre
 </instructions>
 
 <examples>
-## Bad
-```go
-//go:build linux
-
-// file: foo_linux.go (suffix already implies linux)
-package pkg
-```
-
 ## Good
 ```go
 // file: foo_linux.go
@@ -31,4 +23,5 @@ package pkg
 </patterns>
 
 <related>
-redundant-import-alias, redundant-test-main-exit
+revive/redundant-import-alias, revive/redundant-test-main-exit
+</related>

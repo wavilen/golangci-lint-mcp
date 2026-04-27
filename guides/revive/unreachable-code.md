@@ -7,14 +7,6 @@ Remove the dead code after the terminating statement. If the code should execute
 </instructions>
 
 <examples>
-## Bad
-```go
-func load() ([]byte, error) {
-    return nil, errors.New("not implemented")
-    log.Println("loading data") // unreachable
-}
-```
-
 ## Good
 ```go
 func load() ([]byte, error) {
@@ -33,4 +25,5 @@ func load() ([]byte, error) {
 </patterns>
 
 <related>
-unnecessary-stmt, unconditional-recursion, deep-exit
+revive/unnecessary-stmt, revive/unconditional-recursion, revive/deep-exit
+</related>

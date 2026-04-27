@@ -7,15 +7,6 @@ Fix the code according to the specific ruleguard rule that was triggered. Refer 
 </instructions>
 
 <examples>
-## Bad
-```go
-// Depends on your project's ruleguard rules.
-// Example rule: disallow time.Sleep in tests
-func TestSomething(t *testing.T) {
-	time.Sleep(5 * time.Second)
-}
-```
-
 ## Good
 ```go
 // Use a mock or fake clock instead

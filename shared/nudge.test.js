@@ -12,6 +12,8 @@ const {
   buildStrategyBNudge,
   truncateNudge,
   extractRule,
+  splitCompoundCommand,
+  injectJqFilter,
   COMPOUND_LINTERS,
   OUTPUT_FLAG_PATTERNS_VALUE,
   OUTPUT_FLAG_PATTERNS_BOOL,
@@ -275,19 +277,19 @@ describe('injectJsonOutputFlag', () => {
   });
 
   it('strips conflicting --out-format tab and injects json flag', () => {
-    var result = injectJsonOutputFlag('golangci-lint run --out-format tab');
+    const result = injectJsonOutputFlag('golangci-lint run --out-format tab');
     assert.ok(result.indexOf('--out-format') === -1, 'should not contain --out-format');
     assert.ok(result.indexOf('--output.json.path stdout') !== -1, 'should contain json flag');
   });
 
   it('strips --color flag and injects json flag', () => {
-    var result = injectJsonOutputFlag('golangci-lint run --color always');
+    const result = injectJsonOutputFlag('golangci-lint run --color always');
     assert.ok(result.indexOf('--color') === -1, 'should not contain --color');
     assert.ok(result.indexOf('--output.json.path stdout') !== -1, 'should contain json flag');
   });
 
   it('replaces existing --output.json.path with new value', () => {
-    var result = injectJsonOutputFlag('golangci-lint run --output.json.path stderr');
+    const result = injectJsonOutputFlag('golangci-lint run --output.json.path stderr');
     assert.ok(result.indexOf('stderr') === -1, 'should not contain old value');
     assert.ok(result.indexOf('--output.json.path stdout') !== -1, 'should contain new value');
   });
@@ -297,37 +299,103 @@ describe('injectJsonOutputFlag', () => {
 
 describe('parseDiagnostics', () => {
   it('parses single diagnostic', () => {
-    var input = JSON.stringify({ FromLinter: 'errcheck', Text: 'error return is unchecked' });
-    var result = parseDiagnostics(input);
+    const input = JSON.stringify({ FromLinter: 'errcheck', Text: 'error return is unchecked' });
+    const result = parseDiagnostics(input);
     assert.equal(result.totalUnique, 1);
     assert.equal(result.linterCounts.errcheck, 1);
   });
 
   it('parses multiple linters', () => {
-    var line1 = JSON.stringify({ FromLinter: 'errcheck', Text: 'unchecked' });
-    var line2 = JSON.stringify({ FromLinter: 'govet', Text: 'lostcancel: cancel function not used' });
-    var line3 = JSON.stringify({ FromLinter: 'errcheck', Text: 'another unchecked' });
-    var result = parseDiagnostics(line1 + '\n' + line2 + '\n' + line3);
+    const line1 = JSON.stringify({ FromLinter: 'errcheck', Text: 'unchecked' });
+    const line2 = JSON.stringify({ FromLinter: 'govet', Text: 'lostcancel: cancel function not used' });
+    const line3 = JSON.stringify({ FromLinter: 'errcheck', Text: 'another unchecked' });
+    const result = parseDiagnostics(line1 + '\n' + line2 + '\n' + line3);
     assert.equal(result.totalUnique, 2);
     assert.equal(result.linterCounts.errcheck, 1);
     assert.equal(result.linterCounts.govet, 1);
   });
 
   it('handles empty input', () => {
-    var result = parseDiagnostics('');
+    const result = parseDiagnostics('');
     assert.equal(result.totalUnique, 0);
     assert.deepEqual(result.linterCounts, {});
   });
 
   it('handles invalid JSON lines', () => {
-    var result = parseDiagnostics('not json\nalso not json');
+    const result = parseDiagnostics('not json\nalso not json');
     assert.equal(result.totalUnique, 0);
   });
 
   it('extracts rule from compound linter text', () => {
-    var line = JSON.stringify({ FromLinter: 'govet', Text: 'lostcancel: cancel function is not used on deferral path' });
-    var result = parseDiagnostics(line);
+    const line = JSON.stringify({ FromLinter: 'govet', Text: 'lostcancel: cancel function is not used on deferral path' });
+    const result = parseDiagnostics(line);
     assert.equal(result.totalUnique, 1);
+  });
+
+  // ─── envelope format tests ────────────────────────────────────────────────
+
+  it('parses envelope with single issue', () => {
+    const input = JSON.stringify({ Issues: [{ FromLinter: 'errcheck', Text: 'unchecked' }], Report: {} });
+    const result = parseDiagnostics(input);
+    assert.equal(result.totalUnique, 1);
+    assert.equal(result.linterCounts.errcheck, 1);
+    assert.deepEqual(result.warnings, []);
+  });
+
+  it('parses envelope with warnings', () => {
+    const input = JSON.stringify({ Issues: [], Report: { Warnings: [{ Text: 'config deprecated' }] } });
+    const result = parseDiagnostics(input);
+    assert.equal(result.totalUnique, 0);
+    assert.deepEqual(result.linterCounts, {});
+    assert.equal(result.warnings.length, 1);
+    assert.equal(result.warnings[0].Text, 'config deprecated');
+  });
+
+  it('parses envelope with issues AND warnings', () => {
+    const input = JSON.stringify({
+      Issues: [{ FromLinter: 'errcheck', Text: 'x' }],
+      Report: { Warnings: [{ Text: 'config deprecated' }, { Text: 'slow linter' }] }
+    });
+    const result = parseDiagnostics(input);
+    assert.equal(result.totalUnique, 1);
+    assert.equal(result.linterCounts.errcheck, 1);
+    assert.equal(result.warnings.length, 2);
+    assert.equal(result.warnings[0].Text, 'config deprecated');
+    assert.equal(result.warnings[1].Text, 'slow linter');
+  });
+
+  it('parses envelope with compound linter', () => {
+    const input = JSON.stringify({
+      Issues: [{ FromLinter: 'govet', Text: 'lostcancel: cancel function not used' }],
+      Report: {}
+    });
+    const result = parseDiagnostics(input);
+    assert.equal(result.totalUnique, 1);
+    assert.equal(result.linterCounts.govet, 1);
+    assert.deepEqual(result.warnings, []);
+  });
+
+  it('parses empty envelope', () => {
+    const input = JSON.stringify({ Issues: [], Report: {} });
+    const result = parseDiagnostics(input);
+    assert.equal(result.totalUnique, 0);
+    assert.deepEqual(result.linterCounts, {});
+    assert.deepEqual(result.warnings, []);
+  });
+
+  it('parses envelope with missing Report', () => {
+    const input = JSON.stringify({ Issues: [{ FromLinter: 'errcheck', Text: 'x' }] });
+    const result = parseDiagnostics(input);
+    assert.equal(result.totalUnique, 1);
+    assert.equal(result.linterCounts.errcheck, 1);
+    assert.deepEqual(result.warnings, []);
+  });
+
+  it('returns warnings array in line-by-line path', () => {
+    const input = JSON.stringify({ FromLinter: 'errcheck', Text: 'unchecked' });
+    const result = parseDiagnostics(input);
+    assert.ok(Array.isArray(result.warnings));
+    assert.equal(result.warnings.length, 0);
   });
 });
 
@@ -441,14 +509,14 @@ describe('extractInnerCommand', () => {
 
 describe('stripOutputFilters — shell-wrapped pipe scenarios', () => {
   it('after extractInnerCommand: bash -c wrapped command with grep -v pipe', () => {
-    var inner = extractInnerCommand('bash -c "golangci-lint run | grep -v SA1019"');
-    var stripped = stripOutputFilters(inner);
+    const inner = extractInnerCommand('bash -c "golangci-lint run | grep -v SA1019"');
+    const stripped = stripOutputFilters(inner);
     assert.equal(stripped, 'golangci-lint run');
   });
 
   it('after extractInnerCommand: /bin/bash -c wrapped with redirect + grep -v', () => {
-    var inner = extractInnerCommand("/bin/bash -c 'golangci-lint run ./... 2>&1 | grep -v \"SA1019\"'");
-    var stripped = stripOutputFilters(inner);
+    const inner = extractInnerCommand("/bin/bash -c 'golangci-lint run ./... 2>&1 | grep -v \"SA1019\"'");
+    const stripped = stripOutputFilters(inner);
     assert.equal(stripped, 'golangci-lint run ./...');
   });
 });
@@ -457,10 +525,10 @@ describe('stripOutputFilters — shell-wrapped pipe scenarios', () => {
 
 describe('full pipeline: shell-wrapped + piped commands', () => {
   function processCommand(raw) {
-    var cdMatch = raw.match(/^(cd\s+(?:"[^"]+"|'[^']+'|\S+)\s*(?:&&|;)\s*)/);
-    var cdPrefix = cdMatch ? cdMatch[0] : '';
-    var inner = extractInnerCommand(raw);
-    var stripped = stripOutputFilters(inner);
+    const cdMatch = raw.match(/^(cd\s+(?:"[^"]+"|'[^']+'|\S+)\s*(?:&&|;)\s*)/);
+    const cdPrefix = cdMatch ? cdMatch[0] : '';
+    const inner = extractInnerCommand(raw);
+    const stripped = stripOutputFilters(inner);
     return cdPrefix + injectJsonOutputFlag(stripped);
   }
 
@@ -553,13 +621,13 @@ describe('shared module constants', () => {
 
 describe('buildStrategyANudge', () => {
   it('builds nudge with count and raw output', () => {
-    var nudge = buildStrategyANudge(2, 'raw');
+    const nudge = buildStrategyANudge(2, 'raw');
     assert.ok(nudge.indexOf('2 diagnostics') !== -1);
     assert.ok(nudge.indexOf('raw') !== -1);
   });
 
   it('singular: 1 diagnostic', () => {
-    var nudge = buildStrategyANudge(1, 'raw');
+    const nudge = buildStrategyANudge(1, 'raw');
     assert.ok(nudge.indexOf('1 diagnostic') !== -1);
     assert.ok(nudge.indexOf('diagnostics') === -1);
   });
@@ -567,27 +635,49 @@ describe('buildStrategyANudge', () => {
 
 describe('buildStrategyBNudge', () => {
   it('builds nudge with linter breakdown', () => {
-    var nudge = buildStrategyBNudge(5, { errcheck: 3, govet: 2 }, 'raw');
+    const nudge = buildStrategyBNudge(5, { errcheck: 3, govet: 2 }, 'raw');
     assert.ok(nudge.indexOf('5 diagnostics') !== -1);
     assert.ok(nudge.indexOf('2 linters') !== -1);
   });
 
   it('singular: 1 linter', () => {
-    var nudge = buildStrategyBNudge(3, { errcheck: 3 }, 'raw');
+    const nudge = buildStrategyBNudge(3, { errcheck: 3 }, 'raw');
     assert.ok(nudge.indexOf('1 linter') !== -1);
     assert.ok(nudge.indexOf('linters') === -1);
+  });
+
+  it('directs agents to golangci_lint_run (not golangci_lint_guide)', () => {
+    const nudge = buildStrategyBNudge(5, { errcheck: 3, govet: 2 }, 'raw');
+    assert.ok(nudge.indexOf('golangci_lint_run') !== -1, 'nudge should mention golangci_lint_run');
+    assert.equal(nudge.indexOf('golangci_lint_guide'), -1, 'nudge should NOT mention golangci_lint_guide');
+  });
+
+  it('nudge body is concise for short raw output (under 500 chars)', () => {
+    const nudge = buildStrategyBNudge(5, { errcheck: 3, govet: 2 }, 'short');
+    // The nudge body (without raw output) should be under 500 chars
+    // Find where the raw output section starts (after the action guidance line)
+    const lines = nudge.split('\n');
+    let bodyLen = 0;
+    for (let i = 0; i < lines.length; i++) {
+      bodyLen += lines[i].length + 1;
+      if (lines[i].indexOf('recommendation') !== -1) {
+        // Action guidance ends here; rest is raw output section
+        break;
+      }
+    }
+    assert.ok(bodyLen < 500, 'nudge body (without raw output) should be under 500 chars, got ' + bodyLen);
   });
 });
 
 describe('truncateNudge', () => {
   it('does not truncate short nudge', () => {
-    var nudge = 'short message';
+    const nudge = 'short message';
     assert.equal(truncateNudge(nudge), nudge);
   });
 
   it('truncates long nudge with notice', () => {
-    var nudge = 'x'.repeat(9000);
-    var result = truncateNudge(nudge);
+    const nudge = 'x'.repeat(9000);
+    const result = truncateNudge(nudge);
     assert.ok(result.length <= 8000);
     assert.ok(result.indexOf('truncated') !== -1 || result.indexOf('Truncated') !== -1);
   });
@@ -604,5 +694,142 @@ describe('extractRule', () => {
 
   it('returns null for compound linter with no colon', () => {
     assert.equal(extractRule('govet', 'no colon here'), null);
+  });
+});
+
+// ─── splitCompoundCommand ─────────────────────────────────────────────────
+
+describe('splitCompoundCommand', () => {
+  it('splits on semicolon: echo "x"; golangci-lint run ./...', () => {
+    const result = splitCompoundCommand('echo "x"; golangci-lint run ./...');
+    assert.deepEqual(result, { lintCommand: 'golangci-lint run ./...', jqSegment: '', echoSuffix: '' });
+  });
+
+  it('extracts jq pipe: golangci-lint run | jq \'.\'', () => {
+    const result = splitCompoundCommand("golangci-lint run | jq '.'");
+    assert.equal(result.lintCommand, 'golangci-lint run');
+    assert.equal(result.jqSegment, "| jq '.'");
+    assert.equal(result.echoSuffix, '');
+  });
+
+  it('extracts jq pipe with path prefix: golangci-lint run | /usr/bin/jq \'.\'', () => {
+    const result = splitCompoundCommand("golangci-lint run | /usr/bin/jq '.'");
+    assert.equal(result.lintCommand, 'golangci-lint run');
+    assert.equal(result.jqSegment, "| /usr/bin/jq '.'");
+    assert.equal(result.echoSuffix, '');
+  });
+
+  it('preserves || echo exit-code pattern', () => {
+    const result = splitCompoundCommand("golangci-lint run || echo 'lint failed'");
+    assert.equal(result.lintCommand, 'golangci-lint run');
+    assert.equal(result.jqSegment, '');
+    assert.equal(result.echoSuffix, "|| echo 'lint failed'");
+  });
+
+  it('preserves && echo exit-code pattern', () => {
+    const result = splitCompoundCommand("golangci-lint run && echo 'all clear'");
+    assert.equal(result.lintCommand, 'golangci-lint run');
+    assert.equal(result.jqSegment, '');
+    assert.equal(result.echoSuffix, "&& echo 'all clear'");
+  });
+
+  it('plain golangci-lint run returns empty jqSegment and echoSuffix', () => {
+    const result = splitCompoundCommand('golangci-lint run');
+    assert.deepEqual(result, { lintCommand: 'golangci-lint run', jqSegment: '', echoSuffix: '' });
+  });
+
+  it('non-jq pipe stays in lintCommand: golangci-lint run | grep -v SA1019', () => {
+    const result = splitCompoundCommand('golangci-lint run | grep -v SA1019');
+    assert.equal(result.lintCommand, 'golangci-lint run | grep -v SA1019');
+    assert.equal(result.jqSegment, '');
+    assert.equal(result.echoSuffix, '');
+  });
+
+  it('quoted semicolons NOT split: golangci-lint run --args \'a;b\'', () => {
+    const result = splitCompoundCommand("golangci-lint run --args 'a;b'");
+    assert.equal(result.lintCommand, "golangci-lint run --args 'a;b'");
+    assert.equal(result.jqSegment, '');
+    assert.equal(result.echoSuffix, '');
+  });
+
+  it('multiple semicolons: echo \'a\'; golangci-lint run; echo \'b\'', () => {
+    const result = splitCompoundCommand("echo 'a'; golangci-lint run; echo 'b'");
+    assert.deepEqual(result, { lintCommand: 'golangci-lint run', jqSegment: '', echoSuffix: '' });
+  });
+
+  it('jq with second pipe strips after jq: golangci-lint run | jq \'.\' | grep something', () => {
+    const result = splitCompoundCommand("golangci-lint run | jq '.' | grep something");
+    assert.equal(result.lintCommand, 'golangci-lint run');
+    assert.equal(result.jqSegment, "| jq '.'");
+    assert.equal(result.echoSuffix, '');
+  });
+
+  it('falsy/empty input returns empty fields', () => {
+    const result = splitCompoundCommand('');
+    assert.deepEqual(result, { lintCommand: '', jqSegment: '', echoSuffix: '' });
+  });
+
+  it('null input returns empty string lintCommand', () => {
+    const result = splitCompoundCommand(null);
+    assert.deepEqual(result, { lintCommand: '', jqSegment: '', echoSuffix: '' });
+  });
+
+  it('undefined input returns empty string lintCommand', () => {
+    const result = splitCompoundCommand(undefined);
+    assert.deepEqual(result, { lintCommand: '', jqSegment: '', echoSuffix: '' });
+  });
+
+  it('no golangci-lint segment returns passthrough', () => {
+    const result = splitCompoundCommand('echo hello');
+    assert.deepEqual(result, { lintCommand: 'echo hello', jqSegment: '', echoSuffix: '' });
+  });
+});
+
+// ─── injectJqFilter ──────────────────────────────────────────────────────
+
+describe('injectJqFilter', () => {
+  it('replaces trivial | jq with envelope filter', () => {
+    const result = injectJqFilter('| jq');
+    assert.equal(result, "| jq '{Issues: .Issues, Report: .Report}'");
+  });
+
+  it('replaces trivial | jq \'.\' with envelope filter', () => {
+    const result = injectJqFilter("| jq '.'");
+    assert.equal(result, "| jq '{Issues: .Issues, Report: .Report}'");
+  });
+
+  it('replaces trivial | jq "." with envelope filter', () => {
+    const result = injectJqFilter('| jq "."');
+    assert.equal(result, "| jq '{Issues: .Issues, Report: .Report}'");
+  });
+
+  it('replaces trivial | /usr/bin/jq \'.\' preserving path prefix', () => {
+    const result = injectJqFilter("| /usr/bin/jq '.'");
+    assert.equal(result, "| /usr/bin/jq '{Issues: .Issues, Report: .Report}'");
+  });
+
+  it('leaves non-trivial jq filter unchanged: | jq \'.Issues[]\'', () => {
+    const result = injectJqFilter("| jq '.Issues[]'");
+    assert.equal(result, "| jq '.Issues[]'");
+  });
+
+  it('leaves jq with -r flag unchanged: | jq -r \'.Issues[].Text\'', () => {
+    const result = injectJqFilter("| jq -r '.Issues[].Text'");
+    assert.equal(result, "| jq -r '.Issues[].Text'");
+  });
+
+  it('leaves jq with -c flag unchanged: | jq -c \'.Issues | length\'', () => {
+    const result = injectJqFilter("| jq -c '.Issues | length'");
+    assert.equal(result, "| jq -c '.Issues | length'");
+  });
+
+  it('empty string returns empty string', () => {
+    const result = injectJqFilter('');
+    assert.equal(result, '');
+  });
+
+  it('falsy input returns empty string', () => {
+    const result = injectJqFilter(null);
+    assert.equal(result, '');
   });
 });

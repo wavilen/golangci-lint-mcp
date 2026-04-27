@@ -7,21 +7,6 @@ Invert the error check: handle the error case first with a return, then continue
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(data []byte) error {
-    result, err := parse(data)
-    if err == nil {
-        if err := validate(result); err == nil {
-            return save(result)
-        } else {
-            return errors.Wrap(err, "validate")
-        }
-    }
-    return errors.Wrap(err, "parse")
-}
-```
-
 ## Good
 ```go
 func process(data []byte) error {
@@ -46,4 +31,5 @@ func process(data []byte) error {
 </patterns>
 
 <related>
-early-return, if-return, error-return
+revive/early-return, revive/if-return, revive/error-return
+</related>

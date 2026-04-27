@@ -7,17 +7,6 @@ Remove the `if` and keep only the relevant branch, or rewrite the logic to elimi
 </instructions>
 
 <examples>
-## Bad
-```go
-if true {
-    doWork()
-}
-if err != nil && err != io.EOF {
-} else {
-    doWork() // identical in both branches
-}
-```
-
 ## Good
 ```go
 doWork()
@@ -33,4 +22,5 @@ doWork()
 </patterns>
 
 <related>
-unnecessary-stmt, unnecessary-format, bool-literal-in-expr
+revive/unnecessary-stmt, revive/unnecessary-format, revive/bool-literal-in-expr
+</related>

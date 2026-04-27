@@ -7,14 +7,6 @@ Remove the unnecessary nil comparison or restructure to use a function pointer t
 </instructions>
 
 <examples>
-## Bad
-```go
-var fn func() = someFunc
-if fn == nil { // fn is never nil — always false
-    return
-}
-```
-
 ## Good
 ```go
 var fn func()
@@ -31,5 +23,5 @@ if fn == nil { // fn is actually nil — valid check
 </patterns>
 
 <related>
-ifaceassert, bools
+govet/ifaceassert, govet/bools
 </related>

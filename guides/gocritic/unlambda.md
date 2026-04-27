@@ -7,13 +7,6 @@ Replace the lambda with a direct reference to the target function.
 </instructions>
 
 <examples>
-## Bad
-```go
-slices.SortFunc(items, func(a, b Item) int {
-	return compare(a, b)
-})
-```
-
 ## Good
 ```go
 slices.SortFunc(items, compare)
@@ -27,5 +20,5 @@ slices.SortFunc(items, compare)
 </patterns>
 
 <related>
-deferUnlambda, wrapperFunc, methodExprCall
+gocritic/deferUnlambda, gocritic/wrapperFunc, gocritic/methodExprCall
 </related>

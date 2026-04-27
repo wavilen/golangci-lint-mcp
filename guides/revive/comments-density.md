@@ -7,16 +7,6 @@ Add meaningful doc comments to exported functions, types, and constants. Focus o
 </instructions>
 
 <examples>
-## Bad
-```go
-func Process(data []byte, flags int) (Result, error) {
-    if flags&0x01 != 0 {
-        return transform(data)
-    }
-    return analyze(data)
-}
-```
-
 ## Good
 ```go
 // Process applies the transformation indicated by flags to the input data.
@@ -39,4 +29,5 @@ func Process(data []byte, flags int) (Result, error) {
 </patterns>
 
 <related>
-exported, comment-spacings, godoclint
+revive/exported, revive/comment-spacings, godoclint
+</related>

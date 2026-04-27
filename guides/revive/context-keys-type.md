@@ -7,12 +7,6 @@ Create an unexported custom type for the context key and use it consistently.
 </instructions>
 
 <examples>
-## Bad
-```go
-ctx = context.WithValue(ctx, "requestID", "abc-123")
-ctx = context.WithValue(ctx, 42, someData)
-```
-
 ## Good
 ```go
 type contextKey string
@@ -32,4 +26,5 @@ ctx = context.WithValue(ctx, requestIDKey, "abc-123")
 </patterns>
 
 <related>
-context-as-argument, staticcheck SA1029
+revive/context-as-argument, staticcheck/SA1029
+</related>

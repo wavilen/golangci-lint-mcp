@@ -7,13 +7,6 @@ Merge multiple `append` calls on the same variable into one call with variadic a
 </instructions>
 
 <examples>
-## Bad
-```go
-xs = append(xs, 1)
-xs = append(xs, 2)
-xs = append(xs, 3)
-```
-
 ## Good
 ```go
 xs = append(xs, 1, 2, 3)
@@ -28,4 +21,5 @@ xs = append(xs, 1, 2, 3)
 </patterns>
 
 <related>
-appendAssign, rangeExprCopy, makeLen
+gocritic/appendAssign, gocritic/rangeExprCopy
+</related>

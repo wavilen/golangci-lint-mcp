@@ -7,17 +7,10 @@ Break long lines at natural boundaries: after operators, before function argumen
 </instructions>
 
 <examples>
-## Bad
-```go
-func main() {
-    http.HandleFunc("/api/v1/users", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, `{"status":"ok","users":[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]}`) })
-}
-```
-
 ## Good
 ```go
 func main() {
-    handler := func(w http.ResponseWriter, r *http.Request) {
+    handler := func(w http.ResponseWriter, _ *http.Request) {
         response := `{"status":"ok","users":[` +
             `{"id":1,"name":"Alice"},` +
             `{"id":2,"name":"Bob"}]}`
@@ -35,5 +28,5 @@ func main() {
 </patterns>
 
 <related>
-funlen, godoclint, revive
+funlen, godoclint, revive/line-length-limit
 </related>

@@ -5,14 +5,6 @@ Detects direct usage of `errors.As(err, &target)` in tests when testify provides
 </instructions>
 
 <examples>
-## Bad
-```go
-var pathErr *os.PathError
-if !errors.As(err, &pathErr) {
-    t.Fatal("expected PathError")
-}
-```
-
 ## Good
 ```go
 var pathErr *os.PathError
@@ -27,4 +19,5 @@ assert.ErrorAs(t, err, &pathErr, "expected PathError")
 </patterns>
 
 <related>
-error-nil, require-error
+testifylint/error-nil, testifylint/require-error, errorlint/asserts
+</related>

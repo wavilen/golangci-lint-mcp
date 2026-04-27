@@ -7,18 +7,6 @@ Move the `default` case to the end of the `switch` or `select` statement.
 </instructions>
 
 <examples>
-## Bad
-```go
-switch v := x.(type) {
-default:
-	handleAny(v)
-case int:
-	handleInt(v)
-case string:
-	handleString(v)
-}
-```
-
 ## Good
 ```go
 switch v := x.(type) {
@@ -39,5 +27,5 @@ default:
 </patterns>
 
 <related>
-singleCaseSwitch, switchTrue, typeSwitchVar
+gocritic/singleCaseSwitch, gocritic/switchTrue, gocritic/typeSwitchVar
 </related>

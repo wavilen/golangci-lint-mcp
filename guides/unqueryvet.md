@@ -7,16 +7,6 @@ Ensure `Query()` methods return `(url.Values, error)` and always handle the erro
 </instructions>
 
 <examples>
-## Bad
-```go
-func (f *Filter) Query() (url.Values, error) {
-    v := url.Values{}
-    v.Set("status", string(f.Status))
-    return v, nil
-    // error never checked by callers
-}
-```
-
 ## Good
 ```go
 func (f *Filter) Query() (url.Values, error) {

@@ -7,13 +7,6 @@ Simplify or correct the condition. Replace redundant comparisons with a single c
 </instructions>
 
 <examples>
-## Bad
-```go
-if x > 5 && x > 3 { // second check is redundant
-    process(x)
-}
-```
-
 ## Good
 ```go
 if x > 5 {
@@ -31,5 +24,5 @@ if x > 5 {
 </patterns>
 
 <related>
-weakCond, dupSubExpr, offBy1
+gocritic/weakCond, gocritic/dupSubExpr, gocritic/offBy1
 </related>

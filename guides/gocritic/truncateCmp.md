@@ -7,15 +7,6 @@ Use explicit conversion to the wider type before comparison, or ensure both oper
 </instructions>
 
 <examples>
-## Bad
-```go
-var x int64 = 1<<32
-var y int32 = 0
-if int32(x) == y { // truncation loses high bits
-    slog.Info("equal")
-}
-```
-
 ## Good
 ```go
 var x int64 = 1 << 32
@@ -34,5 +25,5 @@ if x == int64(y) {
 </patterns>
 
 <related>
-offBy1, badCond, sloppyTypeAssert
+gocritic/offBy1, gocritic/badCond, gocritic/sloppyTypeAssert
 </related>

@@ -7,11 +7,6 @@ Always pass key-value pairs: `slog.Info("msg", "key", value, "key2", value2)`.
 </instructions>
 
 <examples>
-## Bad
-```go
-slog.Info("user logged in", userID, "admin") // first arg not a string key
-```
-
 ## Good
 ```go
 slog.Info("user logged in", "user_id", userID, "role", "admin")
@@ -26,5 +21,5 @@ slog.Info("user logged in", "user_id", userID, "role", "admin")
 </patterns>
 
 <related>
-printf, stdmethods
+govet/printf, govet/stdmethods
 </related>

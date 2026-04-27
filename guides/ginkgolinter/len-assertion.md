@@ -5,11 +5,6 @@ Detects `Expect(len(x)).Should(Equal(5))` in Ginkgo tests. This uses `len()` ins
 </instructions>
 
 <examples>
-## Bad
-```go
-Expect(len(items)).Should(Equal(5))
-```
-
 ## Good
 ```go
 Expect(items).Should(HaveLen(5))
@@ -23,4 +18,5 @@ Expect(items).Should(HaveLen(5))
 </patterns>
 
 <related>
-have-len-zero, nil-assertion
+ginkgolinter/have-len-zero, ginkgolinter/nil-assertion
+</related>

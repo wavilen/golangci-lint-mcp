@@ -7,18 +7,6 @@ Use pointers to structs containing locks, or avoid copying them after initializa
 </instructions>
 
 <examples>
-## Bad
-```go
-type Server struct {
-    mu    sync.Mutex
-    conns map[string]net.Conn
-}
-
-func (s Server) Clone() Server {
-    return s // copies the mutex — dangerous
-}
-```
-
 ## Good
 ```go
 type Server struct {
@@ -27,7 +15,7 @@ type Server struct {
 }
 
 func (s *Server) Clone() *Server {
-    return &Server{conns: s.conns} // new mutex, shared state via pointer
+	return &Server{mu: sync.Mutex{}, conns: s.conns} // new mutex, shared state via pointer
 }
 ```
 </examples>
@@ -40,5 +28,5 @@ func (s *Server) Clone() *Server {
 </patterns>
 
 <related>
-atomic, waitgroup
+govet/atomic, govet/waitgroup, gocritic/badLock
 </related>

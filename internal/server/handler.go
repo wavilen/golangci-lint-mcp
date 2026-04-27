@@ -10,6 +10,11 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
+const (
+	maxRelatedEntries = 5
+	maxRelatedBytes   = 500
+)
+
 const gosecLinterName = "gosec"
 
 const gosecAISection = `
@@ -32,6 +37,89 @@ func maybeAppendGosecAI(body string, opts Options, linter string) string {
 	return body
 }
 
+// expandRelatedInBody strips the raw <related> block from body and appends a
+// structured Related Context section with fix hints from related guides.
+// Uses guide's Instructions as the keyword source for BestPatternBullet (D-11).
+func expandRelatedInBody(body string, guide *guides.Guide, store *guides.Store) string {
+	// Strip raw <related>...</related> block
+	stripped := stripRelatedTag(body)
+
+	if len(guide.Related) == 0 {
+		return stripped
+	}
+
+	var entries []string
+	for _, ref := range guide.Related {
+		if len(entries) >= maxRelatedEntries {
+			break
+		}
+		linter, rule := parseRelatedRef(ref)
+		relatedGuide, found := store.Lookup(linter, rule)
+		if !found && rule != "" {
+			// Try parent linter for compound refs
+			relatedGuide, found = store.Lookup(linter, "")
+		}
+		if !found {
+			continue
+		}
+		fixHint := guides.BestPatternBullet(relatedGuide.Patterns, guide.Instructions)
+		if fixHint == "" {
+			continue
+		}
+		entries = append(entries, fmt.Sprintf("- %s: %s", ref, fixHint))
+	}
+
+	if len(entries) == 0 {
+		return stripped
+	}
+
+	section := "### Related Context\n" + strings.Join(entries, "\n")
+	// Enforce byte budget: trim entries from bottom if too long
+	for len(section) > maxRelatedBytes && len(entries) > 0 {
+		entries = entries[:len(entries)-1]
+		section = "### Related Context\n" + strings.Join(entries, "\n")
+	}
+
+	if len(entries) == 0 {
+		return stripped
+	}
+
+	return stripped + "\n\n" + section
+}
+
+// stripRelatedTag removes <related>...</related> from body and cleans up
+// resulting blank lines.
+func stripRelatedTag(body string) string {
+	for {
+		start := strings.Index(body, "<related>")
+		if start == -1 {
+			break
+		}
+		end := strings.Index(body, "</related>")
+		if end == -1 {
+			break
+		}
+		body = body[:start] + body[end+len("</related>"):]
+	}
+	// Clean up multiple blank lines left behind
+	for strings.Contains(body, "\n\n\n") {
+		body = strings.ReplaceAll(body, "\n\n\n", "\n\n")
+	}
+	body = strings.TrimRight(body, "\n")
+	return body
+}
+
+// parseRelatedRef splits a related reference into linter and rule parts.
+func parseRelatedRef(ref string) (string, string) {
+	const pathParts = 2
+
+	parts := strings.SplitN(ref, "/", pathParts)
+	if len(parts) == pathParts {
+		return parts[0], parts[1]
+	}
+	return parts[0], ""
+}
+
 func unknownLinterMessage(linter string, store *guides.Store) string {
 	suggestion := store.Suggest(linter)
 	msg := fmt.Sprintf("Unknown linter %q.", linter)
@@ -44,7 +132,8 @@ func unknownLinterMessage(linter string, store *guides.Store) string {
 func handleRuleQuery(store *guides.Store, opts Options, linter, rule string) (*mcp.CallToolResult, error) {
 	guide, found := store.Lookup(linter, rule)
 	if found {
-		return mcp.NewToolResultText(maybeAppendGosecAI(guide.RawBody, opts, linter)), nil
+		body := maybeAppendGosecAI(guide.RawBody, opts, linter)
+		return mcp.NewToolResultText(expandRelatedInBody(body, guide, store)), nil
 	}
 
 	_, linterExists := store.Lookup(linter, "")
@@ -65,7 +154,8 @@ func handleRuleQuery(store *guides.Store, opts Options, linter, rule string) (*m
 func handleNoRuleQuery(store *guides.Store, opts Options, linter string) (*mcp.CallToolResult, error) {
 	guide, found := store.Lookup(linter, "")
 	if found {
-		return mcp.NewToolResultText(maybeAppendGosecAI(guide.RawBody, opts, linter)), nil
+		body := maybeAppendGosecAI(guide.RawBody, opts, linter)
+		return mcp.NewToolResultText(expandRelatedInBody(body, guide, store)), nil
 	}
 
 	rules := store.ListRules(linter)

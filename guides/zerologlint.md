@@ -7,11 +7,6 @@ Always end zerolog chains with `.Send()` or `.Msg("message")` to emit the log ev
 </instructions>
 
 <examples>
-## Bad
-```go
-log.Info().Str("key", "value").Int("count", 42)
-```
-
 ## Good
 ```go
 log.Info().Str("key", "value").Int("count", 42).Send()
@@ -26,5 +21,5 @@ log.Info().Str("key", "value").Int("count", 42).Send()
 </patterns>
 
 <related>
-loggercheck, sloglint
+loggercheck
 </related>

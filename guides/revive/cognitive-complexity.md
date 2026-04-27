@@ -7,40 +7,6 @@ The root cause is often a god function accumulating complexity from mixing unrel
 </instructions>
 
 <examples>
-## Bad
-```go
-func calculateDiscount(c Customer, o Order) float64 {
-    var disc float64
-    if c.Tier == "gold" {
-        if c.Years > 5 {
-            disc += 0.15
-        } else {
-            disc += 0.10
-        }
-    } else if c.Tier == "silver" {
-        if c.Years > 3 {
-            disc += 0.08
-        }
-    }
-    if o.Season == "holiday" {
-        if o.Total > 200 {
-            disc += 0.12
-        } else {
-            disc += 0.05
-        }
-    }
-    if len(o.Items) >= 10 {
-        disc += 0.07
-    } else if len(o.Items) >= 5 {
-        disc += 0.03
-    }
-    if c.Member && c.Points > 1000 {
-        disc += 0.05
-    }
-    return disc
-}
-```
-
 ## Good
 ```go
 func calculateDiscount(c Customer, o Order) float64 {
@@ -102,5 +68,5 @@ func membershipDiscount(c Customer) float64 {
 </patterns>
 
 <related>
-cyclomatic, function-length, max-control-nesting, gocognit
+revive/cyclomatic, revive/function-length, revive/max-control-nesting, gocognit
 </related>

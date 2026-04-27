@@ -7,18 +7,6 @@ Use channels to communicate test results back to the test goroutine, or restruct
 </instructions>
 
 <examples>
-## Bad
-```go
-func TestParallel(t *testing.T) {
-    go func() {
-        result := doWork()
-        if result != expected {
-            t.Fatal("wrong result") // called from wrong goroutine
-        }
-    }()
-}
-```
-
 ## Good
 ```go
 func TestParallel(t *testing.T) {
@@ -45,5 +33,5 @@ func TestParallel(t *testing.T) {
 </patterns>
 
 <related>
-loopclosure, tests
+govet/loopclosure, govet/tests
 </related>

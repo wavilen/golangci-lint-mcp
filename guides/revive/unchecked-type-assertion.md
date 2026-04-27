@@ -7,12 +7,6 @@ Add the comma-ok check and handle the `false` case with an error return, default
 </instructions>
 
 <examples>
-## Bad
-```go
-name := val.(string)
-handler := v.(http.Handler)
-```
-
 ## Good
 ```go
 name, ok := val.(string)
@@ -36,4 +30,5 @@ if !ok {
 </patterns>
 
 <related>
-unhandled-error, unreachable-code, forcetypeassert
+revive/unhandled-error, revive/unreachable-code, forcetypeassert
+</related>

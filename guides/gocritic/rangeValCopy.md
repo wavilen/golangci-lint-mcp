@@ -7,20 +7,6 @@ Change `for _, v := range slice` to `for i := range slice` and access `slice[i]`
 </instructions>
 
 <examples>
-## Bad
-```go
-type Record struct {
-    Data [1024]byte
-    Name string
-}
-
-records := []Record{{}, {}}
-for _, r := range records {
-    // each Record (~1KB) is copied per iteration
-    _ = r.Name
-}
-```
-
 ## Good
 ```go
 for i := range records {
@@ -38,4 +24,5 @@ for i := range records {
 </patterns>
 
 <related>
-rangeExprCopy, hugeParam, indexAlloc
+gocritic/rangeExprCopy, gocritic/hugeParam, gocritic/indexAlloc
+</related>

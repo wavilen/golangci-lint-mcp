@@ -7,17 +7,6 @@ Remove the unnecessary block, or if intentional (for variable scoping), add a co
 </instructions>
 
 <examples>
-## Bad
-```go
-func process() {
-	{
-		x := compute()
-		use(x)
-	}
-	return
-}
-```
-
 ## Good
 ```go
 func process() {
@@ -35,5 +24,5 @@ func process() {
 </patterns>
 
 <related>
-nestingReduce, initClause
+gocritic/nestingReduce, gocritic/initClause
 </related>

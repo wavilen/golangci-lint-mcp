@@ -7,12 +7,6 @@ Use the value directly, or call `string()` for simple conversions instead of for
 </instructions>
 
 <examples>
-## Bad
-```go
-msg := fmt.Sprintf("%v", err)
-name := fmt.Sprint(s)
-```
-
 ## Good
 ```go
 msg := err.Error()
@@ -27,5 +21,5 @@ name := s
 </patterns>
 
 <related>
-stringConcatSimplify, wrapperFunc
+gocritic/stringConcatSimplify, gocritic/wrapperFunc
 </related>

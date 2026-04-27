@@ -7,12 +7,6 @@ Always check error return values. If intentionally ignoring, use `_ =` with a co
 </instructions>
 
 <examples>
-## Bad
-```go
-file, _ := os.Open("config.yaml")
-data, _ := io.ReadAll(file)
-```
-
 ## Good
 ```go
 file, err := os.Open("config.yaml")
@@ -34,5 +28,5 @@ if err != nil {
 </patterns>
 
 <related>
-err113, errname, wrapcheck, govet
+err113, errname, wrapcheck, govet, nilerr, rowserrcheck
 </related>

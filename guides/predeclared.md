@@ -7,13 +7,6 @@ Rename the shadowing identifier to something distinct from the predeclared name.
 </instructions>
 
 <examples>
-## Bad
-```go
-type error struct {
-    msg string
-}
-```
-
 ## Good
 ```go
 type appError struct {
@@ -31,3 +24,4 @@ type appError struct {
 
 <related>
 govet, revive, staticcheck
+</related>

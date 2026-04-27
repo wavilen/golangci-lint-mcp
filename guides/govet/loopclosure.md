@@ -7,15 +7,6 @@ Use a local copy inside the loop (`v := v`) or upgrade to Go 1.22+ per-iteration
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, v := range values {
-    go func() {
-        process(v) // captures loop variable — may see last value
-    }()
-}
-```
-
 ## Good
 ```go
 for _, v := range values {
@@ -34,5 +25,5 @@ for _, v := range values {
 </patterns>
 
 <related>
-testinggoroutine, defers
+govet/testinggoroutine, govet/defers, revive/range-val-in-closure
 </related>

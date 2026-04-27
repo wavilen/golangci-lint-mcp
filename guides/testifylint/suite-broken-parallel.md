@@ -5,14 +5,6 @@ Detects `t.Parallel()` called inside testify suite test methods. The suite runne
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *MySuite) TestFeature() {
-    s.T().Parallel()
-    // test code
-}
-```
-
 ## Good
 ```go
 func (s *MySuite) TestFeature() {
@@ -28,4 +20,5 @@ func (s *MySuite) TestFeature() {
 </patterns>
 
 <related>
-suite-dont-use-pkg, suite-extra-assert-call
+testifylint/suite-dont-use-pkg, testifylint/suite-extra-assert-call
+</related>

@@ -7,17 +7,6 @@ Add a termination condition, or fix the call to target the correct function/meth
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *Server) Process(req *Request) error {
-    return s.Process(req) // infinite recursion
-}
-
-func factorial(n int) int {
-    return n * factorial(n-1) // no base case
-}
-```
-
 ## Good
 ```go
 func (s *Server) Process(req *Request) error {
@@ -42,4 +31,5 @@ func factorial(n int) int {
 </patterns>
 
 <related>
-unreachable-code, datarace
+revive/unreachable-code, revive/datarace
+</related>

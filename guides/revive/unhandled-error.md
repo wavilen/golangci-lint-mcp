@@ -7,13 +7,6 @@ Assign the error to a variable and check it. Use `if err != nil` to handle the e
 </instructions>
 
 <examples>
-## Bad
-```go
-file, _ := os.Open("config.yaml")
-rows, _ := db.Query("SELECT * FROM users")
-fmt.Fprintf(w, "hello")
-```
-
 ## Good
 ```go
 file, err := os.Open("config.yaml")
@@ -36,4 +29,5 @@ if err != nil {
 </patterns>
 
 <related>
-error-return, error-naming, errcheck
+revive/error-return, revive/error-naming, errcheck
+</related>

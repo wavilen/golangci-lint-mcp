@@ -7,12 +7,6 @@ Remove the impossible assertion or correct the interface types to reflect a vali
 </instructions>
 
 <examples>
-## Bad
-```go
-var r io.Reader
-w := r.(io.Writer) // Reader never implements Writer — always panics
-```
-
 ## Good
 ```go
 var r io.ReadWriter // a type that implements both
@@ -27,5 +21,5 @@ w := r.(io.Writer)  // valid assertion
 </patterns>
 
 <related>
-nilfunc, errorsas
+govet/nilfunc, govet/errorsas
 </related>

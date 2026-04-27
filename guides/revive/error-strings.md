@@ -7,13 +7,6 @@ Lowercase the first letter of error messages and remove trailing punctuation (pe
 </instructions>
 
 <examples>
-## Bad
-```go
-return fmt.Errorf("File not found.")
-return errors.New("Connection refused!")
-return fmt.Errorf("Invalid input: %v", err)
-```
-
 ## Good
 ```go
 return fmt.Errorf("file not found")
@@ -31,4 +24,5 @@ return errors.Wrap(err, "invalid input")
 </patterns>
 
 <related>
-error-naming, error-return, errorf
+revive/error-naming, revive/error-return, revive/errorf, errname
+</related>

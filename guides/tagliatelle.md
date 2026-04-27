@@ -7,14 +7,6 @@ Configure the required case in `.golangci.yml` under `linters.settings.tagliatel
 </instructions>
 
 <examples>
-## Bad
-```go
-type Config struct {
-    MaxRetries int `json:"max_retries"`
-    Timeout    int `json:"Timeout"`
-}
-```
-
 ## Good
 ```go
 type Config struct {

@@ -7,22 +7,6 @@ Flatten nesting with guard clauses (early returns), extract inner logic into hel
 </instructions>
 
 <examples>
-## Bad
-```go
-func grant(user *User, res *Resource) bool {
-    if user != nil {
-        if res != nil {
-            if user.Active {
-                if res.Owner == user.ID {
-                    return true
-                }
-            }
-        }
-    }
-    return false
-}
-```
-
 ## Good
 ```go
 func grant(user *User, res *Resource) bool {
@@ -42,5 +26,5 @@ func grant(user *User, res *Resource) bool {
 </patterns>
 
 <related>
-gocognit, cyclop, gocyclo, funlen
+gocognit, cyclop, gocyclo, funlen, revive/max-control-nesting
 </related>

@@ -7,12 +7,6 @@ Use `http.NewRequestWithContext` instead of `http.NewRequest`, passing a context
 </instructions>
 
 <examples>
-## Bad
-```go
-req, err := http.NewRequest("GET", "https://example.com", nil)
-resp, err := http.DefaultClient.Do(req)
-```
-
 ## Good
 ```go
 req, err := http.NewRequestWithContext(ctx, "GET", "https://example.com", nil)

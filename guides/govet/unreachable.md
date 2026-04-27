@@ -7,14 +7,6 @@ Remove the unreachable code or restructure the control flow.
 </instructions>
 
 <examples>
-## Bad
-```go
-func status() int {
-    return 200
-    log.Println("returned") // unreachable
-}
-```
-
 ## Good
 ```go
 func status() int {
@@ -32,5 +24,5 @@ func status() int {
 </patterns>
 
 <related>
-tests, defers
+govet/tests, govet/defers, staticcheck/SA4032
 </related>

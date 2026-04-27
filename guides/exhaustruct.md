@@ -9,15 +9,6 @@ Do not suppress exhaustruct diagnostics by adding struct types to the exclusion 
 </instructions>
 
 <examples>
-## Bad
-```go
-cfg := Config{
-    Host: "localhost",
-    Port: 8080,
-    // Timeout is missing — defaults to 0, meaning no timeout
-}
-```
-
 ## Good
 ```go
 cfg := Config{

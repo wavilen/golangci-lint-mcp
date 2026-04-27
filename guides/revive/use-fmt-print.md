@@ -7,12 +7,6 @@ Use `fmt.Printf` when format verbs are needed. Use `fmt.Println` or `fmt.Print` 
 </instructions>
 
 <examples>
-## Bad
-```go
-fmt.Println(fmt.Sprintf("Hello %s", name))
-fmt.Print("Count: " + strconv.Itoa(n) + "\n")
-```
-
 ## Good
 ```go
 fmt.Printf("Hello %s\n", name)
@@ -29,4 +23,5 @@ fmt.Printf("Count: %d\n", n)
 </patterns>
 
 <related>
-use-errors-new, unnecessary-format, string-format
+revive/use-errors-new, revive/unnecessary-format, revive/string-format
+</related>

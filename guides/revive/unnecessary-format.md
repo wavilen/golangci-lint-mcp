@@ -7,12 +7,6 @@ Replace `fmt.Sprintf` with the simpler alternative: use string concatenation, di
 </instructions>
 
 <examples>
-## Bad
-```go
-msg := fmt.Sprintf("%s", name)
-msg := fmt.Sprintf("hello") // no verbs
-```
-
 ## Good
 ```go
 msg := name
@@ -29,4 +23,5 @@ msg := "hello"
 </patterns>
 
 <related>
-unnecessary-if, unnecessary-stmt, use-fmt-print
+revive/unnecessary-if, revive/unnecessary-stmt, revive/use-fmt-print
+</related>

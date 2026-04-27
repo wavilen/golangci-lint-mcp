@@ -7,13 +7,6 @@ Fix the format verbs to match argument types and ensure the argument count match
 </instructions>
 
 <examples>
-## Bad
-```go
-name := "Alice"
-age := 30
-fmt.Printf("Name: %d, Age: %s\n", name, age) // %d for string, %s for int
-```
-
 ## Good
 ```go
 name := "Alice"
@@ -30,5 +23,5 @@ fmt.Printf("Name: %s, Age: %d\n", name, age) // correct verbs
 </patterns>
 
 <related>
-slog, stringintconv
+govet/slog, govet/stringintconv
 </related>

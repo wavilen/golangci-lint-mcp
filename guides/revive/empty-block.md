@@ -7,17 +7,6 @@ Remove the empty block entirely. If the block represents an intentional no-op, a
 </instructions>
 
 <examples>
-## Bad
-```go
-switch status {
-case http.StatusOK:
-    handleSuccess()
-case http.StatusNotFound:
-    // forgot to implement
-default:
-}
-```
-
 ## Good
 ```go
 switch status {
@@ -38,4 +27,5 @@ case http.StatusNotFound:
 </patterns>
 
 <related>
-empty-lines, identical-branches
+revive/empty-lines, revive/identical-branches
+</related>

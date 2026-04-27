@@ -7,17 +7,6 @@ Add a doc comment immediately above the exported declaration. Start the comment 
 </instructions>
 
 <examples>
-## Bad
-```go
-type Config struct {
-    Timeout time.Duration
-}
-
-func NewClient(c Config) *Client {
-    return &Client{cfg: c}
-}
-```
-
 ## Good
 ```go
 // Config holds settings for creating a new Client.
@@ -42,4 +31,5 @@ func NewClient(c Config) *Client {
 </patterns>
 
 <related>
-comments-density, godoclint, comment-spacings
+revive/comments-density, godoclint, revive/comment-spacings
+</related>

@@ -7,18 +7,6 @@ Combine the duplicate cases using the Go multi-value case syntax: `case "a", "b"
 </instructions>
 
 <examples>
-## Bad
-```go
-switch role {
-case "admin":
-    grantFullAccess()
-case "superuser":
-    grantFullAccess() // identical — should be combined
-case "user":
-    grantLimitedAccess()
-}
-```
-
 ## Good
 ```go
 switch role {
@@ -39,4 +27,5 @@ case "user":
 </patterns>
 
 <related>
-identical-branches, identical-switch-conditions, identical-ifelseif-branches
+revive/identical-branches, revive/identical-switch-conditions, revive/identical-ifelseif-branches
+</related>

@@ -7,17 +7,6 @@ Rename either the import alias or the shadowed identifier to be distinct. Avoid 
 </instructions>
 
 <examples>
-## Bad
-```go
-import "fmt"
-
-var fmt = "a string" // shadows the fmt import
-
-func log() {
-    fmt.Println(fmt) // confusing — which fmt?
-}
-```
-
 ## Good
 ```go
 import "fmt"
@@ -39,4 +28,5 @@ func log() {
 </patterns>
 
 <related>
-import-alias-naming, confusing-naming
+revive/import-alias-naming, revive/confusing-naming
+</related>

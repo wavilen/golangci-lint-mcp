@@ -7,14 +7,6 @@ Apply the project's chosen style consistently. Configure the preference in your 
 </instructions>
 
 <examples>
-## Bad
-```go
-// Team prefers explicit types but this uses shorthand
-func move(x, y int) (dx, dy int) {
-    return x, y
-}
-```
-
 ## Good
 ```go
 // Consistent with project style: explicit
@@ -37,4 +29,5 @@ func move(x, y int) (dx, dy int) {
 </patterns>
 
 <related>
-enforce-map-style, enforce-slice-style
+revive/enforce-map-style, revive/enforce-slice-style
+</related>

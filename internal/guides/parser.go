@@ -23,17 +23,14 @@ func Parse(filename string, content []byte) (*Guide, error) {
 		Instructions: "",
 		Examples:     "",
 		Patterns:     "",
+		Related:      nil,
 	}
 
-	recognizedTags := []string{"instructions", "examples", "patterns"}
+	recognizedTags := []string{"instructions", "examples", "patterns", "related"}
 
 	// Extract each recognized tag's content.
-	found := false
 	for _, tag := range recognizedTags {
 		inner := extractTag(raw, tag)
-		if inner != "" {
-			found = true
-		}
 		switch tag {
 		case "instructions":
 			guide.Instructions = inner
@@ -41,10 +38,13 @@ func Parse(filename string, content []byte) (*Guide, error) {
 			guide.Examples = inner
 		case "patterns":
 			guide.Patterns = inner
+		case "related":
+			guide.Related = parseRelatedRefs(inner)
 		}
 	}
 
-	if !found {
+	// Check that at least one primary tag (not related) has content.
+	if guide.Instructions == "" && guide.Examples == "" && guide.Patterns == "" {
 		return nil, fmt.Errorf(
 			"guide %q must contain at least one recognized XML tag (<instructions>, <examples>, or <patterns>)",
 			filename,
@@ -86,4 +86,24 @@ func extractTag(content, tag string) string {
 	}
 
 	return strings.TrimSpace(content[startIdx : startIdx+endIdx])
+}
+
+// parseRelatedRefs splits a comma-separated related tag into trimmed references.
+// Returns nil if no valid refs are found (empty input, whitespace only).
+func parseRelatedRefs(raw string) []string {
+	if raw == "" {
+		return nil
+	}
+	parts := strings.Split(raw, ",")
+	refs := make([]string, 0, len(parts))
+	for _, p := range parts {
+		ref := strings.TrimSpace(p)
+		if ref != "" {
+			refs = append(refs, ref)
+		}
+	}
+	if len(refs) == 0 {
+		return nil
+	}
+	return refs
 }

@@ -7,14 +7,6 @@ Remove the unused label. Keep labels only when needed for `break` or `continue` 
 </instructions>
 
 <examples>
-## Bad
-```go
-loop:
-	for i := 0; i < n; i++ {
-		process(i)
-	}
-```
-
 ## Good
 ```go
 for i := 0; i < n; i++ {
@@ -30,5 +22,5 @@ for i := 0; i < n; i++ {
 </patterns>
 
 <related>
-unnecessaryBlock, nestingReduce
+gocritic/unnecessaryBlock, gocritic/nestingReduce
 </related>

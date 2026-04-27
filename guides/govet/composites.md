@@ -7,12 +7,6 @@ Always use field names in struct composite literals.
 </instructions>
 
 <examples>
-## Bad
-```go
-type Point struct{ X, Y int }
-p := Point{1, 2} // unkeyed: fragile if fields change
-```
-
 ## Good
 ```go
 type Point struct{ X, Y int }
@@ -27,5 +21,5 @@ p := Point{X: 1, Y: 2} // keyed: safe and readable
 </patterns>
 
 <related>
-structtag, stdmethods
+govet/structtag, govet/stdmethods
 </related>

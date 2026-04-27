@@ -45,3 +45,5 @@ AGENTS.md
 .desloppify/
 *.pyc
 __pycache__/
+graphify-out/manifest.json
+graphify-out/cache/

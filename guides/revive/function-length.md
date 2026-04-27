@@ -7,15 +7,6 @@ Extract logical sections into helper functions with descriptive names. Each func
 </instructions>
 
 <examples>
-## Bad
-```go
-func ProcessOrder(o Order) error {
-    // 80 lines of validation, calculation, persistence,
-    // notification, and logging mixed together...
-    return nil
-}
-```
-
 ## Good
 ```go
 func ProcessOrder(o Order) error {
@@ -40,4 +31,5 @@ func ProcessOrder(o Order) error {
 </patterns>
 
 <related>
-cyclomatic, cognitive-complexity, function-result-limit, funlen
+revive/cyclomatic, revive/cognitive-complexity, revive/function-result-limit, funlen
+</related>

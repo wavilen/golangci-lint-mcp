@@ -7,17 +7,6 @@ Always defer `Close()` immediately after successfully opening rows, statements, 
 </instructions>
 
 <examples>
-## Bad
-```go
-rows, err := db.Query("SELECT id FROM users")
-if err != nil {
-    return err
-}
-for rows.Next() {
-    // ...
-}
-```
-
 ## Good
 ```go
 rows, err := db.Query("SELECT id FROM users")

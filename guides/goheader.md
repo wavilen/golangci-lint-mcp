@@ -7,13 +7,6 @@ Add the required header comment at the top of the file. Configure the expected h
 </instructions>
 
 <examples>
-## Bad
-```go
-package main
-
-import "fmt"
-```
-
 ## Good
 ```go
 // Copyright 2026 My Company. All rights reserved.

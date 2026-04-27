@@ -7,12 +7,6 @@ Rename error variables to follow Go conventions. Use `err` for local error varia
 </instructions>
 
 <examples>
-## Bad
-```go
-var NotFoundError = errors.New("not found")
-var errorPermission = errors.New("permission denied")
-```
-
 ## Good
 ```go
 var ErrNotFound = errors.New("not found")
@@ -29,4 +23,5 @@ var ErrPermissionDenied = errors.New("permission denied")
 </patterns>
 
 <related>
-error-return, error-strings, errorf, errname
+revive/error-return, revive/error-strings, revive/errorf, errname
+</related>

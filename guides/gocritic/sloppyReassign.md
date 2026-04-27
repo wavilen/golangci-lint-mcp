@@ -7,16 +7,6 @@ Assign the variable once before the conditional, or fix the branch that should h
 </instructions>
 
 <examples>
-## Bad
-```go
-var port int
-if useTLS {
-    port = 443
-} else {
-    port = 443 // same value in both branches
-}
-```
-
 ## Good
 ```go
 port := 443
@@ -34,5 +24,5 @@ if !useTLS {
 </patterns>
 
 <related>
-sloppyLen, sloppyTypeAssert, dupBranchBody
+gocritic/sloppyLen, gocritic/sloppyTypeAssert, gocritic/dupBranchBody
 </related>

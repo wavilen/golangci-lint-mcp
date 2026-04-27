@@ -7,12 +7,6 @@ Always specify which linter to suppress (`//nolint:lintername`) and add an expla
 </instructions>
 
 <examples>
-## Bad
-```go
-//nolint
-file, _ := os.Open("config.yaml")
-```
-
 ## Good
 ```go
 //nolint:errcheck // config must exist at deploy time

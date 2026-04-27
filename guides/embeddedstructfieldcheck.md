@@ -7,14 +7,6 @@ Either export the embedded type or use it as a named field instead of embedding.
 </instructions>
 
 <examples>
-## Bad
-```go
-type Server struct {
-    *http.Client
-    mu sync.Mutex
-}
-```
-
 ## Good
 ```go
 type Server struct {

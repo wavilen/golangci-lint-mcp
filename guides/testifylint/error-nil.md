@@ -5,12 +5,6 @@ Detects `assert.Nil(t, err)` or `assert.NotNil(t, err)` for error values. Use `a
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Nil(t, err)
-assert.NotNil(t, err)
-```
-
 ## Good
 ```go
 assert.NoError(t, err)
@@ -25,4 +19,5 @@ assert.Error(t, err)
 </patterns>
 
 <related>
-error-as, require-error
+testifylint/error-as, testifylint/require-error, errcheck
+</related>

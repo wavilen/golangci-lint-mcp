@@ -7,13 +7,6 @@ Remove the wrapper and call the target function directly, or add meaningful logi
 </instructions>
 
 <examples>
-## Bad
-```go
-func handleError(err error) {
-	log.Fatal(err)
-}
-```
-
 ## Good
 ```go
 // Use [log.Fatal] directly at call sites, or add real value.
@@ -31,5 +24,5 @@ func handleError(err error) {
 </patterns>
 
 <related>
-unlambda, deferUnlambda
+gocritic/unlambda, gocritic/deferUnlambda
 </related>

@@ -5,12 +5,6 @@ Detects `Expect(err).Should(BeNil())` when calling a function that returns only 
 </instructions>
 
 <examples>
-## Bad
-```go
-err := os.Remove(tmpFile)
-Expect(err).Should(BeNil())
-```
-
 ## Good
 ```go
 Expect(os.Remove(tmpFile)).Should(Succeed())
@@ -24,4 +18,5 @@ Expect(os.Remove(tmpFile)).Should(Succeed())
 </patterns>
 
 <related>
-error-assertion, nil-assertion
+ginkgolinter/error-assertion, ginkgolinter/nil-assertion
+</related>

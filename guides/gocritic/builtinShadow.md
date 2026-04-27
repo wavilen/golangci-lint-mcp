@@ -7,20 +7,10 @@ Rename the shadowing identifier to avoid confusion and preserve access to the bu
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(len int) error {
-	for i := 0; i < len; i++ {
-		_ = i
-	}
-	return nil
-}
-```
-
 ## Good
 ```go
 func process(length int) error {
-	for i := 0; i < length; i++ {
+	for i := range length {
 		_ = i
 	}
 	return nil
@@ -36,5 +26,5 @@ func process(length int) error {
 </patterns>
 
 <related>
-builtinShadowDecl, importShadow
+gocritic/builtinShadowDecl, gocritic/importShadow
 </related>

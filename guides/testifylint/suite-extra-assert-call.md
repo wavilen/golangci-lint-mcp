@@ -5,14 +5,6 @@ Detects `s.Assert().Equal(t, ...)` where the extra `Assert()` wrapper is redunda
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *MySuite) TestFeature() {
-    s.Assert().Equal(expected, actual)
-    s.Assert().True(ok)
-}
-```
-
 ## Good
 ```go
 func (s *MySuite) TestFeature() {
@@ -29,4 +21,5 @@ func (s *MySuite) TestFeature() {
 </patterns>
 
 <related>
-suite-dont-use-pkg, suite-method-signature
+testifylint/suite-dont-use-pkg, testifylint/suite-method-signature
+</related>

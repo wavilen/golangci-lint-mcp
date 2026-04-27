@@ -7,27 +7,6 @@ Add a `default` case or handle the missing implementation type in the switch.
 </instructions>
 
 <examples>
-## Bad
-```go
-//sumtype:enclosed
-type Shape interface{ shape() }
-
-type Circle struct{}
-func (Circle) shape() {}
-
-type Square struct{}
-func (Square) shape() {}
-
-func area(s Shape) float64 {
-    switch s.(type) {
-    case Circle:
-        return 3.14
-    // Square not handled
-    }
-    return 0
-}
-```
-
 ## Good
 ```go
 func area(s Shape) float64 {
@@ -51,3 +30,4 @@ func area(s Shape) float64 {
 
 <related>
 exhaustive, govet, staticcheck
+</related>

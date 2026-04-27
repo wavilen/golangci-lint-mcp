@@ -7,14 +7,6 @@ Reorder declarations to follow the conventional sequence: imports, then types, t
 </instructions>
 
 <examples>
-## Bad
-```go
-var a = 1
-const b = 2
-import "fmt"
-var c = 3
-```
-
 ## Good
 ```go
 import "fmt"

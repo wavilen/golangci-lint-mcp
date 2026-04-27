@@ -7,18 +7,6 @@ Return an error instead of calling `os.Exit`, and let the caller decide how to h
 </instructions>
 
 <examples>
-## Bad
-```go
-func process(path string) {
-    f, err := os.Open(path)
-    if err != nil {
-        log.Fatal(err) // defers won't run
-    }
-    defer f.Close()
-    // ...
-}
-```
-
 ## Good
 ```go
 func process(path string) error {
@@ -41,5 +29,5 @@ func process(path string) error {
 </patterns>
 
 <related>
-deferInLoop, unnecessaryDefer, badCall
+gocritic/deferInLoop, gocritic/unnecessaryDefer, gocritic/badCall
 </related>

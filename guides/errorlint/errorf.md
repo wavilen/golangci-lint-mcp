@@ -5,11 +5,6 @@ Detects `fmt.Errorf("message: %s", err)` without the `%w` wrapping verb. Without
 </instructions>
 
 <examples>
-## Bad
-```go
-return fmt.Errorf("open config: %s", err)
-```
-
 ## Good
 ```go
 return errors.Wrap(err, "open config")
@@ -24,4 +19,5 @@ return errors.Wrap(err, "open config")
 </patterns>
 
 <related>
-asserts, comparison
+errorlint/asserts, errorlint/comparison, modernize/errorf
+</related>

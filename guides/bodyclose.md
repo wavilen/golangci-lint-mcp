@@ -7,16 +7,6 @@ Always defer `resp.Body.Close()` immediately after checking the response error.
 </instructions>
 
 <examples>
-## Bad
-```go
-resp, err := http.Get("https://example.com/api")
-if err != nil {
-    return err
-}
-data, _ := io.ReadAll(resp.Body)
-// resp.Body never closed — FD leak
-```
-
 ## Good
 ```go
 resp, err := http.Get("https://example.com/api")
@@ -36,4 +26,5 @@ data, _ := io.ReadAll(resp.Body)
 </patterns>
 
 <related>
-noctx, sqlclosecheck, rowserrcheck
+noctx, sqlclosecheck, rowserrcheck, contextcheck
+</related>

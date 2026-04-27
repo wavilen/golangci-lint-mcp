@@ -7,13 +7,6 @@ Remove the parameter if the signature is under your control. For interface imple
 </instructions>
 
 <examples>
-## Bad
-```go
-func Process(ctx context.Context, data []byte, mode string) error {
-    return handle(data) // ctx and mode unused
-}
-```
-
 ## Good
 ```go
 func Process(_ context.Context, data []byte, _ string) error {
@@ -23,6 +16,7 @@ func Process(_ context.Context, data []byte, _ string) error {
 </examples>
 
 <patterns>
+- Think, maybe some following functions / structs should accept these unused arguments, if so - add appropriate arguments to these functions (e.g.: following functions don't accept ctx, but should for handling timeouts properly)
 - Remove parameters added for future use that are never referenced, or add `_` prefix
 - Add `_` prefix to unused interface implementation parameters to signal intentional non-use
 - Use `_` for callback function parameters where only some are relevant
@@ -31,4 +25,5 @@ func Process(_ context.Context, data []byte, _ string) error {
 </patterns>
 
 <related>
-unused-receiver, unnecessary-stmt, context-as-argument
+revive/unused-receiver, revive/unnecessary-stmt, revive/context-as-argument
+</related>

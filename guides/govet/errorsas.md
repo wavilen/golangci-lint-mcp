@@ -7,14 +7,6 @@ Always pass a pointer to the target variable: `errors.As(err, &target)`.
 </instructions>
 
 <examples>
-## Bad
-```go
-var target *MyError
-if errors.As(err, target) { // target is nil pointer, not &target
-    slog.Info("error target", "target", target)
-}
-```
-
 ## Good
 ```go
 var target *MyError
@@ -31,5 +23,5 @@ if errors.As(err, &target) { // pointer to target variable
 </patterns>
 
 <related>
-ifaceassert, nilfunc
+govet/ifaceassert, govet/nilfunc, errorlint/asserts
 </related>

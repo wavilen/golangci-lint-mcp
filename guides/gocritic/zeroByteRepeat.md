@@ -7,11 +7,6 @@ Use `string(make([]byte, n))` for a zero-filled string, or `make([]byte, n)` dir
 </instructions>
 
 <examples>
-## Bad
-```go
-padding := strings.Repeat("\x00", 16)
-```
-
 ## Good
 ```go
 padding := string(make([]byte, 16)) // all zeros, no Repeat needed
@@ -26,4 +21,5 @@ padding := string(make([]byte, 16)) // all zeros, no Repeat needed
 </patterns>
 
 <related>
-sliceClear, stringXbytes, appendCombine
+gocritic/sliceClear, gocritic/stringXbytes, gocritic/appendCombine
+</related>

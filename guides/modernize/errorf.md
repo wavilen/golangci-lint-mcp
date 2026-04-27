@@ -5,11 +5,6 @@ Detects `fmt.Sprintf` used to build error messages or `errors.New(fmt.Sprintf(..
 </instructions>
 
 <examples>
-## Bad
-```go
-return errors.New(fmt.Sprintf("failed to open %s: %s", path, err))
-```
-
 ## Good
 ```go
 return errors.Wrap(err, "failed to open")
@@ -23,4 +18,5 @@ return errors.Wrap(err, "failed to open")
 </patterns>
 
 <related>
-stringappend, mapval
+modernize/stringappend, modernize/mapval
+</related>

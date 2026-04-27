@@ -23,16 +23,16 @@ console.log('\u2713 golangci-lint-guide skill installed to ' + dest);
 const cmdSrc = path.join(__dirname, '..', 'commands', 'golangci-lint.md');
 
 if (fs.existsSync(cmdSrc)) {
-  var cmdTargets = [
+  const cmdTargets = [
     { name: 'opencode', dir: path.join(os.homedir(), '.config', 'opencode', 'commands') },
     { name: 'crush',    dir: path.join(os.homedir(), '.config', 'crush', 'commands') }
   ];
 
-  for (var i = 0; i < cmdTargets.length; i++) {
-    var t = cmdTargets[i];
+  for (let i = 0; i < cmdTargets.length; i++) {
+    const t = cmdTargets[i];
     try {
       fs.mkdirSync(t.dir, { recursive: true });
-      var cmdDest = path.join(t.dir, 'golangci-lint.md');
+      const cmdDest = path.join(t.dir, 'golangci-lint.md');
       fs.copyFileSync(cmdSrc, cmdDest);
       console.log('\u2713 golangci-lint command installed to ' + cmdDest);
     } catch (err) {
@@ -44,22 +44,25 @@ if (fs.existsSync(cmdSrc)) {
 }
 
 // --- Platform rules installation ---
-var rulesDir = path.join(__dirname, '..', 'rules');
+const rulesDir = path.join(__dirname, '..', 'rules');
 
-var rulesSources = [
+const rulesSources = [
   { platform: 'claude', src: 'claude-code.md', destDir: '.claude/rules', destFile: 'golangci-lint.md' },
   { platform: 'cursor', src: 'cursor.mdc', destDir: '.cursor/rules', destFile: 'golangci-lint.mdc' },
   { platform: 'opencode', src: 'opencode.md', destDir: '.opencode/rules', destFile: 'golangci-lint.md' }
 ];
 
+let platforms;
+let pluginScopeFlag;
+
 if (!fs.existsSync(rulesDir)) {
   console.warn('Warning: rules/ directory not found at ' + rulesDir + ' — skipping rules installation');
 } else {
   // Parse --platforms= CLI flag
-  var platformFlag = null;
+  let platformFlag = null;
   // Parse --plugin-scope= CLI flag (for opencode plugin install scope)
-  var pluginScopeFlag = null;
-  for (var a = 2; a < process.argv.length; a++) {
+  pluginScopeFlag = null;
+  for (let a = 2; a < process.argv.length; a++) {
     if (process.argv[a].startsWith('--platforms=')) {
       platformFlag = process.argv[a].split('=')[1].split(',');
     }
@@ -73,19 +76,18 @@ if (!fs.existsSync(rulesDir)) {
   }
 
   // Resolve target platforms
-  var platforms;
   if (platformFlag) {
     platforms = platformFlag;
   } else {
     // Auto-detect installed platforms
-    var cwd = process.cwd();
-    var home = os.homedir();
-    var detected = [];
+    const cwd = process.cwd();
+    const home = os.homedir();
+    const detected = [];
 
-    for (var i = 0; i < rulesSources.length; i++) {
-      var p = rulesSources[i];
-      var projectDir = path.join(cwd, p.destDir.split('/')[0]);
-      var userDir = null;
+    for (let i = 0; i < rulesSources.length; i++) {
+      const p = rulesSources[i];
+      const projectDir = path.join(cwd, p.destDir.split('/')[0]);
+      let userDir = null;
       if (p.platform === 'claude') { userDir = path.join(home, '.claude'); }
       else if (p.platform === 'cursor') { userDir = path.join(home, '.cursor'); }
       else if (p.platform === 'opencode') { userDir = path.join(home, '.config', 'opencode'); }
@@ -104,24 +106,24 @@ if (!fs.existsSync(rulesDir)) {
   } else {
     console.log('Detected platforms: ' + platforms.join(', '));
 
-    var installed = [];
-    var skipped = [];
+    const installed = [];
+    const skipped = [];
 
-    for (var i = 0; i < rulesSources.length; i++) {
-      var r = rulesSources[i];
+    for (let i = 0; i < rulesSources.length; i++) {
+      const r = rulesSources[i];
       if (platforms.indexOf(r.platform) === -1) {
         skipped.push(r.platform);
         continue;
       }
 
-      var ruleSrc = path.join(rulesDir, r.src);
+      const ruleSrc = path.join(rulesDir, r.src);
       if (!fs.existsSync(ruleSrc)) {
         console.warn('Warning: rules/' + r.src + ' not found — skipping ' + r.platform);
         skipped.push(r.platform);
         continue;
       }
 
-      var destPath = path.join(process.cwd(), r.destDir);
+      const destPath = path.join(process.cwd(), r.destDir);
       try {
         fs.mkdirSync(destPath, { recursive: true });
         fs.copyFileSync(ruleSrc, path.join(destPath, r.destFile));
@@ -145,13 +147,13 @@ if (!fs.existsSync(rulesDir)) {
 // --- Claude Code hook + config installation ---
 // Only runs when 'claude' is in the platforms list
 if (platforms && platforms.indexOf('claude') !== -1) {
-  var projectDir = process.cwd();
+  const projectDir = process.cwd();
 
   // 1. Copy hook script to .claude/hooks/
   try {
-    var hookSrc = path.join(__dirname, '..', 'hooks', 'golangci-lint-post.js');
+    const hookSrc = path.join(__dirname, '..', 'hooks', 'golangci-lint-post.js');
     if (fs.existsSync(hookSrc)) {
-      var hookDestDir = path.join(projectDir, '.claude', 'hooks');
+      const hookDestDir = path.join(projectDir, '.claude', 'hooks');
       fs.mkdirSync(hookDestDir, { recursive: true });
       fs.copyFileSync(hookSrc, path.join(hookDestDir, 'golangci-lint-post.js'));
       console.log('\u2713 Claude Code hook installed to .claude/hooks/golangci-lint-post.js');
@@ -164,9 +166,9 @@ if (platforms && platforms.indexOf('claude') !== -1) {
 
   // 1.5. Copy shared nudge module to .claude/shared/
   try {
-    var sharedSrc = path.join(__dirname, '..', 'shared', 'nudge.js');
+    const sharedSrc = path.join(__dirname, '..', 'shared', 'nudge.js');
     if (fs.existsSync(sharedSrc)) {
-      var sharedDestDir = path.join(projectDir, '.claude', 'shared');
+      const sharedDestDir = path.join(projectDir, '.claude', 'shared');
       fs.mkdirSync(sharedDestDir, { recursive: true });
       fs.copyFileSync(sharedSrc, path.join(sharedDestDir, 'nudge.js'));
       console.log('\u2713 Shared nudge module installed to .claude/shared/nudge.js');
@@ -177,16 +179,16 @@ if (platforms && platforms.indexOf('claude') !== -1) {
 
   // 2. Merge hooks block into .claude/settings.json
   try {
-    var settingsDir = path.join(projectDir, '.claude');
+    const settingsDir = path.join(projectDir, '.claude');
     fs.mkdirSync(settingsDir, { recursive: true });
-    var settingsPath = path.join(settingsDir, 'settings.json');
+    const settingsPath = path.join(settingsDir, 'settings.json');
 
-    var settings = {};
+    let settings = {};
     if (fs.existsSync(settingsPath)) {
       settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
     }
 
-    var hookConfig = {
+    const hookConfig = {
       type: 'command',
       'if': 'Bash(golangci-lint*)',
       command: '"$CLAUDE_PROJECT_DIR"/.claude/hooks/golangci-lint-post.js',
@@ -198,8 +200,8 @@ if (platforms && platforms.indexOf('claude') !== -1) {
       settings.hooks.PostToolUse = [{ matcher: 'Bash', hooks: [hookConfig] }];
     } else {
       // Find existing Bash matcher entry
-      var bashEntry = null;
-      for (var i = 0; i < settings.hooks.PostToolUse.length; i++) {
+      let bashEntry = null;
+      for (let i = 0; i < settings.hooks.PostToolUse.length; i++) {
         if (settings.hooks.PostToolUse[i].matcher === 'Bash') {
           bashEntry = settings.hooks.PostToolUse[i];
           break;
@@ -208,8 +210,8 @@ if (platforms && platforms.indexOf('claude') !== -1) {
       if (bashEntry) {
         // Update existing entry — replace or add our hook
         if (!bashEntry.hooks) { bashEntry.hooks = []; }
-        var found = false;
-        for (var j = 0; j < bashEntry.hooks.length; j++) {
+        let found = false;
+        for (let j = 0; j < bashEntry.hooks.length; j++) {
           if (bashEntry.hooks[j].command && bashEntry.hooks[j].command.indexOf('golangci-lint-post.js') !== -1) {
             bashEntry.hooks[j] = hookConfig;
             found = true;
@@ -230,8 +232,8 @@ if (platforms && platforms.indexOf('claude') !== -1) {
 
   // 3. Merge MCP server into .mcp.json
   try {
-    var mcpPath = path.join(projectDir, '.mcp.json');
-    var mcpConfig = {};
+    const mcpPath = path.join(projectDir, '.mcp.json');
+    let mcpConfig = {};
     if (fs.existsSync(mcpPath)) {
       mcpConfig = JSON.parse(fs.readFileSync(mcpPath, 'utf8'));
     }
@@ -249,24 +251,24 @@ if (platforms && platforms.indexOf('claude') !== -1) {
 // --- OpenCode plugin + MCP config installation ---
 // Only runs when 'opencode' is in the platforms list
 if (platforms && platforms.indexOf('opencode') !== -1) {
-  var readline = require('readline');
+  const readline = require('readline');
 
   // 1. Resolve plugin scope (project, user, or both)
-  var scopes;
+  let scopes;
   if (pluginScopeFlag === 'both') {
     scopes = ['project', 'user'];
   } else if (pluginScopeFlag === 'project' || pluginScopeFlag === 'user') {
     scopes = [pluginScopeFlag];
   } else {
     // Auto-detect and prompt interactively
-    var projectOpenCodeDir = path.join(process.cwd(), '.opencode');
-    var userOpenCodeDir = path.join(os.homedir(), '.config', 'opencode');
-    var projectExists = fs.existsSync(projectOpenCodeDir);
-    var userExists = fs.existsSync(userOpenCodeDir);
+    const projectOpenCodeDir = path.join(process.cwd(), '.opencode');
+    const userOpenCodeDir = path.join(os.homedir(), '.config', 'opencode');
+    const projectExists = fs.existsSync(projectOpenCodeDir);
+    const userExists = fs.existsSync(userOpenCodeDir);
 
     if (projectExists && userExists) {
       // Both exist — ask user which scope
-      var rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+      const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
       console.log('\nBoth project-level and user-level opencode directories detected.');
       console.log('Install plugin to:');
       console.log('  1) Project (.opencode/plugins/)');
@@ -274,7 +276,7 @@ if (platforms && platforms.indexOf('opencode') !== -1) {
       console.log('  3) Both');
       rl.question('Enter choice [1-3]: ', function(answer) {
         rl.close();
-        var choice = (answer || '').trim();
+        const choice = (answer || '').trim();
         if (choice === '2') {
           scopes = ['user'];
         } else if (choice === '3') {
@@ -301,22 +303,22 @@ if (platforms && platforms.indexOf('opencode') !== -1) {
 
 function runOpenCodeInstall(scopes) {
   // 2. Copy plugin file to each scope
-  var pluginSrc = path.join(__dirname, '..', 'plugins', 'golangci-lint.js');
+  const pluginSrc = path.join(__dirname, '..', 'plugins', 'golangci-lint.js');
 
   if (!fs.existsSync(pluginSrc)) {
     console.warn('Warning: plugins/golangci-lint.js not found — skipping plugin installation');
   } else {
-    for (var i = 0; i < scopes.length; i++) {
-      var scope = scopes[i];
+    for (let i = 0; i < scopes.length; i++) {
+      const scope = scopes[i];
       try {
-        var pluginDestDir;
+        let pluginDestDir;
         if (scope === 'project') {
           pluginDestDir = path.join(process.cwd(), '.opencode', 'plugins');
         } else {
           pluginDestDir = path.join(os.homedir(), '.config', 'opencode', 'plugins');
         }
         fs.mkdirSync(pluginDestDir, { recursive: true });
-        var pluginDest = path.join(pluginDestDir, 'golangci-lint.js');
+        const pluginDest = path.join(pluginDestDir, 'golangci-lint.js');
         fs.copyFileSync(pluginSrc, pluginDest);
         console.log('\u2713 opencode plugin installed to ' + pluginDest);
       } catch (err) {
@@ -326,11 +328,11 @@ function runOpenCodeInstall(scopes) {
   }
 
   // 2.5. Copy shared nudge module to each scope's shared/ directory
-  var sharedSrc = path.join(__dirname, '..', 'shared', 'nudge.js');
+  const sharedSrc = path.join(__dirname, '..', 'shared', 'nudge.js');
   if (fs.existsSync(sharedSrc)) {
-    for (var s = 0; s < scopes.length; s++) {
+    for (let s = 0; s < scopes.length; s++) {
       try {
-        var sharedDestDir;
+        let sharedDestDir;
         if (scopes[s] === 'project') {
           sharedDestDir = path.join(process.cwd(), '.opencode', 'shared');
         } else {
@@ -346,10 +348,10 @@ function runOpenCodeInstall(scopes) {
   }
 
   // 3. Merge MCP server config into opencode.json for each scope
-  for (var i = 0; i < scopes.length; i++) {
-    var scope = scopes[i];
+  for (let i = 0; i < scopes.length; i++) {
+    const scope = scopes[i];
     try {
-      var configPath;
+      let configPath;
       if (scope === 'project') {
         configPath = path.join(process.cwd(), 'opencode.json');
       } else {
@@ -358,13 +360,13 @@ function runOpenCodeInstall(scopes) {
 
       // Backup user-level config before modifying
       if (scope === 'user' && fs.existsSync(configPath)) {
-        var backupPath = configPath + '.bak.' + Date.now();
+        const backupPath = configPath + '.bak.' + Date.now();
         fs.copyFileSync(configPath, backupPath);
         console.log('\u2713 Backup created: ' + backupPath);
       }
 
       // Read existing config or start fresh
-      var openCodeConfig = {};
+      let openCodeConfig = {};
       if (fs.existsSync(configPath)) {
         openCodeConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
       }
@@ -378,7 +380,7 @@ function runOpenCodeInstall(scopes) {
       };
 
       // Ensure parent directory exists
-      var configDir = path.dirname(configPath);
+      const configDir = path.dirname(configPath);
       fs.mkdirSync(configDir, { recursive: true });
 
       fs.writeFileSync(configPath, JSON.stringify(openCodeConfig, null, 2) + '\n');
@@ -389,12 +391,12 @@ function runOpenCodeInstall(scopes) {
   }
 
   // 4. Binary prerequisite checks (informational warnings only)
-  var execSync = require('child_process').execSync;
+  const execSync = require('child_process').execSync;
 
   try {
     execSync('which golangci-lint-mcp', { stdio: 'pipe' });
     console.log('\u2713 golangci-lint-mcp binary found on PATH');
-  } catch (e) {
+  } catch (_e) {
     console.warn('\u26A0 golangci-lint-mcp not found on PATH.');
     console.warn('  Install with: go install github.com/wavilen/golangci-lint-mcp@latest');
   }
@@ -402,7 +404,7 @@ function runOpenCodeInstall(scopes) {
   try {
     execSync('which golangci-lint', { stdio: 'pipe' });
     console.log('\u2713 golangci-lint binary found on PATH');
-  } catch (e) {
+  } catch (_e) {
     console.warn('\u26A0 golangci-lint not found on PATH.');
     console.warn('  Install with: https://golangci-lint.run/usage/install/');
   }

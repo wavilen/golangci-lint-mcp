@@ -7,17 +7,6 @@ Wrap external errors instead of replacing them. Use `errors.Wrap(err, "context")
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *Service) Do(ctx context.Context) error {
-    err := s.client.Call(ctx)
-    if err != nil {
-        err = errors.New("call failed") // lost original error
-    }
-    return err
-}
-```
-
 ## Good
 ```go
 func (s *Service) Do(ctx context.Context) error {
@@ -38,5 +27,5 @@ func (s *Service) Do(ctx context.Context) error {
 </patterns>
 
 <related>
-uncheckedInlineErr, nilValReturn
+gocritic/uncheckedInlineErr, gocritic/nilValReturn
 </related>

@@ -5,12 +5,6 @@ Detects `assert.Equal(t, actual, expected)` where arguments are in the wrong ord
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Equal(t, result, expected)
-assert.Equal(t, calculate(), 42)
-```
-
 ## Good
 ```go
 assert.Equal(t, expected, result)
@@ -25,4 +19,5 @@ assert.Equal(t, 42, calculate())
 </patterns>
 
 <related>
-formatter, contains-unnecessary-format
+testifylint/formatter, testifylint/contains-unnecessary-format, testifylint/bool-compare, testifylint/nil-compare
+</related>

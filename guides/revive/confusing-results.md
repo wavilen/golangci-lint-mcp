@@ -7,14 +7,6 @@ Return a struct or named result values to make the meaning of each return value 
 </instructions>
 
 <examples>
-## Bad
-```go
-func GetCoordinates() (float64, float64, error) {
-    return lat, lng, nil
-    // Caller might write: lng, lat, _ := GetCoordinates()
-}
-```
-
 ## Good
 ```go
 type Coordinates struct {
@@ -37,4 +29,5 @@ func GetCoordinates() (Coordinates, error) {
 </patterns>
 
 <related>
-confusing-naming, argument-limit
+revive/confusing-naming, revive/argument-limit
+</related>

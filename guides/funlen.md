@@ -7,24 +7,6 @@ Break long functions into smaller, named functions that each do one thing.
 </instructions>
 
 <examples>
-## Bad
-```go
-func ProcessOrder(o Order) error {
-    if o.ID == "" { return errors.New("missing id") }
-    if o.Customer == "" { return errors.New("missing customer") }
-    if len(o.Items) == 0 { return errors.New("no items") }
-    for _, item := range o.Items {
-        if item.Quantity <= 0 { return errors.New("invalid qty") }
-    }
-    var total float64
-    for _, item := range o.Items {
-        total += float64(item.Quantity) * item.Price
-    }
-    total *= 1.08 // tax
-    return saveOrder(o, total)
-}
-```
-
 ## Good
 ```go
 func ProcessOrder(o Order) error {
@@ -44,5 +26,5 @@ func ProcessOrder(o Order) error {
 </patterns>
 
 <related>
-cyclop, gocyclo, gocognit, nestif
+cyclop, gocyclo, gocognit, nestif, revive/function-length
 </related>

@@ -7,16 +7,6 @@ Reorder cases so more specific cases come before more general ones, or remove th
 </instructions>
 
 <examples>
-## Bad
-```go
-switch v := x.(type) {
-case io.Reader:
-    handleReader(v)
-case io.ReadCloser: // unreachable — ReadCloser is a Reader
-    handleReadCloser(v)
-}
-```
-
 ## Good
 ```go
 switch v := x.(type) {
@@ -36,5 +26,5 @@ case io.Reader:
 </patterns>
 
 <related>
-dupCase, dupBranchBody, evalOrder
+gocritic/dupCase, gocritic/dupBranchBody, gocritic/evalOrder
 </related>

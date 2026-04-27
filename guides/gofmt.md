@@ -5,20 +5,6 @@ Gofmt enforces standard Go formatting per the spec. Run `gofmt -w .` to auto-fix
 </instructions>
 
 <examples>
-## Bad
-```go
-type Config struct{
-	Name string
-	Age  int
-	Email string
-}
-func process( c Config )(int,error){
-	if  c.Age>18  {
-	return c.Age,nil}
-	return 0,fmt.Errorf("too young")
-}
-```
-
 ## Good
 ```go
 type Config struct {
@@ -31,7 +17,7 @@ func process(c Config) (int, error) {
 	if c.Age > 18 {
 		return c.Age, nil
 	}
-	return 0, fmt.Errorf("too young")
+	return 0, errors.New("too young")
 }
 ```
 </examples>

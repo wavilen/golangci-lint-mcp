@@ -7,13 +7,6 @@ Always `defer cancel()` immediately after creating a cancellable context.
 </instructions>
 
 <examples>
-## Bad
-```go
-ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-// cancel function discarded — context never cancelled
-doWork(ctx)
-```
-
 ## Good
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -29,5 +22,5 @@ doWork(ctx)
 </patterns>
 
 <related>
-defers, httpresponse
+govet/defers, govet/httpresponse, contextcheck
 </related>

@@ -7,16 +7,6 @@ Extract repeated or meaningful literals into `const` declarations at the package
 </instructions>
 
 <examples>
-## Bad
-```go
-if timeout > 30 {
-    return fmt.Errorf("exceeded %d seconds", 30)
-}
-if status == 404 {
-    handleNotFound()
-}
-```
-
 ## Good
 ```go
 const (
@@ -43,3 +33,4 @@ if status == httpStatusNotFound {
 
 <related>
 mnd, goconst
+</related>

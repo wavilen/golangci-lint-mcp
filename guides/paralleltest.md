@@ -7,17 +7,6 @@ Call `t.Parallel()` in each subtest and capture loop variables properly (Go 1.22
 </instructions>
 
 <examples>
-## Bad
-```go
-tests := []struct{ name string }{{name: "a"}, {name: "b"}}
-for _, tt := range tests {
-    t.Run(tt.name, func(t *testing.T) {
-        t.Parallel()
-        // tt is captured by reference — may be "b" for both
-    })
-}
-```
-
 ## Good
 ```go
 tests := []struct{ name string }{{name: "a"}, {name: "b"}}
@@ -38,5 +27,5 @@ for _, tt := range tests {
 </patterns>
 
 <related>
-tparallel, thelper, testpackage
+tparallel, thelper, testpackage, usetesting
 </related>

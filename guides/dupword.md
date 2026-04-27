@@ -7,12 +7,6 @@ Remove the duplicate word. Proofread comments after editing or restructuring sen
 </instructions>
 
 <examples>
-## Bad
-```go
-// Parse parses the the configuration file and returns a Config.
-func Parse(r io.Reader) (*Config, error) {
-```
-
 ## Good
 ```go
 // Parse parses the configuration file and returns a Config.

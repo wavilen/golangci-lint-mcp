@@ -7,11 +7,6 @@ Use lowercase kebab-case for flag names: `my-flag-name` instead of `my_flag_name
 </instructions>
 
 <examples>
-## Bad
-```go
-flag.Int("max_retries", 3, "maximum retry count")
-```
-
 ## Good
 ```go
 flag.Int("max-retries", 3, "maximum retry count")
@@ -26,5 +21,5 @@ flag.Int("max-retries", 3, "maximum retry count")
 </patterns>
 
 <related>
-flagDeref
+gocritic/flagDeref
 </related>

@@ -7,13 +7,6 @@ Simplify the expression or use temporary variables to make the data flow explici
 </instructions>
 
 <examples>
-## Bad
-```go
-a[i] = a[i+1] // reads a[i+1] and writes a[i]
-i = i + 1     // but both happen on same line in original
-x, x = 1, 2   // x assigned twice
-```
-
 ## Good
 ```go
 tmp := a[i+1]
@@ -30,5 +23,5 @@ i = i + 1
 </patterns>
 
 <related>
-argOrder, dupSubExpr, appendAssign
+gocritic/argOrder, gocritic/dupSubExpr, gocritic/appendAssign
 </related>

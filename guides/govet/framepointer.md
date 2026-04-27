@@ -7,12 +7,6 @@ Follow Go's assembly conventions: save the frame pointer on entry and restore it
 </instructions>
 
 <examples>
-## Bad
-```asm
-TEXT ·broken(SB), NOSPLIT, $0
-    MOVQ BP, 123(SP) // clobbers BP without saving
-```
-
 ## Good
 ```asm
 TEXT ·correct(SB), NOSPLIT, $16
@@ -31,5 +25,5 @@ TEXT ·correct(SB), NOSPLIT, $16
 </patterns>
 
 <related>
-asmdecl, cgocall
+govet/asmdecl, govet/cgocall
 </related>

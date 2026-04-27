@@ -7,13 +7,6 @@ Assign the value to a new variable inside the loop before taking its address, or
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, v := range items {
-    ptrs = append(ptrs, &v)
-}
-```
-
 ## Good
 ```go
 for i := range items {
@@ -31,4 +24,5 @@ for i := range items {
 </patterns>
 
 <related>
-range-val-in-closure, datarace
+revive/range-val-in-closure, revive/datarace
+</related>

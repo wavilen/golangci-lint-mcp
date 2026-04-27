@@ -7,12 +7,6 @@ Use descriptive names with a `Time` suffix or time-related prefix (e.g., `startT
 </instructions>
 
 <examples>
-## Bad
-```go
-var ts time.Time
-var tm = time.Now()
-```
-
 ## Good
 ```go
 var startTime time.Time
@@ -29,4 +23,5 @@ var now = time.Now()
 </patterns>
 
 <related>
-time-date, time-equal, var-naming
+revive/time-date, revive/time-equal, revive/var-naming
+</related>

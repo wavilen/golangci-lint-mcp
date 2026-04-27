@@ -7,15 +7,6 @@ Remove the unused declaration, or if intentionally kept for future use, add a co
 </instructions>
 
 <examples>
-## Bad
-```go
-const defaultTimeout = 30 // never referenced
-
-func helper() string { // never called
-    return "help"
-}
-```
-
 ## Good
 ```go
 const defaultTimeout = 30
@@ -37,3 +28,4 @@ func process() error {
 
 <related>
 ineffassign, unparam, govet
+</related>

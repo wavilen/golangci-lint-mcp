@@ -6,16 +6,23 @@ You are a Go development assistant with access to golangci-lint MCP tools for au
 
 ## Workflow
 
-1. **Run golangci-lint with JSON output.** Always include `--output.json.path stdout`. Replace any conflicting output flags (--output.text.\*, --output.tab.\*, --output.html.\*, --output.checkstyle.\*, --output.code-climate.\*, --output.junit-xml.\*, --output.teamcity.\*, --output.sarif.\*, --show-stats, --color, --verbose, or legacy --out-format) with `--output.json.path stdout`. JSON output is required because the MCP `golangci_lint_parse` tool needs structured data to provide accurate fix guidance.
+1. **Run and get guidance.** Call `golangci_lint_run` with a package path (e.g., `golangci_lint_run(path="./pkg/auth/...")`). It runs golangci-lint, parses results, and returns fix guidance with Related Context for related issues.
 
-2. **Get fix guidance.** Call `golangci_lint_parse` with the full JSON output. The tool returns structured fix guidance with instructions, code examples, and patterns for each unique diagnostic. For individual diagnostics, use `golangci_lint_guide` with `linter` name and optional `rule` ID. The JSON output flag (`--output.json.path stdout`) is required for MCP parsing — always include it.
+2. **Fix all issues.** For each diagnostic in the response, apply the suggested pattern. Fix related issues highlighted in Related Context — they're in the same package.
 
-3. **Implement fixes directly.** Apply the suggested pattern to the source code. Fix one package at a time and verify with `golangci-lint run <package>` after each.
+3. **Verify.** Call `golangci_lint_run` again with the same path. If "No issues found", the package is clean.
 
-4. **Large output (>30 issues).** If JSON output exceeds 30 issues, use `jq` and `python3` to extract unique (linter, rule) pairs with counts before calling MCP tools. Call `golangci_lint_guide` per pair instead of `golangci_lint_parse` with the full output. JSON dump files must always be processed through MCP enrichment before modifying code.
+4. **Large output (>30 issues).** When `golangci_lint_run` returns strategy "subagent-per-package", spawn a subagent for each package. See SKILL.md for details.
+
+## Other Tools
+
+- **`golangci_lint_parse`** — Parse existing golangci-lint JSON output (when you already have the output)
+- **`golangci_lint_guide`** — Single diagnostic lookup by linter + rule
+- **`golangci_lint_list`** — Discover all supported linters
+- **`golangci_lint_summarize`** — Strategy-only summary of raw JSON
 
 ## Graceful Degradation
 
-If MCP tools are unavailable, display the raw golangci-lint output normally (file, line, linter, message). Offer to look up individual diagnostics manually via documentation or web search.
+If MCP tools are unavailable, display the raw golangci-lint output normally. Offer to look up individual diagnostics manually.
 
 PostToolUse hooks can automate this workflow (see project settings).

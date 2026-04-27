@@ -7,21 +7,6 @@ Move the loop body into a separate function so `defer` runs at the end of each i
 </instructions>
 
 <examples>
-## Bad
-```go
-func processFiles(paths []string) error {
-    for _, p := range paths {
-        f, err := os.Open(p)
-        if err != nil {
-            return err
-        }
-        defer f.Close() // all files close only when function returns
-        process(f)
-    }
-    return nil
-}
-```
-
 ## Good
 ```go
 func processFiles(paths []string) error {
@@ -53,5 +38,5 @@ func processOne(path string) error {
 </patterns>
 
 <related>
-unnecessaryDefer, exitAfterDefer, badLock
+gocritic/unnecessaryDefer, gocritic/exitAfterDefer, gocritic/badLock
 </related>

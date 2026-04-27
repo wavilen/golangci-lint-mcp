@@ -7,22 +7,6 @@ Split large interfaces into smaller, focused ones composed together. Consumers s
 </instructions>
 
 <examples>
-## Bad
-```go
-type Repository interface {
-    Find(id int) (*User, error)
-    FindAll() ([]User, error)
-    Save(u *User) error
-    Delete(id int) error
-    FindPosts(userID int) ([]Post, error)
-    SavePost(p *Post) error
-    DeletePost(id int) error
-    FindComments(postID int) ([]Comment, error)
-    SaveComment(c *Comment) error
-    DeleteComment(id int) error
-}
-```
-
 ## Good
 ```go
 type UserReader interface {
@@ -50,5 +34,5 @@ type PostRepository interface {
 </patterns>
 
 <related>
-funlen, gocyclo, revive
+funlen, gocyclo, ireturn
 </related>

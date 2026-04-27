@@ -7,16 +7,6 @@ Move blank imports to `main` packages or test files. If a package needs a driver
 </instructions>
 
 <examples>
-## Bad
-```go
-// In a library package (not main)
-package store
-
-import (
-    _ "github.com/lib/pq" // forces PostgreSQL driver on all consumers
-)
-```
-
 ## Good
 ```go
 // In cmd/main.go
@@ -36,4 +26,5 @@ import (
 </patterns>
 
 <related>
-dot-imports, imports-blocklist
+revive/dot-imports, revive/imports-blocklist
+</related>

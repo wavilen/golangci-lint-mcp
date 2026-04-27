@@ -7,13 +7,6 @@ Rename files to follow the configured naming convention. Use `go fmt`-compatible
 </instructions>
 
 <examples>
-## Bad
-```go
-// userHandler.go
-// User-Service.go
-// user service.go
-```
-
 ## Good
 ```go
 // user_handler.go
@@ -31,4 +24,5 @@ Rename files to follow the configured naming convention. Use `go fmt`-compatible
 </patterns>
 
 <related>
-file-header, file-length-limit
+revive/file-header, revive/file-length-limit
+</related>

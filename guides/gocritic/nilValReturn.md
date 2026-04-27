@@ -7,17 +7,6 @@ Return an explicit `nil` for the interface or return the concrete value directly
 </instructions>
 
 <examples>
-## Bad
-```go
-func getResource() (*Resource, error) {
-    var r *Resource // nil pointer
-    if !found {
-        return r, nil // typed nil returned as non-nil interface
-    }
-    return r, nil
-}
-```
-
 ## Good
 ```go
 func getResource() (*Resource, error) {
@@ -37,5 +26,5 @@ func getResource() (*Resource, error) {
 </patterns>
 
 <related>
-externalErrorReassign, uncheckedInlineErr
+gocritic/externalErrorReassign, gocritic/uncheckedInlineErr
 </related>

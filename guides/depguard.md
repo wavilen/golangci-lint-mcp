@@ -7,13 +7,6 @@ Configure `depguard.rules` in `.golangci.yml` with lists of denied and allowed p
 </instructions>
 
 <examples>
-## Bad
-```go
-import (
-    "io/ioutil" // deprecated since Go 1.16
-)
-```
-
 ## Good
 ```go
 import (
@@ -32,3 +25,4 @@ import (
 
 <related>
 gomodguard, gomoddirectives, importas
+</related>

@@ -5,13 +5,6 @@ Detects `sort.Slice` and `sort.SliceStable` calls that can be replaced with `sli
 </instructions>
 
 <examples>
-## Bad
-```go
-sort.Slice(nums, func(i, j int) bool {
-    return nums[i] < nums[j]
-})
-```
-
 ## Good
 ```go
 slices.Sort(nums)
@@ -25,4 +18,5 @@ slices.Sort(nums)
 </patterns>
 
 <related>
-sortfunc, sliceclear
+modernize/sortfunc, modernize/sliceclear
+</related>

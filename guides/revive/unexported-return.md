@@ -7,17 +7,6 @@ Either export the return type so callers can use it, or return an interface that
 </instructions>
 
 <examples>
-## Bad
-```go
-type result struct {
-    Value int
-}
-
-func Process() result { // returns unexported type
-    return result{Value: 42}
-}
-```
-
 ## Good
 ```go
 type Result struct {
@@ -39,4 +28,5 @@ func Process() Result {
 </patterns>
 
 <related>
-unexported-naming, receiver-naming, var-naming
+revive/unexported-naming, revive/receiver-naming, revive/var-naming
+</related>

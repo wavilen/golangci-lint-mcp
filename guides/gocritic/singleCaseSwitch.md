@@ -7,14 +7,6 @@ Replace the single-case `switch` with an equivalent `if` statement.
 </instructions>
 
 <examples>
-## Bad
-```go
-switch {
-case x > 10:
-	big()
-}
-```
-
 ## Good
 ```go
 if x > 10 {
@@ -30,5 +22,5 @@ if x > 10 {
 </patterns>
 
 <related>
-switchTrue, ifElseChain, emptyFallthrough
+gocritic/switchTrue, gocritic/ifElseChain, gocritic/emptyFallthrough
 </related>

@@ -7,17 +7,6 @@ Ensure `wg.Done()` is deferred as the first statement in the goroutine so it alw
 </instructions>
 
 <examples>
-## Bad
-```go
-var wg sync.WaitGroup
-wg.Add(1)
-go func() {
-    runtime.Goexit() // prevents wg.Done() from being reached
-    wg.Done()
-}()
-wg.Wait()
-```
-
 ## Good
 ```go
 var wg sync.WaitGroup
@@ -39,4 +28,5 @@ wg.Wait()
 </patterns>
 
 <related>
-datarace, defer
+revive/datarace, revive/defer
+</related>

@@ -5,12 +5,6 @@ Detects `assert.Len(t, x, 0)` or `assert.Equal(t, 0, len(x))` used to check if a
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Len(t, results, 0)
-assert.Equal(t, 0, len(items))
-```
-
 ## Good
 ```go
 assert.Empty(t, results)
@@ -25,4 +19,5 @@ assert.Empty(t, items)
 </patterns>
 
 <related>
-len, nil-compare
+testifylint/len, testifylint/nil-compare
+</related>

@@ -7,20 +7,6 @@ Remove extraneous blank lines. Keep one blank line between function definitions 
 </instructions>
 
 <examples>
-## Bad
-```go
-func process() error {
-
-    data, err := read()
-    if err != nil {
-
-        return err
-    }
-
-    return nil
-}
-```
-
 ## Good
 ```go
 func process() error {

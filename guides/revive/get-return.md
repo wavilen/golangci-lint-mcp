@@ -7,14 +7,6 @@ Rename the method if it does more than getting a value. If it performs computati
 </instructions>
 
 <examples>
-## Bad
-```go
-func (c *Cache) GetSize() error {
-    c.computeSize() // modifies state — not a simple getter
-    return c.lastError
-}
-```
-
 ## Good
 ```go
 func (c *Cache) Size() int {
@@ -37,4 +29,5 @@ func (c *Cache) RecalculateSize() error {
 </patterns>
 
 <related>
-modifies-value-receiver, exported
+revive/modifies-value-receiver, revive/exported
+</related>

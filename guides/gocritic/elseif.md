@@ -7,19 +7,6 @@ Replace `else { if ... }` with `else if ...` to flatten the control flow.
 </instructions>
 
 <examples>
-## Bad
-```go
-if x > 0 {
-	positive()
-} else {
-	if x < 0 {
-		negative()
-	} else {
-		zero()
-	}
-}
-```
-
 ## Good
 ```go
 if x > 0 {
@@ -39,5 +26,5 @@ if x > 0 {
 </patterns>
 
 <related>
-ifElseChain, nestingReduce
+gocritic/ifElseChain, gocritic/nestingReduce
 </related>

@@ -63,6 +63,39 @@ func NewServer(store *guides.Store, opts ...Options) *server.MCPServer {
 
 	mcpServer.AddTool(parseTool, makeParseHandler(store, opt))
 
+	listTool := mcp.NewTool("golangci_lint_list",
+		mcp.WithDescription(
+			"List all supported linters, their rules, and compound/simple classification. "+
+				"Call this to discover available linters and determine which require a rule parameter. "+
+				"Returns compound linters with rule counts and simple linter names."),
+	)
+	mcpServer.AddTool(listTool, makeListHandler(store))
+
+	summarizeTool := mcp.NewTool("golangci_lint_summarize",
+		mcp.WithDescription(
+			"Summarize raw golangci-lint JSON output with package-level breakdown and strategy recommendation. "+
+				"Call this when you need issue distribution data without full fix guidance. "+
+				"Returns total issue counts, package breakdown sorted by count, and recommended approach."),
+		mcp.WithString("output",
+			mcp.Required(),
+			mcp.Description("The raw golangci-lint JSON output string"),
+		),
+	)
+	mcpServer.AddTool(summarizeTool, makeSummarizeHandler(store))
+
+	runTool := mcp.NewTool("golangci_lint_run",
+		mcp.WithDescription(
+			"Run golangci-lint on a path and return parsed results with fix guidance. "+
+				"For per-package paths (e.g., './pkg/auth/...'), returns full guidance with fix directions. "+
+				"For full-project ('./...'), returns summary with package breakdown and strategy recommendation. "+
+				"Uses the project's .golangci.yml configuration."),
+		mcp.WithString("path",
+			mcp.Required(),
+			mcp.Description("File or directory path to scan (e.g., './pkg/auth/...', './cmd/main.go', './...')"),
+		),
+	)
+	mcpServer.AddTool(runTool, makeRunHandler(store, opt))
+
 	if opt.GosecAIConfigured() {
 		autofixTool := mcp.NewTool("gosec_ai_autofix",
 			mcp.WithDescription(

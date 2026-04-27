@@ -7,16 +7,6 @@ Remove the duplicate case expression. If the intent was to check something diffe
 </instructions>
 
 <examples>
-## Bad
-```go
-switch statusCode {
-case 404:
-    handleNotFound()
-case 404: // unreachable — duplicate of above
-    handleGone()
-}
-```
-
 ## Good
 ```go
 switch statusCode {
@@ -37,4 +27,5 @@ case 410:
 </patterns>
 
 <related>
-identical-switch-branches, identical-ifelseif-conditions
+revive/identical-switch-branches, revive/identical-ifelseif-conditions
+</related>

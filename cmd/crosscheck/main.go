@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/fs"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -51,17 +53,62 @@ type golangciLintOutput struct {
 	Issues []golangciLintIssue `json:"Issues"`
 }
 
+type excludeConfig struct {
+	Excludes map[string][]string `json:"excludes"`
+}
+
+type fixSuggestion struct {
+	Guide        string `json:"guide"`
+	Linter       string `json:"linter"`
+	Message      string `json:"message"`
+	SuggestedFix string `json:"suggested_fix"`
+}
+
+type fixReport struct {
+	Trivial []fixSuggestion `json:"trivial"`
+	Complex []fixSuggestion `json:"complex"`
+}
+
+type badValidation struct {
+	Guide        string `json:"guide"`
+	TargetLinter string `json:"target_linter"`
+	Triggered    bool   `json:"triggered"`
+	Issues       int    `json:"issues"`
+	Details      string `json:"details,omitempty"`
+}
+
 var declarationKeywords = []string{
 	"func ", "type ", "var ", "const ", "import ", "var(", "const(", "import(",
 }
 
+const linterGovet = "govet"
+
+const minPathParts = 2
+
 func main() {
+	excludeConfigPath := flag.String(
+		"exclude-config",
+		"cmd/crosscheck/excludes.json",
+		"path to per-guide exclude config JSON",
+	)
+	fixMode := flag.Bool("fix", false, "categorize violations into trivial/complex and output fixes.json")
+	validateBad := flag.Bool("validate-bad", false, "validate Bad code blocks trigger their target linter")
+	flag.Parse()
+
 	projectRoot, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("cannot get working directory: %v", err)
 	}
 
-	extractions, skipped := extractGoodBlocks(filepath.Join(projectRoot, "guides"))
+	// --validate-bad mode: separate pipeline for Bad examples
+	if *validateBad {
+		runBadValidation(projectRoot)
+		return
+	}
+
+	perGuideExcludes := loadExcludeConfig(*excludeConfigPath)
+
+	extractions, skipped := extractBlocks(filepath.Join(projectRoot, "guides"), "Good")
 	relSkipped := make([]string, len(skipped))
 	for idx, skipPath := range skipped {
 		rel, relErr := filepath.Rel(projectRoot, skipPath)
@@ -90,7 +137,7 @@ func main() {
 
 	runGoimports(tmpDir, extractions)
 
-	issues := runGolangciLint(projectRoot, tmpDir, extractions)
+	issues := runGolangciLint(projectRoot, tmpDir, extractions, perGuideExcludes)
 
 	rpt := buildReport(extractions, issues)
 
@@ -101,11 +148,23 @@ func main() {
 	}
 
 	printSummary(rpt)
+
+	if *fixMode {
+		fixRpt := categorizeViolations(rpt)
+		fixPath := filepath.Join(tmpDir, "fixes.json")
+		fixErr := writeFixReport(fixPath, fixRpt)
+		if fixErr != nil {
+			log.Fatalf("writing fix report: %v", fixErr)
+		}
+		fmt.Fprintf(os.Stdout, "\n%d trivial violations (auto-fixable), %d complex violations (need review)\n",
+			len(fixRpt.Trivial), len(fixRpt.Complex))
+		fmt.Fprintln(os.Stdout, "Fix report: "+fixPath)
+	}
 }
 
-func extractGoodBlocks(guidesDir string) ([]extraction, []string) {
+func extractBlocks(guidesDir, sectionHeader string) ([]extraction, []string) {
 	examplesRe := regexp.MustCompile(`(?s)<examples>(.*?)</examples>`)
-	goodRe := regexp.MustCompile(`(?s)## Good\s*\n` + "`" + "`" + "`go\n(.*?)" + "`" + "`" + "`")
+	sectionRe := regexp.MustCompile(fmt.Sprintf(`(?s)## %s\s*\n`+"`"+"`"+"`"+`go\n(.*?)`+"`"+"`"+"`", sectionHeader))
 
 	var extractions []extraction
 	var skipped []string
@@ -133,12 +192,12 @@ func extractGoodBlocks(guidesDir string) ([]extraction, []string) {
 		}
 		examplesContent := examplesMatch[1]
 
-		goodMatch := goodRe.FindStringSubmatch(examplesContent)
-		if goodMatch == nil {
+		sectionMatch := sectionRe.FindStringSubmatch(examplesContent)
+		if sectionMatch == nil {
 			skipped = append(skipped, path)
 			return nil
 		}
-		code := goodMatch[1]
+		code := sectionMatch[1]
 
 		rel, relErr := filepath.Rel(guidesDir, path)
 		if relErr != nil {
@@ -309,58 +368,84 @@ func getExcludedLinters() map[string]bool {
 	}
 }
 
-func runGolangciLint(projectRoot, tmpDir string, extractions []extraction) []golangciLintIssue {
+func runGolangciLint(
+	projectRoot, tmpDir string,
+	extractions []extraction,
+	perGuideExcludes map[string][]string,
+) []golangciLintIssue {
 	configPath := filepath.Join(projectRoot, "golden-config", ".golangci.yml")
 
 	var allIssues []golangciLintIssue
 
 	for _, ext := range extractions {
-		pkgDir := filepath.Join(tmpDir, ext.relativePath)
-		args := []string{
-			"run",
-			"--config", configPath,
-			"--output.json.path", "stdout",
-			".",
-		}
-
-		cmd := exec.CommandContext(context.Background(), "golangci-lint", args...)
-		cmd.Dir = pkgDir
-
-		out, cmdErr := cmd.Output()
-
-		if len(out) == 0 && cmdErr != nil {
-			log.Printf("warning: golangci-lint failed for %s: %v", ext.relativePath, cmdErr)
-			continue
-		}
-
-		var output golangciLintOutput
-		unmarshalErr := json.Unmarshal(out, &output)
-		if unmarshalErr != nil {
-			for _, line := range bytes.Split(out, []byte("\n")) {
-				line = bytes.TrimSpace(line)
-				if len(line) == 0 {
-					continue
-				}
-				var obj golangciLintOutput
-				lineErr := json.Unmarshal(line, &obj)
-				if lineErr == nil && len(obj.Issues) > 0 {
-					output.Issues = append(output.Issues, obj.Issues...)
-				}
-			}
-		}
-		allIssues = append(allIssues, output.Issues...)
+		issues := lintSinglePackage(configPath, tmpDir, ext)
+		allIssues = append(allIssues, issues...)
 	}
 
-	excludedLinters := getExcludedLinters()
-	var filtered []golangciLintIssue
-	for _, issue := range allIssues {
-		if !excludedLinters[issue.FromLinter] {
-			filtered = append(filtered, issue)
-		}
-	}
+	filtered := filterIssues(allIssues, perGuideExcludes)
 
 	log.Printf("golangci-lint checked %d packages, found %d issues (%d after filtering excluded linters)",
 		len(extractions), len(allIssues), len(filtered))
+	return filtered
+}
+
+func lintSinglePackage(configPath, tmpDir string, ext extraction) []golangciLintIssue {
+	pkgDir := filepath.Join(tmpDir, ext.relativePath)
+	args := []string{
+		"run",
+		"--config", configPath,
+		"--output.json.path", "stdout",
+		".",
+	}
+
+	cmd := exec.CommandContext(context.Background(), "golangci-lint", args...)
+	cmd.Dir = pkgDir
+
+	out, cmdErr := cmd.Output()
+
+	if len(out) == 0 && cmdErr != nil {
+		log.Printf("warning: golangci-lint failed for %s: %v", ext.relativePath, cmdErr)
+		return nil
+	}
+
+	output := parseLintJSON(out)
+	return output.Issues
+}
+
+func parseLintJSON(out []byte) golangciLintOutput {
+	var output golangciLintOutput
+	unmarshalErr := json.Unmarshal(out, &output)
+	if unmarshalErr != nil {
+		for _, line := range bytes.Split(out, []byte("\n")) {
+			line = bytes.TrimSpace(line)
+			if len(line) == 0 {
+				continue
+			}
+			var obj golangciLintOutput
+			lineErr := json.Unmarshal(line, &obj)
+			if lineErr == nil && len(obj.Issues) > 0 {
+				output.Issues = append(output.Issues, obj.Issues...)
+			}
+		}
+	}
+	return output
+}
+
+func filterIssues(allIssues []golangciLintIssue, perGuideExcludes map[string][]string) []golangciLintIssue {
+	excludedLinters := getExcludedLinters()
+	var filtered []golangciLintIssue
+	for _, issue := range allIssues {
+		if excludedLinters[issue.FromLinter] {
+			continue
+		}
+		guidePath := filenameToGuide(issue.Pos.Filename)
+		if guideExcludes, ok := perGuideExcludes[guidePath]; ok {
+			if slices.Contains(guideExcludes, issue.FromLinter) {
+				continue
+			}
+		}
+		filtered = append(filtered, issue)
+	}
 	return filtered
 }
 
@@ -496,4 +581,325 @@ func printSummary(rpt report) {
 	}
 
 	fmt.Fprintln(os.Stdout, "\nFull report: tmp/crosscheck/violations.json")
+}
+
+func loadExcludeConfig(path string) map[string][]string {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		log.Printf("warning: cannot read exclude config %s: %v — using empty excludes", path, err)
+		return make(map[string][]string)
+	}
+	var cfg excludeConfig
+	unmarshalErr := json.Unmarshal(data, &cfg)
+	if unmarshalErr != nil {
+		log.Printf("warning: cannot parse exclude config %s: %v — using empty excludes", path, unmarshalErr)
+		return make(map[string][]string)
+	}
+	if cfg.Excludes == nil {
+		return make(map[string][]string)
+	}
+	return cfg.Excludes
+}
+
+func categorizeViolations(rpt report) fixReport {
+	trivialLinters := map[string]bool{
+		"errcheck":    true,
+		"intrange":    true,
+		"prealloc":    true,
+		"perfsprint":  true,
+		"godot":       true,
+		"modernize":   true,
+		"exhaustruct": true,
+		"varnamelen":  true,
+	}
+
+	complexLinters := map[string]bool{
+		"wrapcheck":   true,
+		"noinlineerr": true,
+		"godox":       true,
+	}
+
+	var fixRpt fixReport
+	for _, violation := range rpt.Violations {
+		suggestion := fixSuggestion{
+			Guide:        violation.Guide,
+			Linter:       violation.Linter,
+			Message:      violation.Message,
+			SuggestedFix: suggestFix(violation.Linter, violation.Message),
+		}
+
+		switch {
+		case trivialLinters[violation.Linter]:
+			fixRpt.Trivial = append(fixRpt.Trivial, suggestion)
+		case complexLinters[violation.Linter]:
+			fixRpt.Complex = append(fixRpt.Complex, suggestion)
+		case violation.Linter == "revive" && strings.Contains(violation.Message, "unused-parameter"):
+			fixRpt.Trivial = append(fixRpt.Trivial, suggestion)
+		case violation.Linter == linterGovet && (strings.Contains(violation.Message, "shadow") || strings.Contains(violation.Message, "unusedresult")):
+			fixRpt.Complex = append(fixRpt.Complex, suggestion)
+		default:
+			fixRpt.Complex = append(fixRpt.Complex, suggestion)
+		}
+	}
+	return fixRpt
+}
+
+func suggestFix(linter, message string) string {
+	switch {
+	case linter == "errcheck":
+		return "Check returned error or explicitly discard with _"
+	case linter == "intrange":
+		return "Replace for loop with integer range (for i := range n)"
+	case linter == "prealloc":
+		return "Preallocate slice with make() using known length"
+	case linter == "perfsprint":
+		return "Replace fmt.Sprintf with strconv or direct string concatenation"
+	case linter == "godot":
+		return "Add period at end of comment"
+	case linter == "modernize":
+		return "Use modern Go idiom as suggested by linter message"
+	case linter == "exhaustruct":
+		return "Initialize all struct fields or add to exhaustruct exclude pattern"
+	case linter == "varnamelen":
+		return "Use longer variable name matching its scope"
+	case linter == "wrapcheck":
+		return "Wrap error returned from external package with fmt.Errorf(\"...: %w\", err)"
+	case linter == "noinlineerr":
+		return "Extract error check: assign err first, then check in separate if statement"
+	case linter == "godox":
+		return "Convert TODO/FIXME to tracked issue or add nolint directive"
+	case linter == "revive" && strings.Contains(message, "unused-parameter"):
+		return "Rename unused parameter to '_'"
+	case linter == linterGovet && strings.Contains(message, "shadow"):
+		return "Rename variable to avoid shadowing outer scope variable"
+	case linter == linterGovet && strings.Contains(message, "unusedresult"):
+		return "Use or explicitly discard the result of the function call"
+	default:
+		return "Review and fix per linter suggestion"
+	}
+}
+
+func writeFixReport(path string, fr fixReport) error {
+	data, marshalErr := json.MarshalIndent(fr, "", "  ")
+	if marshalErr != nil {
+		return fmt.Errorf("marshaling fix report: %w", marshalErr)
+	}
+	writeErr := os.WriteFile(path, data, 0o600)
+	if writeErr != nil {
+		return fmt.Errorf("writing fix report file: %w", writeErr)
+	}
+	return nil
+}
+
+func targetLinterFromPath(relativePath string) string {
+	parts := strings.Split(relativePath, "/")
+	if len(parts) >= minPathParts {
+		// Subdirectory guide: e.g., "gosec/G502" → "gosec", "staticcheck/SA1006" → "staticcheck"
+		return parts[0]
+	}
+	// Root-level guide: e.g., "errcheck" → "errcheck"
+	return parts[0]
+}
+
+// fixUnusedVars attempts to fix "declared and not used" compile errors in
+// Bad extractions by adding `_ = varName` assignments. Bad code snippets
+// often declare variables that aren't referenced within the snippet.
+func fixUnusedVars(tmpDir string, extractions []extraction) {
+	unusedRe := regexp.MustCompile(`declared and not used: (\w+)`)
+
+	for _, ext := range extractions {
+		file := filepath.Join(tmpDir, ext.relativePath, "main.go")
+
+		// Try up to 3 rounds of fixing (each fix may expose new unused vars)
+		for range 3 {
+			cmd := exec.CommandContext(context.Background(), "go", "build", ".")
+			cmd.Dir = filepath.Join(tmpDir, ext.relativePath)
+			out, _ := cmd.CombinedOutput()
+
+			matches := unusedRe.FindAllStringSubmatch(string(out), -1)
+			if len(matches) == 0 {
+				break
+			}
+
+			data, readErr := os.ReadFile(file)
+			if readErr != nil {
+				break
+			}
+			content := string(data)
+
+			// Find the last closing brace (end of func _() {} wrapper)
+			lastBrace := strings.LastIndex(content, "}")
+			if lastBrace == -1 {
+				break
+			}
+
+			// Build _ = statements for all unused variables
+			var suppressions strings.Builder
+			suppressions.WriteString("\t// suppress unused var errors for snippet extraction\n")
+			for _, match := range matches {
+				suppressions.WriteString("\t_ = " + match[1] + "\n")
+			}
+
+			// Insert before the last closing brace
+			newContent := content[:lastBrace] + suppressions.String() + content[lastBrace:]
+			writeErr := os.WriteFile(
+				file, []byte(newContent), 0o600,
+			)
+			if writeErr != nil {
+				log.Printf("warning: cannot fix unused vars in %s: %v", file, writeErr)
+				break
+			}
+		}
+	}
+}
+
+func runBadValidation(projectRoot string) {
+	guidesDir := filepath.Join(projectRoot, "guides")
+	extractions, skipped := extractBlocks(guidesDir, "Bad")
+	log.Printf("Bad block extraction: %d with Bad blocks, %d skipped",
+		len(extractions), len(skipped))
+
+	if len(extractions) == 0 {
+		fmt.Fprintln(os.Stdout, "No Bad code blocks found — validation skipped")
+		return
+	}
+
+	tmpDir := filepath.Join(projectRoot, "tmp", "crosscheck-bad")
+	prepareBadTmpDir(tmpDir)
+	writeBadExtractions(tmpDir, extractions)
+
+	badConfigPath := filepath.Join(projectRoot, "cmd", "crosscheck", "bad-validation-config.yml")
+	validations := validateBadExtractions(tmpDir, badConfigPath, extractions)
+
+	writeBadValidationReport(tmpDir, validations)
+	printBadValidationSummary(validations, tmpDir)
+}
+
+func prepareBadTmpDir(tmpDir string) {
+	_, statErr := os.Stat(tmpDir)
+	if statErr == nil {
+		removeErr := os.RemoveAll(tmpDir)
+		if removeErr != nil {
+			log.Fatalf("clearing tmp/crosscheck-bad: %v", removeErr)
+		}
+	}
+	mkdirErr := os.MkdirAll(tmpDir, 0o750)
+	if mkdirErr != nil {
+		log.Fatalf("creating tmp/crosscheck-bad: %v", mkdirErr)
+	}
+}
+
+func writeBadExtractions(tmpDir string, extractions []extraction) {
+	writeErr := writeExtractions(tmpDir, extractions)
+	if writeErr != nil {
+		log.Fatalf("writing Bad extractions: %v", writeErr)
+	}
+
+	modErr := writeGoMod(tmpDir)
+	if modErr != nil {
+		log.Fatalf("writing go.mod: %v", modErr)
+	}
+
+	runGoimports(tmpDir, extractions)
+	fixUnusedVars(tmpDir, extractions)
+}
+
+func validateBadExtractions(tmpDir, badConfigPath string, extractions []extraction) []badValidation {
+	validations := make([]badValidation, 0, len(extractions))
+
+	for _, ext := range extractions {
+		guidePath := "guides/" + ext.relativePath + ".md"
+		targetLinter := targetLinterFromPath(ext.relativePath)
+		validation := lintBadPackage(tmpDir, badConfigPath, ext, guidePath, targetLinter)
+		validations = append(validations, validation)
+		log.Printf("Validated %s (target: %s) — triggered: %v, issues: %d",
+			guidePath, targetLinter, validation.Triggered, validation.Issues)
+	}
+
+	return validations
+}
+
+func lintBadPackage(tmpDir, badConfigPath string, ext extraction, guidePath, targetLinter string) badValidation {
+	pkgDir := filepath.Join(tmpDir, ext.relativePath)
+
+	args := []string{
+		"run",
+		"--config", badConfigPath,
+		"--enable-only", targetLinter,
+		"--output.json.path", "stdout",
+		".",
+	}
+
+	cmd := exec.CommandContext(context.Background(), "golangci-lint", args...)
+	cmd.Dir = pkgDir
+
+	out, cmdErr := cmd.Output()
+
+	var issues int
+	var triggered bool
+	var details string
+
+	if len(out) > 0 {
+		output := parseLintJSON(out)
+		for _, issue := range output.Issues {
+			if issue.FromLinter == targetLinter {
+				issues++
+			}
+		}
+		triggered = issues > 0
+	}
+
+	if cmdErr != nil && len(out) == 0 {
+		details = fmt.Sprintf("golangci-lint error: %v", cmdErr)
+	}
+
+	return badValidation{
+		Guide:        guidePath,
+		TargetLinter: targetLinter,
+		Triggered:    triggered,
+		Issues:       issues,
+		Details:      details,
+	}
+}
+
+func writeBadValidationReport(tmpDir string, validations []badValidation) {
+	reportPath := filepath.Join(tmpDir, "bad-validation.json")
+	data, marshalErr := json.MarshalIndent(validations, "", "  ")
+	if marshalErr != nil {
+		log.Fatalf("marshaling bad validation report: %v", marshalErr)
+	}
+	writeErr := os.WriteFile(reportPath, data, 0o600)
+	if writeErr != nil {
+		log.Fatalf("writing bad validation report: %v", writeErr)
+	}
+}
+
+func printBadValidationSummary(validations []badValidation, tmpDir string) {
+	reportPath := filepath.Join(tmpDir, "bad-validation.json")
+
+	passing := 0
+	for _, validation := range validations {
+		if validation.Triggered {
+			passing++
+		}
+	}
+	fmt.Fprintf(os.Stdout, "\nBad Example Validation: %d/%d Bad examples trigger their target linter\n",
+		passing, len(validations))
+
+	failing := len(validations) - passing
+	if failing > 0 {
+		fmt.Fprintln(os.Stdout, "\nFailing Bad examples (do NOT trigger target linter):")
+		for _, validation := range validations {
+			if !validation.Triggered {
+				detail := ""
+				if validation.Details != "" {
+					detail = fmt.Sprintf(" (%s)", validation.Details)
+				}
+				fmt.Fprintf(os.Stdout, "  %s — target: %s, issues: %d%s\n",
+					validation.Guide, validation.TargetLinter, validation.Issues, detail)
+			}
+		}
+	}
+
+	fmt.Fprintln(os.Stdout, "\nFull report: "+reportPath)
 }

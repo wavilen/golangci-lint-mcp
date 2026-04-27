@@ -7,19 +7,6 @@ Store the expression in a variable and range over its address, or change the ran
 </instructions>
 
 <examples>
-## Bad
-```go
-type BigArray [4096]int
-
-func getArray() BigArray { return BigArray{} }
-
-for i, v := range getArray() {
-    // getArray() result is copied once for range expression (32KB)
-    _ = i
-    _ = v
-}
-```
-
 ## Good
 ```go
 arr := getArray()
@@ -38,4 +25,5 @@ for i, v := range &arr {
 </patterns>
 
 <related>
-rangeValCopy, hugeParam, appendCombine
+gocritic/rangeValCopy, gocritic/hugeParam, gocritic/appendCombine
+</related>

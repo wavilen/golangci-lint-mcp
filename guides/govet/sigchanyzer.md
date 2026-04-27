@@ -5,13 +5,6 @@ Reports unbuffered channels used with `signal.Notify`. `signal.Notify` sends on 
 </instructions>
 
 <examples>
-## Bad
-```go
-ch := make(chan os.Signal)
-signal.Notify(ch, syscall.SIGTERM)
-// unbuffered — signal may be dropped if not immediately consumed
-```
-
 ## Good
 ```go
 ch := make(chan os.Signal, 1)
@@ -27,5 +20,5 @@ signal.Notify(ch, syscall.SIGTERM)
 </patterns>
 
 <related>
-lostcancel, defers
+govet/lostcancel, govet/defers
 </related>

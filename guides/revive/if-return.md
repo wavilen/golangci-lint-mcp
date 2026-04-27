@@ -7,17 +7,6 @@ Replace the if-else with a single `return condition`. For negated cases, use `re
 </instructions>
 
 <examples>
-## Bad
-```go
-func isValid() bool {
-    if len(items) > 0 {
-        return true
-    } else {
-        return false
-    }
-}
-```
-
 ## Good
 ```go
 func isValid() bool {
@@ -35,4 +24,5 @@ func isValid() bool {
 </patterns>
 
 <related>
-early-return, bool-literal-in-expr, indent-error-flow
+revive/early-return, revive/bool-literal-in-expr, revive/indent-error-flow
+</related>

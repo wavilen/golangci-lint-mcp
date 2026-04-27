@@ -7,13 +7,6 @@ Move `regexp.MustCompile` to a package-level `var` so the pattern is compiled on
 </instructions>
 
 <examples>
-## Bad
-```go
-func match(s string) bool {
-	return regexp.MustCompile(`^\d+$`).MatchString(s)
-}
-```
-
 ## Good
 ```go
 var digitPattern = regexp.MustCompile(`^\d+$`)
@@ -31,5 +24,5 @@ func match(s string) bool {
 </patterns>
 
 <related>
-regexpSimplify, regexpPattern
+gocritic/regexpSimplify, gocritic/regexpPattern
 </related>

@@ -7,13 +7,6 @@ Strengthen the condition to cover all necessary cases, or add separate validatio
 </instructions>
 
 <examples>
-## Bad
-```go
-if err != nil || resp == nil { // weak — resp.StatusCode not checked
-    return errors.New("request failed")
-}
-```
-
 ## Good
 ```go
 if err != nil {
@@ -33,5 +26,5 @@ if resp.StatusCode != http.StatusOK {
 </patterns>
 
 <related>
-badCond, dupSubExpr, offBy1
+gocritic/badCond, gocritic/dupSubExpr, gocritic/offBy1
 </related>

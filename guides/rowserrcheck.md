@@ -7,15 +7,6 @@ Always check `rows.Err()` after the `rows.Next()` loop, before processing the re
 </instructions>
 
 <examples>
-## Bad
-```go
-rows, _ := db.Query("SELECT id FROM users")
-for rows.Next() {
-    var id int
-    _ = rows.Scan(&id)
-}
-```
-
 ## Good
 ```go
 rows, err := db.Query("SELECT id FROM users")

@@ -7,16 +7,10 @@ Always assign the result of `append` back to the same slice variable: `s = appen
 </instructions>
 
 <examples>
-## Bad
-```go
-items := []string{"a", "b"}
-more := append(items, "c") // more may share backing array with items
-```
-
 ## Good
 ```go
-items := []string{"a", "b"}
-items = append(items, "c") // result assigned back to same variable
+items := make([]string, 0, 3)
+items = append(items, "a", "b", "c") // result assigned back to same variable
 ```
 </examples>
 
@@ -27,5 +21,5 @@ items = append(items, "c") // result assigned back to same variable
 </patterns>
 
 <related>
-assign, copylocks
+govet/assign, govet/copylocks
 </related>

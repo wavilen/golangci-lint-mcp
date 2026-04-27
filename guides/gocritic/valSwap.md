@@ -7,13 +7,6 @@ Use parallel assignment `a, b = b, a` to swap two variables.
 </instructions>
 
 <examples>
-## Bad
-```go
-tmp := a
-a = b
-b = tmp
-```
-
 ## Good
 ```go
 a, b = b, a
@@ -26,5 +19,5 @@ a, b = b, a
 </patterns>
 
 <related>
-assignOp
+gocritic/assignOp
 </related>

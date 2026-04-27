@@ -7,18 +7,6 @@ Move the loop body into a separate function so each `defer` runs at the end of i
 </instructions>
 
 <examples>
-## Bad
-```go
-for _, path := range paths {
-    f, err := os.Open(path)
-    if err != nil {
-        return err
-    }
-    defer f.Close() // all files close only when function returns
-    process(f)
-}
-```
-
 ## Good
 ```go
 for _, path := range paths {
@@ -45,5 +33,5 @@ func processFile(path string) error {
 </patterns>
 
 <related>
-lostcancel, loopclosure
+govet/lostcancel, govet/loopclosure
 </related>

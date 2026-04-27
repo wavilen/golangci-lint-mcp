@@ -7,21 +7,6 @@ Remove the `defer` keyword and call the function directly. `defer` is useful whe
 </instructions>
 
 <examples>
-## Bad
-```go
-func process() error {
-    f, err := os.Open("data.txt")
-    if err != nil {
-        return err
-    }
-    defer f.Close() // fine — may return before end
-
-    err = scan(f)
-    defer f.Close() // unnecessary — this is the last statement
-    return err
-}
-```
-
 ## Good
 ```go
 func process() error {
@@ -45,5 +30,5 @@ func process() error {
 </patterns>
 
 <related>
-deferInLoop, exitAfterDefer, badLock
+gocritic/deferInLoop, gocritic/exitAfterDefer, gocritic/badLock
 </related>

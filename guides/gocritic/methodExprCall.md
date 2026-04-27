@@ -7,11 +7,6 @@ Use the standard method call syntax on the receiver instead of the method expres
 </instructions>
 
 <examples>
-## Bad
-```go
-http.HandlerFunc(myHandler).ServeHTTP(w, r)
-```
-
 ## Good
 ```go
 myHandler.ServeHTTP(w, r)
@@ -25,5 +20,5 @@ myHandler.ServeHTTP(w, r)
 </patterns>
 
 <related>
-underef, unlambda
+gocritic/underef, gocritic/unlambda
 </related>

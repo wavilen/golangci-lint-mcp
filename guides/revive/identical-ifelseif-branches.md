@@ -7,19 +7,6 @@ Merge the duplicate branches using `||` in the condition, or fix the branch that
 </instructions>
 
 <examples>
-## Bad
-```go
-if status == "active" {
-    enableFeature()
-    logAction("enabled")
-} else if status == "pending" {
-    enableFeature()
-    logAction("enabled") // identical to "active" branch
-} else {
-    disableFeature()
-}
-```
-
 ## Good
 ```go
 if status == "active" || status == "pending" {
@@ -40,4 +27,5 @@ if status == "active" || status == "pending" {
 </patterns>
 
 <related>
-identical-branches, identical-ifelseif-conditions, identical-switch-branches
+revive/identical-branches, revive/identical-ifelseif-conditions, revive/identical-switch-branches
+</related>

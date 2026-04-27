@@ -7,16 +7,6 @@ Extract the repeated string into a `const` declaration. Use a typed constant if 
 </instructions>
 
 <examples>
-## Bad
-```go
-func role(r string) bool {
-    return r == "admin" || r == "superuser"
-}
-func canEdit(r string) bool {
-    return r == "admin"
-}
-```
-
 ## Good
 ```go
 const RoleAdmin = "admin"

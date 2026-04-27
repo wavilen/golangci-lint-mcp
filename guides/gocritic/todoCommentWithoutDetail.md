@@ -7,17 +7,10 @@ Add descriptive detail to the comment: what needs to be done, who is responsible
 </instructions>
 
 <examples>
-## Bad
-```go
-// TODO
-// FIXME
-// HACK
-```
-
 ## Good
 ```go
-// TODO(john): migrate to structured logger by 2026-06 (#1234)
-// FIXME: race condition when concurrent writers access the cache
+// TODO(john): migrate to structured logger by 2026-06 (#1234).
+// FIXME: race condition when concurrent writers access the cache.
 ```
 </examples>
 
@@ -29,5 +22,5 @@ Add descriptive detail to the comment: what needs to be done, who is responsible
 </patterns>
 
 <related>
-commentFormatting, docStub
+gocritic/commentFormatting, gocritic/docStub
 </related>

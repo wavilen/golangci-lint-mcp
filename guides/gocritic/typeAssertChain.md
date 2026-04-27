@@ -7,17 +7,6 @@ Use a `switch x := x.(type)` statement to handle multiple possible types in one 
 </instructions>
 
 <examples>
-## Bad
-```go
-if v, ok := val.(int); ok {
-	useInt(v)
-} else if v, ok := val.(string); ok {
-	useStr(v)
-} else if v, ok := val.(bool); ok {
-	useBool(v)
-}
-```
-
 ## Good
 ```go
 switch v := val.(type) {
@@ -38,5 +27,5 @@ case bool:
 </patterns>
 
 <related>
-typeSwitchVar, ifElseChain, sloppyTypeAssert
+gocritic/typeSwitchVar, gocritic/ifElseChain, gocritic/sloppyTypeAssert
 </related>

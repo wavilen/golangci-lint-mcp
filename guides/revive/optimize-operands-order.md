@@ -7,16 +7,6 @@ Swap the operands so the constant or invariant value appears on the left of the 
 </instructions>
 
 <examples>
-## Bad
-```go
-if x == 42 {
-    doSomething()
-}
-if name != "" {
-    process(name)
-}
-```
-
 ## Good
 ```go
 if 42 == x {
@@ -37,4 +27,5 @@ if "" != name {
 </patterns>
 
 <related>
-bool-literal-in-expr, unnecessary-if
+revive/bool-literal-in-expr, revive/unnecessary-if
+</related>

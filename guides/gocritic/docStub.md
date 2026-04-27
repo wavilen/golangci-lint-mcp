@@ -7,20 +7,11 @@ Write documentation that describes the purpose, behavior, or usage of the symbol
 </instructions>
 
 <examples>
-## Bad
-```go
-// Handler ...
-func Handler(w http.ResponseWriter, r *http.Request) {}
-
-// Config is a config.
-type Config struct{}
-```
-
 ## Good
 ```go
 // Handler processes incoming HTTP requests and routes them
 // to the appropriate service endpoint.
-func Handler(w http.ResponseWriter, r *http.Request) {}
+func Handler(_ http.ResponseWriter, _ *http.Request) {}
 
 // Config holds application-wide configuration values
 // loaded from environment variables and config files.
@@ -36,5 +27,5 @@ type Config struct{}
 </patterns>
 
 <related>
-commentFormatting, captLocal
+gocritic/commentFormatting, gocritic/captLocal
 </related>

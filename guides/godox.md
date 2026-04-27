@@ -7,15 +7,6 @@ Either resolve the flagged item or convert it into a tracked issue in your proje
 </instructions>
 
 <examples>
-## Bad
-```go
-func handleSubmit(w http.ResponseWriter, r *http.Request) {
-    // TODO: add input validation
-    // FIXME: this crashes on empty body
-    process(r.Body)
-}
-```
-
 ## Good
 ```go
 func handleSubmit(w http.ResponseWriter, r *http.Request) {

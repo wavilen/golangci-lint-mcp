@@ -7,21 +7,6 @@ Use pointer receivers for all methods if any method needs a pointer receiver, or
 </instructions>
 
 <examples>
-## Bad
-```go
-type Counter struct {
-    count int
-}
-
-func (c Counter) Value() int {
-    return c.count
-}
-
-func (c *Counter) Increment() {
-    c.count++
-}
-```
-
 ## Good
 ```go
 type Counter struct {

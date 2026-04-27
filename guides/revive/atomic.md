@@ -7,17 +7,6 @@ Ensure every read and write to a shared variable uses the corresponding `atomic`
 </instructions>
 
 <examples>
-## Bad
-```go
-var counter int64
-
-// Non-atomic write — races with atomic reads
-counter = 42
-
-// Atomic read — sees torn value
-val := atomic.LoadInt64(&counter)
-```
-
 ## Good
 ```go
 var counter int64
@@ -36,4 +25,5 @@ val := atomic.LoadInt64(&counter)
 </patterns>
 
 <related>
-datarace
+revive/datarace
+</related>

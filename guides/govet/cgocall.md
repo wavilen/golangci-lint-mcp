@@ -7,17 +7,6 @@ Use `C.malloc`/`C.free` for C-side memory, or ensure C does not store the Go poi
 </instructions>
 
 <examples>
-## Bad
-```go
-/*
-void store(void **p) { *p = malloc(1); }
-*/
-import "C"
-
-var buf unsafe.Pointer
-C.store((**C.void)(unsafe.Pointer(&buf))) // passing Go pointer to pointer
-```
-
 ## Good
 ```go
 /*
@@ -37,5 +26,5 @@ C.store((**C.void)(p)) // C-allocated memory is safe
 </patterns>
 
 <related>
-unsafeptr, asmdecl
+govet/unsafeptr, govet/asmdecl
 </related>

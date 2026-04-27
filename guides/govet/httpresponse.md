@@ -7,17 +7,6 @@ Always `defer resp.Body.Close()` immediately after checking for errors.
 </instructions>
 
 <examples>
-## Bad
-```go
-resp, err := http.Get(url)
-if err != nil {
-    return err
-}
-// resp.Body never closed — connection leak
-data, _ := io.ReadAll(resp.Body)
-return nil
-```
-
 ## Good
 ```go
 resp, err := http.Get(url)
@@ -37,5 +26,5 @@ return nil
 </patterns>
 
 <related>
-hostport, defers
+govet/hostport, govet/defers
 </related>

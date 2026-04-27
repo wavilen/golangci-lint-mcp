@@ -7,11 +7,6 @@ Use `net.JoinHostPort` which correctly handles IPv6 addresses and other edge cas
 </instructions>
 
 <examples>
-## Bad
-```go
-addr := fmt.Sprintf("%s:%d", host, port)
-```
-
 ## Good
 ```go
 addr := net.JoinHostPort(host, strconv.Itoa(port))
@@ -26,5 +21,5 @@ addr := net.JoinHostPort(host, strconv.Itoa(port))
 </patterns>
 
 <related>
-perfsprint, govet
+perfsprint, govet/hostport
 </related>

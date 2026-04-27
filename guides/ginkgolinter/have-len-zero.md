@@ -5,11 +5,6 @@ Detects `Expect(x).Should(HaveLen(0))` which can be simplified to `Expect(x).Sho
 </instructions>
 
 <examples>
-## Bad
-```go
-Expect(results).Should(HaveLen(0))
-```
-
 ## Good
 ```go
 Expect(results).Should(BeEmpty())
@@ -23,4 +18,5 @@ Expect(results).Should(BeEmpty())
 </patterns>
 
 <related>
-len-assertion, nil-assertion
+ginkgolinter/len-assertion, ginkgolinter/nil-assertion
+</related>

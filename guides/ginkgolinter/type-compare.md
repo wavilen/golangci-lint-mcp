@@ -5,11 +5,6 @@ Detects `Expect(x).Should(BeAssignableToTypeOf(MyType{}))` when simpler type mat
 </instructions>
 
 <examples>
-## Bad
-```go
-Expect(result).To(BeAssignableToTypeOf(MyType{}))
-```
-
 ## Good
 ```go
 // When checking interface implementation:
@@ -28,4 +23,5 @@ Expect(result).To(BeAssignableToTypeOf(MyType{}))
 </patterns>
 
 <related>
-compare-assertion, nil-assertion
+ginkgolinter/compare-assertion, ginkgolinter/nil-assertion
+</related>

@@ -7,19 +7,6 @@ Reorder return values to place the error last: `(resultType, error)`.
 </instructions>
 
 <examples>
-## Bad
-```go
-func Lookup() (error, string) {
-    // error first is unusual and confuses callers
-    return nil, "found"
-}
-
-func Parse() (int, error, bool) {
-    // error in the middle is even worse
-    return 42, nil, true
-}
-```
-
 ## Good
 ```go
 func Lookup() (string, error) {
@@ -41,4 +28,5 @@ func Parse() (int, bool, error) {
 </patterns>
 
 <related>
-error-naming, error-strings, errorf
+revive/error-naming, revive/error-strings, revive/errorf
+</related>

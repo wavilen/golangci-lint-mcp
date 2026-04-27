@@ -7,20 +7,6 @@ Replace if-else chains that compare one variable against different values with a
 </instructions>
 
 <examples>
-## Bad
-```go
-func httpStatus(code int) string {
-    if code == 200 {
-        return "OK"
-    } else if code == 404 {
-        return "Not Found"
-    } else if code == 500 {
-        return "Internal Server Error"
-    }
-    return "Unknown"
-}
-```
-
 ## Good
 ```go
 func httpStatus(code int) string {
@@ -47,4 +33,5 @@ func httpStatus(code int) string {
 </patterns>
 
 <related>
-enforce-map-style, enforce-slice-style, identical-switch-branches
+revive/enforce-map-style, revive/enforce-slice-style, revive/identical-switch-branches
+</related>

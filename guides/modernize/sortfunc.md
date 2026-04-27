@@ -5,13 +5,6 @@ Detects `sort.Slice` or `sort.SliceStable` calls with comparison functions that 
 </instructions>
 
 <examples>
-## Bad
-```go
-sort.Slice(users, func(i, j int) bool {
-    return users[i].Name < users[j].Name
-})
-```
-
 ## Good
 ```go
 slices.SortFunc(users, func(a, b User) int {
@@ -27,4 +20,5 @@ slices.SortFunc(users, func(a, b User) int {
 </patterns>
 
 <related>
-slicesort, sliceclear
+modernize/slicesort, modernize/sliceclear
+</related>

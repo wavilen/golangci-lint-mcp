@@ -7,17 +7,6 @@ Remove the `else` keyword and unindent the code block. The control flow is clear
 </instructions>
 
 <examples>
-## Bad
-```go
-func get(name string) string {
-    if name == "" {
-        return "default"
-    } else {
-        return name
-    }
-}
-```
-
 ## Good
 ```go
 func get(name string) string {
@@ -38,4 +27,5 @@ func get(name string) string {
 </patterns>
 
 <related>
-early-return, indent-error-flow, unnecessary-if
+revive/early-return, revive/indent-error-flow, revive/unnecessary-if
+</related>

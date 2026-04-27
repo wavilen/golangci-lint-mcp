@@ -7,19 +7,6 @@ Place the variable or expression on the left side of the comparison.
 </instructions>
 
 <examples>
-## Bad
-```go
-if nil == err {
-	return
-}
-if 0 == len(items) {
-	return
-}
-if "admin" == role {
-	grantAccess()
-}
-```
-
 ## Good
 ```go
 if err == nil {
@@ -41,5 +28,5 @@ if role == "admin" {
 </patterns>
 
 <related>
-boolExprSimplify, emptyStringTest
+gocritic/boolExprSimplify, gocritic/emptyStringTest
 </related>

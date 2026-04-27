@@ -7,12 +7,6 @@ Ensure all path components are relative. If an absolute path is intentional, use
 </instructions>
 
 <examples>
-## Bad
-```go
-path := filepath.Join("/data", "/config.yaml")
-// Result: "/config.yaml" — absolute path discards "/data"
-```
-
 ## Good
 ```go
 path := filepath.Join("/data", "config.yaml")
@@ -28,5 +22,5 @@ path := filepath.Join("/data", "config.yaml")
 </patterns>
 
 <related>
-argOrder, badCall
+gocritic/argOrder, gocritic/badCall
 </related>

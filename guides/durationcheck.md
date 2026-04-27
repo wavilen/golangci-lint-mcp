@@ -7,11 +7,6 @@ Convert one operand to a plain number before multiplying, or restructure the exp
 </instructions>
 
 <examples>
-## Bad
-```go
-delay := time.Second * time.Duration(count)
-```
-
 ## Good
 ```go
 delay := time.Second * time.Duration(count)
@@ -27,4 +22,5 @@ delay := time.Second * time.Duration(count)
 </patterns>
 
 <related>
-govet, staticcheck, gosec
+govet, staticcheck, gosec, gosec/G109
+</related>

@@ -5,14 +5,6 @@ Detects string concatenation using `+=` inside loops, which creates O(n²) alloc
 </instructions>
 
 <examples>
-## Bad
-```go
-var result string
-for _, part := range parts {
-    result += part
-}
-```
-
 ## Good
 ```go
 var b strings.Builder
@@ -30,4 +22,5 @@ result := b.String()
 </patterns>
 
 <related>
-errorf, sliceclear
+modernize/errorf, modernize/sliceclear
+</related>

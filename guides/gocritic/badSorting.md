@@ -7,13 +7,6 @@ Use strict `<` in sort comparison functions instead of `<=`.
 </instructions>
 
 <examples>
-## Bad
-```go
-sort.Slice(items, func(i, j int) bool {
-    return items[i].Score <= items[j].Score // should be <
-})
-```
-
 ## Good
 ```go
 sort.Slice(items, func(i, j int) bool {
@@ -30,5 +23,5 @@ sort.Slice(items, func(i, j int) bool {
 </patterns>
 
 <related>
-sortSlice, sloppyLen
+gocritic/sortSlice, gocritic/sloppyLen
 </related>

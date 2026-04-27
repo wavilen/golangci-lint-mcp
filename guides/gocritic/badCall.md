@@ -7,11 +7,6 @@ Ensure the function call's return value is used or explicitly discarded with jus
 </instructions>
 
 <examples>
-## Bad
-```go
-fmt.Sprintf("status: %d", code) // result unused
-```
-
 ## Good
 ```go
 msg := fmt.Sprintf("status: %d", code)

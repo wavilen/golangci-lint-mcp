@@ -7,21 +7,16 @@ Remove the blocked import and use the recommended alternative. Check the revive 
 </instructions>
 
 <examples>
-## Bad
-```go
-import "io/ioutil" // deprecated since Go 1.16
-
-func readConfig(path string) ([]byte, error) {
-    return ioutil.ReadFile(path)
-}
-```
-
 ## Good
 ```go
 import "os"
 
 func readConfig(path string) ([]byte, error) {
-    return os.ReadFile(path)
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("reading config: %w", err)
+    }
+    return data, nil
 }
 ```
 </examples>
@@ -34,4 +29,5 @@ func readConfig(path string) ([]byte, error) {
 </patterns>
 
 <related>
-blank-imports, dot-imports, duplicated-imports
+revive/blank-imports, revive/dot-imports, revive/duplicated-imports
+</related>

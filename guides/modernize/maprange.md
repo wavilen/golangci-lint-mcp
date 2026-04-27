@@ -5,14 +5,6 @@ Detects range over a map where `maps.Keys` or `maps.Values` (Go 1.21+) would be 
 </instructions>
 
 <examples>
-## Bad
-```go
-keys := make([]string, 0, len(m))
-for k := range m {
-    keys = append(keys, k)
-}
-```
-
 ## Good
 ```go
 keys := maps.Keys(m)
@@ -26,4 +18,5 @@ keys := maps.Keys(m)
 </patterns>
 
 <related>
-mapval, simplifyrange
+modernize/mapval, modernize/simplifyrange
+</related>

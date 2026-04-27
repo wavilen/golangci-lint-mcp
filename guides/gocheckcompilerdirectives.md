@@ -7,12 +7,6 @@ Ensure compiler directives use exactly `//go:` (two slashes, no space before `go
 </instructions>
 
 <examples>
-## Bad
-```go
-// go:generate go run gen.go
-type Config struct{}
-```
-
 ## Good
 ```go
 //go:generate go run gen.go

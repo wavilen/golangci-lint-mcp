@@ -7,12 +7,6 @@ Place directives on the correct declaration they are meant to affect, and use on
 </instructions>
 
 <examples>
-## Bad
-```go
-//go:noinline
-const x = 1 // noinline only applies to functions
-```
-
 ## Good
 ```go
 //go:noinline
@@ -30,5 +24,5 @@ func expensive() int {
 </patterns>
 
 <related>
-buildtag, stdversion
+govet/buildtag, govet/stdversion
 </related>

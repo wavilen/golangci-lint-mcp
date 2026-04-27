@@ -7,12 +7,6 @@ Split the file into smaller, focused files. Group related types and functions by
 </instructions>
 
 <examples>
-## Bad
-```go
-// user_handler.go — 1200 lines mixing HTTP handling,
-// validation, database queries, and response formatting
-```
-
 ## Good
 ```go
 // user_handler.go     — HTTP route definitions (~100 lines)
@@ -31,4 +25,5 @@ Split the file into smaller, focused files. Group related types and functions by
 </patterns>
 
 <related>
-line-length-limit, function-length, max-public-structs
+revive/line-length-limit, revive/function-length, revive/max-public-structs
+</related>

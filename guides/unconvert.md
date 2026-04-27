@@ -7,13 +7,6 @@ Remove the unnecessary conversion.
 </instructions>
 
 <examples>
-## Bad
-```go
-func add(a, b int) int {
-    return int(a) + int(b)
-}
-```
-
 ## Good
 ```go
 func add(a, b int) int {
@@ -30,4 +23,5 @@ func add(a, b int) int {
 </patterns>
 
 <related>
-gosimple, staticcheck, govet
+staticcheck, govet, perfsprint
+</related>

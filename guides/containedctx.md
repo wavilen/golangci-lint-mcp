@@ -7,18 +7,6 @@ Pass the context as the first argument to methods instead of storing it on the s
 </instructions>
 
 <examples>
-## Bad
-```go
-type Service struct {
-    ctx context.Context
-    db  *sql.DB
-}
-
-func (s *Service) Query() (*sql.Rows, error) {
-    return s.db.QueryContext(s.ctx, "SELECT ...")
-}
-```
-
 ## Good
 ```go
 type Service struct {
@@ -26,7 +14,11 @@ type Service struct {
 }
 
 func (s *Service) Query(ctx context.Context) (*sql.Rows, error) {
-    return s.db.QueryContext(ctx, "SELECT ...")
+    rows, err := s.db.QueryContext(ctx, "SELECT ...")
+    if err != nil {
+        return nil, fmt.Errorf("executing query: %w", err)
+    }
+    return rows, nil
 }
 ```
 </examples>
@@ -38,5 +30,5 @@ func (s *Service) Query(ctx context.Context) (*sql.Rows, error) {
 </patterns>
 
 <related>
-contextcheck, revive, gocritic
+contextcheck, staticcheck/SA1013, gocritic
 </related>

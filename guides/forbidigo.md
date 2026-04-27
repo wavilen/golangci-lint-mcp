@@ -7,13 +7,6 @@ Replace the forbidden identifier with the approved alternative. Check project co
 </instructions>
 
 <examples>
-## Bad
-```go
-func main() {
-    fmt.Println("server started")
-}
-```
-
 ## Good
 ```go
 func main() {

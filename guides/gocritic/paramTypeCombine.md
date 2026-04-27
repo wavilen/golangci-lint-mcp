@@ -7,16 +7,10 @@ Combine consecutive same-typed parameters into a single type declaration.
 </instructions>
 
 <examples>
-## Bad
-```go
-func draw(x int, y int, color string) {}
-func copy(dst []byte, src []byte) int { return 0 }
-```
-
 ## Good
 ```go
-func draw(x, y int, color string) {}
-func copy(dst, src []byte) int { return 0 }
+func draw(_, _ int, _ string) {}
+func cloneData(_, _ []byte) int { return 0 }
 ```
 </examples>
 
@@ -27,5 +21,5 @@ func copy(dst, src []byte) int { return 0 }
 </patterns>
 
 <related>
-unnamedResult, typeDefFirst
+gocritic/unnamedResult, gocritic/typeDefFirst
 </related>

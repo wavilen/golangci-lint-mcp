@@ -7,13 +7,6 @@ Redesign the interface to accept the concrete type as a parameter, or use value 
 </instructions>
 
 <examples>
-## Bad
-```go
-type Modifier interface {
-    Modify(*Modifier) // interface satisfied by *Modifier — confusing
-}
-```
-
 ## Good
 ```go
 type Modifier interface {

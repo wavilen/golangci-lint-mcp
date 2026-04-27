@@ -7,11 +7,6 @@ Use the generated getter method (`msg.GetName()`) instead of direct field access
 </instructions>
 
 <examples>
-## Bad
-```go
-name := req.Name
-```
-
 ## Good
 ```go
 name := req.GetName()

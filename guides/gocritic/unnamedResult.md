@@ -7,16 +7,6 @@ Name all return values in the function signature, or document them clearly in th
 </instructions>
 
 <examples>
-## Bad
-```go
-func divide(a, b float64) (float64, error) {
-	if b == 0 {
-		return 0, errors.New("division by zero")
-	}
-	return a / b, nil
-}
-```
-
 ## Good
 ```go
 func divide(a, b float64) (quotient float64, err error) {
@@ -35,5 +25,5 @@ func divide(a, b float64) (quotient float64, err error) {
 </patterns>
 
 <related>
-tooManyResultsChecker, paramTypeCombine
+gocritic/tooManyResultsChecker, gocritic/paramTypeCombine
 </related>

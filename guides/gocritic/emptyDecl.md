@@ -7,13 +7,6 @@ Remove the empty file or declaration. If the file exists for future implementati
 </instructions>
 
 <examples>
-## Bad
-```go
-package handlers
-
-// No types, functions, or variables declared
-```
-
 ## Good
 ```go
 package handlers
@@ -33,5 +26,5 @@ type Handler struct {
 </patterns>
 
 <related>
-commentedOutCode, codegenComment
+gocritic/commentedOutCode, gocritic/codegenComment
 </related>

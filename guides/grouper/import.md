@@ -5,13 +5,6 @@ Detects multiple `import` declarations that can be grouped into a single `import
 </instructions>
 
 <examples>
-## Bad
-```go
-import "fmt"
-import "strings"
-import "github.com/stretchr/testify/assert"
-```
-
 ## Good
 ```go
 import (
@@ -30,4 +23,5 @@ import (
 </patterns>
 
 <related>
-const, type, var
+grouper/const, grouper/type, grouper/var
+</related>

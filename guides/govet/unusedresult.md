@@ -7,11 +7,6 @@ Assign the result to a variable and use it, or remove the call entirely.
 </instructions>
 
 <examples>
-## Bad
-```go
-strings.HasPrefix(name, "test_") // result discarded — call is useless
-```
-
 ## Good
 ```go
 if strings.HasPrefix(name, "test_") {
@@ -28,5 +23,5 @@ if strings.HasPrefix(name, "test_") {
 </patterns>
 
 <related>
-appends, assign
+govet/appends, govet/assign
 </related>

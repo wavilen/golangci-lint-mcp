@@ -7,16 +7,6 @@ Remove the empty case body and `fallthrough`, or merge the case label with the n
 </instructions>
 
 <examples>
-## Bad
-```go
-switch x {
-case 1:
-	fallthrough
-case 2:
-	handleTwo()
-}
-```
-
 ## Good
 ```go
 switch x {
@@ -33,5 +23,5 @@ case 1, 2:
 </patterns>
 
 <related>
-singleCaseSwitch, defaultCaseOrder
+gocritic/singleCaseSwitch, gocritic/defaultCaseOrder
 </related>

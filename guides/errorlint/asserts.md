@@ -5,14 +5,6 @@ Detects type assertions on errors like `err.(*os.PathError)` or `switch err.(typ
 </instructions>
 
 <examples>
-## Bad
-```go
-pathErr, ok := err.(*os.PathError)
-if ok {
-    slog.Info("path error", "path", pathErr.Path)
-}
-```
-
 ## Good
 ```go
 var pathErr *os.PathError
@@ -29,4 +21,5 @@ if errors.As(err, &pathErr) {
 </patterns>
 
 <related>
-errorf, comparison
+errorlint/errorf, errorlint/comparison, govet/errorsas
+</related>

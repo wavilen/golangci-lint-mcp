@@ -7,22 +7,6 @@ Simplify by extracting branches into helpers, using early returns, and replacing
 </instructions>
 
 <examples>
-## Bad
-```go
-func classify(code int) string {
-    if code >= 200 && code < 300 {
-        return "success"
-    } else if code >= 300 && code < 400 {
-        return "redirect"
-    } else if code >= 400 && code < 500 {
-        return "client error"
-    } else if code >= 500 {
-        return "server error"
-    }
-    return "unknown"
-}
-```
-
 ## Good
 ```go
 var statusRanges = []struct {
@@ -53,5 +37,5 @@ func classify(code int) string {
 </patterns>
 
 <related>
-cyclop, gocognit, maintidx, funlen
+cyclop, gocognit, maintidx, funlen, revive/cyclomatic
 </related>

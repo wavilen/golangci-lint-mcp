@@ -7,15 +7,6 @@ Remove the duplicate condition. If the branches were meant to check different th
 </instructions>
 
 <examples>
-## Bad
-```go
-if x > 100 {
-    handleLarge(x)
-} else if x > 100 { // unreachable
-    handleExtraLarge(x)
-}
-```
-
 ## Good
 ```go
 if x > 100 {
@@ -35,4 +26,5 @@ if x > 100 {
 </patterns>
 
 <related>
-identical-ifelseif-branches, identical-switch-conditions
+revive/identical-ifelseif-branches, revive/identical-switch-conditions
+</related>

@@ -7,15 +7,6 @@ Replace explicit `utf8.DecodeRune` calls in iteration with a `for _, r := range 
 </instructions>
 
 <examples>
-## Bad
-```go
-for i := 0; i < len(s); {
-    r, size := utf8.DecodeRuneInString(s[i:])
-    process(r)
-    i += size
-}
-```
-
 ## Good
 ```go
 for _, r := range s {
@@ -32,4 +23,5 @@ for _, r := range s {
 </patterns>
 
 <related>
-indexAlloc, stringXbytes, preferWriteByte
+gocritic/indexAlloc, gocritic/stringXbytes, gocritic/preferWriteByte
+</related>

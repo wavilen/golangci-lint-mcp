@@ -5,11 +5,6 @@ Detects `Eventually` assertions without explicit timeout or with missing `Should
 </instructions>
 
 <examples>
-## Bad
-```go
-Eventually(func() int { return counter.Load() }).Should(Equal(10))
-```
-
 ## Good
 ```go
 Eventually(func() int { return counter.Load() }).
@@ -26,4 +21,5 @@ Eventually(func() int { return counter.Load() }).
 </patterns>
 
 <related>
-async-intervals, expect-to
+ginkgolinter/async-intervals, ginkgolinter/expect-to
+</related>

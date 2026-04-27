@@ -7,12 +7,6 @@ Use the two-value comma-ok form and handle the failure case explicitly.
 </instructions>
 
 <examples>
-## Bad
-```go
-var i any = getValue()
-s := i.(string)
-```
-
 ## Good
 ```go
 var i any = getValue()
@@ -32,3 +26,4 @@ if !ok {
 
 <related>
 errcheck, govet, staticcheck
+</related>

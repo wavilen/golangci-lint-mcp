@@ -7,15 +7,6 @@ Split mixed iota declarations into separate const blocks or use explicit values.
 </instructions>
 
 <examples>
-## Bad
-```go
-const (
-    ReadPerm  = 1 << iota // 1
-    WritePerm             // 2
-    AdminRole = iota      // 2 — same value as WritePerm!
-)
-```
-
 ## Good
 ```go
 const (
@@ -39,3 +30,4 @@ const (
 
 <related>
 govet, goconst, staticcheck
+</related>

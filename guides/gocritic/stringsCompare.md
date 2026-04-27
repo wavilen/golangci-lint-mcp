@@ -7,13 +7,6 @@ Use the standard comparison operators `==`, `<`, `>` instead of `strings.Compare
 </instructions>
 
 <examples>
-## Bad
-```go
-if strings.Compare(a, b) == 0 {
-	return true
-}
-```
-
 ## Good
 ```go
 if a == b {
@@ -30,5 +23,5 @@ if a == b {
 </patterns>
 
 <related>
-stringConcatSimplify, emptyStringTest
+gocritic/stringConcatSimplify, gocritic/emptyStringTest
 </related>

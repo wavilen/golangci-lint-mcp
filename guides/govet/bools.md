@@ -7,13 +7,6 @@ Simplify boolean expressions by removing redundant comparisons and operators.
 </instructions>
 
 <examples>
-## Bad
-```go
-if isEnabled == true {
-    return flag != false
-}
-```
-
 ## Good
 ```go
 if isEnabled {
@@ -30,5 +23,5 @@ if isEnabled {
 </patterns>
 
 <related>
-assign, nilfunc
+govet/assign, govet/nilfunc
 </related>

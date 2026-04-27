@@ -5,12 +5,6 @@ Detects direct float equality assertions like `assert.Equal(t, 0.1+0.2, 0.3)` wh
 </instructions>
 
 <examples>
-## Bad
-```go
-assert.Equal(t, 0.3, result)
-assert.True(t, math.Abs(result-0.3) < 1e-9)
-```
-
 ## Good
 ```go
 assert.InDelta(t, 0.3, result, 0.0001)
@@ -25,4 +19,5 @@ assert.InEpsilon(t, 0.3, result, 0.001)
 </patterns>
 
 <related>
-bool-compare, compares
+testifylint/bool-compare, testifylint/compares
+</related>

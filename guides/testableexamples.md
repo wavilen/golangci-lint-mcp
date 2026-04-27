@@ -7,13 +7,6 @@ Add an `// Output:` comment at the end of the example function body showing the 
 </instructions>
 
 <examples>
-## Bad
-```go
-func ExampleGreeting() {
-    fmt.Println("hello")
-}
-```
-
 ## Good
 ```go
 func ExampleGreeting() {

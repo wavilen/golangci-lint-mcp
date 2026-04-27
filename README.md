@@ -6,10 +6,13 @@ When an agent encounters a golangci-lint diagnostic, it can call a single tool a
 
 ## What It Does
 
-Provides two MCP tools (three when gosec AI is configured):
+Provides five MCP tools (six when gosec AI is configured):
 
-- **`golangci_lint_guide`** — accepts a linter name and optional rule ID, returning XML-tagged guidance with `<instructions>`, `<examples>`, `<patterns>`, and `<related>` sections.
-- **`golangci_lint_parse`** — accepts raw golangci-lint JSON output and returns fix guidance for all unique (linter, rule) pairs in a single call. Ideal for bulk diagnostics — no need to call the guide tool once per issue.
+- **`golangci_lint_run`** — Primary entry point. Runs golangci-lint, parses results, and returns fix guidance with package breakdown and strategy recommendation. One call replaces the entire run→parse→guide workflow.
+- **`golangci_lint_parse`** — Parse existing golangci-lint JSON output. Returns fix guidance for all unique (linter, rule) pairs with Related Context for related issues.
+- **`golangci_lint_guide`** — Per-diagnostic lookup by linter name and optional rule ID. Returns XML-tagged guidance with `<instructions>`, `<examples>`, `<patterns>`, and `<related>` sections.
+- **`golangci_lint_list`** — Discover all supported linters with compound/simple classification and rule counts.
+- **`golangci_lint_summarize`** — Strategy-only summary of raw JSON: unique issue count, package breakdown, and recommended approach.
 - **`gosec_ai_autofix`** *(conditional)* — runs gosec with AI-powered autofix on a file or directory. Only available when `--gosec-ai` flag is enabled and `GOSEC_AI_API_KEY` environment variable is set.
 
 Covers all linters bundled by golangci-lint with **629 guides total**:
@@ -216,21 +219,25 @@ The API key is passed directly to the gosec subprocess by the MCP server — it 
 
 ## Usage Examples
 
-### Simple linter
+### Run and get guidance
 
-Query `errcheck` → get guidance on handling unchecked error returns. The response includes what the issue means, a code example showing the fix pattern, and related linters.
+Call `golangci_lint_run(path="./pkg/auth/...")` → runs golangci-lint on the package, returns per-package fix guidance with instructions, examples, patterns, and Related Context for related issues.
 
-### Compound linter with rule
+### Full project scan
 
-Query `gocritic` with rule `appendAssign` → get specific guidance on the appendAssign checker, including before/after code examples and the fix pattern.
+Call `golangci_lint_run(path="./...")` → returns a package breakdown with strategy recommendation. When >30 issues are found, the strategy recommends subagent-per-package for efficient fixing.
 
-### Compound linter without rule
+### Discover linters
 
-Query `staticcheck` without a rule → server responds with a list of all ~172 available rule codes (SA1000, SA1001, ...), prompting you to specify one.
+Call `golangci_lint_list()` → returns all supported linters with compound/simple classification and rule counts. Useful for understanding which linters require a `rule` parameter.
 
-### Parse bulk JSON output
+### Parse existing JSON
 
-Pass raw `golangci-lint run --output.json.path stdout` output to `golangci_lint_parse` → get fix guidance for every unique diagnostic in one response. Deduplicates identical (linter, rule) pairs automatically.
+Pass raw golangci-lint JSON output to `golangci_lint_parse(output="<json>")` → get fix guidance for every unique diagnostic in one response. Deduplicates identical (linter, rule) pairs automatically.
+
+### Per-diagnostic lookup
+
+Query `golangci_lint_guide(linter="errcheck")` → get guidance on handling unchecked error returns. For compound linters, add the rule: `golangci_lint_guide(linter="gocritic", rule="appendAssign")`.
 
 ### Unknown linter
 
@@ -238,7 +245,7 @@ Query `errchek` → server suggests "Did you mean \"errcheck\"?" using fuzzy mat
 
 ## OpenCode Skill
 
-The `/golangci-lint-guide` skill teaches agents the full fix workflow. Install it with:
+The `/golangci-lint-guide` skill teaches agents the `golangci_lint_run`-first workflow. Install it with:
 
 ```bash
 npx @wavilen/golangci-lint-guide
@@ -246,18 +253,19 @@ npx @wavilen/golangci-lint-guide
 
 Or from source: `make install-skill`
 
-When an agent runs `/golangci-lint-guide`, it follows the structured workflow:
+When an agent activates the skill, it follows the structured workflow:
 
-1. Run `golangci-lint run --output.json.path stdout ./...` to get all diagnostics (the opencode plugin strips conflicting output flags automatically)
-2. Call the MCP tool `golangci_lint_parse` with the raw JSON output to get fix guidance for all diagnostics at once (or call `golangci_lint_guide` per diagnostic for individual lookups)
-3. Apply fixes per package, re-running golangci-lint after each package
-4. Final verification with `golangci-lint run ./...`
+1. Call `golangci_lint_run` with a package path to run golangci-lint and get fix guidance in one step
+2. Apply fixes per package, using the provided instructions, patterns, and examples
+3. Fix related issues highlighted in Related Context — they're in the same package
+4. Verify by calling `golangci_lint_run` again — expect "No issues found"
+5. For >30 issues: use subagent-per-package strategy (each package gets its own full-context agent)
 
 ## Architecture
 
 **Single binary:** All 629 guides are embedded via `go:embed` at compile time. No external files, no database, no network calls. The binary is self-contained.
 
-**MCP server:** Built with the mcp-go framework (v0.48.0). Uses stdio transport — reads JSON-RPC from stdin, writes to stdout. Exposes two tools: `golangci_lint_guide` (per-diagnostic lookup) and `golangci_lint_parse` (bulk JSON parsing).
+**MCP server:** Built with the mcp-go framework (v0.48.0). Uses stdio transport — reads JSON-RPC from stdin, writes to stdout. Exposes five tools: `golangci_lint_run` (run + parse + guide in one call), `golangci_lint_parse` (bulk JSON parsing), `golangci_lint_guide` (per-diagnostic lookup), `golangci_lint_list` (linter discovery), and `golangci_lint_summarize` (strategy summary).
 
 **OpenCode plugin:** The `plugins/golangci-lint.js` plugin hooks into `tool.execute.before` to strip 20+ conflicting output format flags (`--output.text.*`, `--output.tab.*`, `--out-format`, `--verbose`, `--show-stats`, legacy flags, etc.) and inject `--output.json.path stdout` — ensuring the MCP server always receives clean JSON. It also hooks into `tool.execute.after` to nudge agents toward using MCP tools when diagnostics are found.
 
@@ -266,6 +274,14 @@ When an agent runs `/golangci-lint-guide`, it follows the structured workflow:
 **Guide format:** XML-tagged markdown files with `<instructions>`, `<examples>`, `<patterns>`, and `<related>` sections. Simple guides: ≤200 words. Compound guides: ≤500 words.
 
 **Compound linters:** Subdirectories under `guides/` contain per-rule markdown files (e.g., `guides/gocritic/appendAssign.md`, `guides/gosec/G101.md`, `guides/staticcheck/SA1000.md`).
+
+## Linter Relationship Graph
+
+Graphify analyzed relationships across all 629 guide files, discovering 10 labeled communities and 2232 edges connecting related diagnostics. The communities map to Error Handling, Security, Complexity, Testing, Style, Concurrency, Performance, and Static Analysis clusters.
+
+<img src="assets/graphify.png" width="100%" alt="Linter Relationship Graph">
+
+[Explore the interactive graph →](graphify-out/graph.html)
 
 ## Contributing
 

@@ -7,21 +7,6 @@ Improve scores by extracting helpers, simplifying conditionals, and replacing ma
 </instructions>
 
 <examples>
-## Bad
-```go
-func calc(p Price, q int, d, t float64) float64 {
-    s := p.Base * float64(q)
-    if d > 0 {
-        if d > 1 { d = 1 }
-        s = s * (1 - d)
-    }
-    if t > 0 { s = s * (1 + t) }
-    if s > 1000 { s *= 0.95 }
-    if s > 500 { s *= 0.98 }
-    return s
-}
-```
-
 ## Good
 ```go
 func calc(p Price, qty int, discount, taxRate float64) float64 {

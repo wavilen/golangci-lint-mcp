@@ -7,14 +7,6 @@ Replace the separate `Load` + `Delete` with a single `LoadAndDelete` call.
 </instructions>
 
 <examples>
-## Bad
-```go
-if v, ok := m.Load(key); ok {
-    m.Delete(key) // not atomic with Load
-    return v.(int)
-}
-```
-
 ## Good
 ```go
 if v, loaded := m.LoadAndDelete(key); loaded {
@@ -31,5 +23,5 @@ if v, loaded := m.LoadAndDelete(key); loaded {
 </patterns>
 
 <related>
-badLock, badSyncOnceFunc
+gocritic/badLock, gocritic/badSyncOnceFunc
 </related>

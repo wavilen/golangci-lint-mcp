@@ -5,27 +5,6 @@ Cyclop measures cyclomatic complexity — the number of branching paths through 
 </instructions>
 
 <examples>
-## Bad
-```go
-func Process(status string, o Order) error {
-    if status == "created" {
-        if o.Total <= 0 {
-            return errors.New("invalid total")
-        }
-        notifyCustomer(o)
-        return repo.Save(o)
-    } else if status == "approved" {
-        if !chargeCard(o.PaymentRef) {
-            return errors.New("charge failed")
-        }
-        return repo.Save(o)
-    } else if status == "shipped" {
-        return notifyCustomer(o)
-    }
-    return fmt.Errorf("unknown: %s", status)
-}
-```
-
 ## Good
 ```go
 var handlers = map[string]func(Order) error{

@@ -7,11 +7,6 @@ Use Go's reference time constants: `time.DateTime`, `time.DateOnly`, or the lite
 </instructions>
 
 <examples>
-## Bad
-```go
-t.Format("YYYY-MM-DD") // Go doesn't use YYYY — produces "YYYY-MM-DD" literally
-```
-
 ## Good
 ```go
 t.Format("2006-01-02") // Go reference time format
@@ -26,5 +21,5 @@ t.Format("2006-01-02") // Go reference time format
 </patterns>
 
 <related>
-printf, stringintconv
+govet/printf, govet/stringintconv
 </related>

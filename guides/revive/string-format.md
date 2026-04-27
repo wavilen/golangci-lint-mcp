@@ -7,18 +7,11 @@ Match the format verb to the argument type: `%s` for strings, `%d` for integers,
 </instructions>
 
 <examples>
-## Bad
-```go
-name := "Alice"
-fmt.Sprintf("Hello %d", name) // %d for string
-fmt.Sprintf("Hello %s %s", name) // 2 verbs, 1 arg
-```
-
 ## Good
 ```go
 name := "Alice"
-fmt.Sprintf("Hello %s", name)
-fmt.Sprintf("Hello %s, you are #%d", name, 1)
+_ = fmt.Sprintf("Hello %s", name)
+_ = fmt.Sprintf("Hello %s, you are #%d", name, 1)
 ```
 </examples>
 
@@ -31,4 +24,5 @@ fmt.Sprintf("Hello %s, you are #%d", name, 1)
 </patterns>
 
 <related>
-errorf, unnecessary-format, use-fmt-print
+revive/errorf, revive/unnecessary-format, revive/use-fmt-print
+</related>

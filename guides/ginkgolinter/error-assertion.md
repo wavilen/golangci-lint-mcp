@@ -5,11 +5,6 @@ Detects `Expect(err).Should(BeNil())` instead of the idiomatic `Expect(err).Shou
 </instructions>
 
 <examples>
-## Bad
-```go
-Expect(err).Should(BeNil())
-```
-
 ## Good
 ```go
 Expect(err).ShouldNot(HaveOccurred())
@@ -23,4 +18,5 @@ Expect(err).ShouldNot(HaveOccurred())
 </patterns>
 
 <related>
-nil-assertion, succeed-matcher
+ginkgolinter/nil-assertion, ginkgolinter/succeed-matcher
+</related>

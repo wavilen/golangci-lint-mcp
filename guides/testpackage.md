@@ -7,18 +7,6 @@ Move test files to an external test package (suffix `_test` in package name) and
 </instructions>
 
 <examples>
-## Bad
-```go
-package mypkg
-
-import "testing"
-
-func TestInternal(t *testing.T) {
-    result := helperFunc() // testing unexported symbol
-    // ...
-}
-```
-
 ## Good
 ```go
 package mypkg_test

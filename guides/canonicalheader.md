@@ -7,12 +7,6 @@ Use the canonical header key form (Title-Case with hyphens) when accessing heade
 </instructions>
 
 <examples>
-## Bad
-```go
-ct := resp.Header.Get("content-type")
-resp.Header.Set("x-request-id", id)
-```
-
 ## Good
 ```go
 ct := resp.Header.Get("Content-Type")
@@ -29,3 +23,4 @@ resp.Header.Set("X-Request-Id", id)
 
 <related>
 bodyclose, noctx, nosprintfhostport
+</related>

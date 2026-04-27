@@ -7,14 +7,6 @@ Use `make([]T, 0, n)` or `make(map[K]V, n)` with the known capacity.
 </instructions>
 
 <examples>
-## Bad
-```go
-var results []string
-for _, item := range items {
-    results = append(results, item.Name)
-}
-```
-
 ## Good
 ```go
 results := make([]string, 0, len(items))
@@ -32,4 +24,5 @@ for _, item := range items {
 </patterns>
 
 <related>
-makezero, govet, staticcheck
+makezero, govet, staticcheck, wastedassign, ineffassign
+</related>

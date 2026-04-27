@@ -7,11 +7,6 @@ Replace manual quoting with `%q` in format strings.
 </instructions>
 
 <examples>
-## Bad
-```go
-msg := fmt.Sprintf("'%s' not found", name)
-```
-
 ## Good
 ```go
 msg := fmt.Sprintf("%s not found", name)
@@ -28,5 +23,5 @@ msg := fmt.Sprintf("%q not found", name)
 </patterns>
 
 <related>
-dynamicFmtString, badCall
+gocritic/dynamicFmtString, gocritic/badCall
 </related>

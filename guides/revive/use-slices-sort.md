@@ -7,13 +7,6 @@ Replace `sort.Slice(s, func(i, j int) bool { return s[i] < s[j] })` with `slices
 </instructions>
 
 <examples>
-## Bad
-```go
-sort.Slice(names, func(i, j int) bool {
-    return names[i] < names[j]
-})
-```
-
 ## Good
 ```go
 slices.Sort(names)
@@ -29,4 +22,5 @@ slices.Sort(names)
 </patterns>
 
 <related>
-use-any, use-errors-new, use-fmt-print
+revive/use-any, revive/use-errors-new, revive/use-fmt-print
+</related>

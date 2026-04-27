@@ -5,14 +5,6 @@ Detects standalone `assert.Equal(t, ...)` or `require.NoError(t, ...)` inside su
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *MySuite) TestSomething() {
-    assert.Equal(s.T(), expected, actual)
-    require.NoError(s.T(), err)
-}
-```
-
 ## Good
 ```go
 func (s *MySuite) TestSomething() {
@@ -29,4 +21,5 @@ func (s *MySuite) TestSomething() {
 </patterns>
 
 <related>
-suite-extra-assert-call, suite-method-signature
+testifylint/suite-extra-assert-call, testifylint/suite-method-signature
+</related>

@@ -7,12 +7,6 @@ Remove the unnecessary wrapper and defer the function call directly.
 </instructions>
 
 <examples>
-## Bad
-```go
-defer func() { mu.Unlock() }()
-defer func() { conn.Close() }()
-```
-
 ## Good
 ```go
 defer mu.Unlock()
@@ -27,5 +21,5 @@ defer conn.Close()
 </patterns>
 
 <related>
-unlambda, unnecessaryBlock
+gocritic/unlambda, gocritic/unnecessaryBlock
 </related>

@@ -7,11 +7,6 @@ Replace `w.Write([]byte(fmt.Sprintf(...)))` with `fmt.Fprintf(w, ...)`.
 </instructions>
 
 <examples>
-## Bad
-```go
-w.Write([]byte(fmt.Sprintf("name: %s, age: %d\n", name, age)))
-```
-
 ## Good
 ```go
 fmt.Fprintf(w, "name: %s, age: %d\n", name, age)
@@ -26,4 +21,5 @@ fmt.Fprintf(w, "name: %s, age: %d\n", name, age)
 </patterns>
 
 <related>
-preferStringWriter, preferWriteByte, appendCombine
+gocritic/preferStringWriter, gocritic/preferWriteByte, gocritic/appendCombine
+</related>

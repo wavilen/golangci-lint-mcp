@@ -7,19 +7,6 @@ Ensure all subtests in a parallel test also call `t.Parallel()`, or none of them
 </instructions>
 
 <examples>
-## Bad
-```go
-func TestSuite(t *testing.T) {
-    t.Parallel()
-    t.Run("A", func(t *testing.T) {
-        // missing t.Parallel()
-    })
-    t.Run("B", func(t *testing.T) {
-        t.Parallel()
-    })
-}
-```
-
 ## Good
 ```go
 func TestSuite(t *testing.T) {
@@ -42,5 +29,5 @@ func TestSuite(t *testing.T) {
 </patterns>
 
 <related>
-paralleltest, thelper, testpackage
+paralleltest, thelper, testpackage, usetesting
 </related>

@@ -7,24 +7,12 @@ Reorder code so the nil check happens before the error is used, or remove the re
 </instructions>
 
 <examples>
-## Bad
-```go
-func read() ([]byte, error) {
-    data, err := os.ReadFile("f.txt")
-    fmt.Println(string(data))
-    if err != nil {
-        return nil, err
-    }
-    return data, nil
-}
-```
-
 ## Good
 ```go
 func read() ([]byte, error) {
     data, err := os.ReadFile("f.txt")
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("reading file: %w", err)
     }
     return data, nil
 }
@@ -39,3 +27,4 @@ func read() ([]byte, error) {
 
 <related>
 nilerr, errcheck, staticcheck
+</related>

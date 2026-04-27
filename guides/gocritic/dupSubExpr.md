@@ -7,13 +7,6 @@ Replace the duplicate sub-expression with the correct intended operand.
 </instructions>
 
 <examples>
-## Bad
-```go
-if x.Min - x.Min > threshold { // x.Min subtracted from itself
-    return true
-}
-```
-
 ## Good
 ```go
 if x.Max - x.Min > threshold {
@@ -31,5 +24,5 @@ if x.Max - x.Min > threshold {
 </patterns>
 
 <related>
-dupArg, badCond, weakCond
+gocritic/dupArg, gocritic/badCond, gocritic/weakCond
 </related>

@@ -7,13 +7,6 @@ Convert the method to a package-level function if it doesn't need the receiver. 
 </instructions>
 
 <examples>
-## Bad
-```go
-func (s *Server) Version() string {
-    return "1.0.0" // s never used
-}
-```
-
 ## Good
 ```go
 func Version() string {
@@ -36,4 +29,5 @@ func (_ *Server) Version() string {
 </patterns>
 
 <related>
-unused-parameter, receiver-naming, unexported-return
+revive/unused-parameter, revive/receiver-naming, revive/unexported-return
+</related>

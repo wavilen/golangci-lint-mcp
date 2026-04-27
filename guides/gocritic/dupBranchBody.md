@@ -7,15 +7,6 @@ Combine the branches or fix the body of one branch to perform the correct distin
 </instructions>
 
 <examples>
-## Bad
-```go
-if useCache {
-    return fetchFromDB(key)
-} else {
-    return fetchFromDB(key) // identical body
-}
-```
-
 ## Good
 ```go
 if useCache {
@@ -32,5 +23,5 @@ return fetchFromDB(key)
 </patterns>
 
 <related>
-dupCase, dupArg, dupSubExpr
+gocritic/dupCase, gocritic/dupArg, gocritic/dupSubExpr
 </related>

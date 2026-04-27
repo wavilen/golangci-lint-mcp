@@ -7,21 +7,6 @@ Change the function signature to accept `*sync.WaitGroup` (pointer). Always pass
 </instructions>
 
 <examples>
-## Bad
-```go
-func worker(wg sync.WaitGroup) {
-    defer wg.Done()
-    doWork()
-}
-
-func main() {
-    var wg sync.WaitGroup
-    wg.Add(1)
-    go worker(wg) // copied — counter not shared
-    wg.Wait()     // hangs forever
-}
-```
-
 ## Good
 ```go
 func worker(wg *sync.WaitGroup) {
@@ -47,4 +32,5 @@ func main() {
 </patterns>
 
 <related>
-use-waitgroup-go, datarace
+revive/use-waitgroup-go, revive/datarace
+</related>

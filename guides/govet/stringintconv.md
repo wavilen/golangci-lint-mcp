@@ -7,12 +7,6 @@ Use `strconv.Itoa(x)` to get the decimal string representation, or `string(rune(
 </instructions>
 
 <examples>
-## Bad
-```go
-port := 8080
-addr := "localhost:" + string(port) // produces "localhost: лиц" (rune), not "localhost:8080"
-```
-
 ## Good
 ```go
 port := 8080
@@ -27,5 +21,5 @@ addr := "localhost:" + strconv.Itoa(port) // produces "localhost:8080"
 </patterns>
 
 <related>
-printf, shift
+govet/printf, govet/shift
 </related>

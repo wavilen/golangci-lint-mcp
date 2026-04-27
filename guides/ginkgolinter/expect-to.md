@@ -5,12 +5,6 @@ Detects inconsistent use of `.To()` versus `.Should()` in Ginkgo assertions. Gin
 </instructions>
 
 <examples>
-## Bad
-```go
-Expect(result).To(Equal(42))
-Expect(err).ToNot(HaveOccurred())
-```
-
 ## Good
 ```go
 Expect(result).Should(Equal(42))
@@ -25,4 +19,5 @@ Expect(err).ShouldNot(HaveOccurred())
 </patterns>
 
 <related>
-async-assertion, compare-assertion
+ginkgolinter/async-assertion, ginkgolinter/compare-assertion
+</related>

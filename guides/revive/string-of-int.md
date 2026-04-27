@@ -7,12 +7,6 @@ Replace `string(n)` with `strconv.Itoa(n)` or `fmt.Sprintf("%d", n)` to get the 
 </instructions>
 
 <examples>
-## Bad
-```go
-port := 8080
-addr := "localhost:" + string(port) // gets rune, not "8080"
-```
-
 ## Good
 ```go
 port := 8080
@@ -29,4 +23,5 @@ addr := "localhost:" + strconv.Itoa(port)
 </patterns>
 
 <related>
-use-fmt-print, unnecessary-format, gocritic/stringX
+revive/use-fmt-print, revive/unnecessary-format, gocritic/stringXbytes
+</related>

@@ -5,12 +5,6 @@ Detects `Expect(x == y).Should(BeTrue())` or `Expect(x != y).Should(BeTrue())` i
 </instructions>
 
 <examples>
-## Bad
-```go
-Expect(result == expected).Should(BeTrue())
-Expect(name != "").Should(BeTrue())
-```
-
 ## Good
 ```go
 Expect(result).Should(Equal(expected))
@@ -25,4 +19,5 @@ Expect(name).ShouldNot(BeEmpty())
 </patterns>
 
 <related>
-type-compare, nil-assertion
+ginkgolinter/type-compare, ginkgolinter/nil-assertion
+</related>

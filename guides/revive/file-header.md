@@ -7,13 +7,6 @@ Add the required header comment block at the top of the file, before the package
 </instructions>
 
 <examples>
-## Bad
-```go
-package handler
-
-import "net/http"
-```
-
 ## Good
 ```go
 // Copyright 2025 Acme Corp. All rights reserved.
@@ -34,4 +27,5 @@ import "net/http"
 </patterns>
 
 <related>
-file-length-limit, filename-format
+revive/file-length-limit, revive/filename-format
+</related>

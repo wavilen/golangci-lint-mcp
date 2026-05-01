@@ -1,18 +1,17 @@
-package main
+package guides
 
 import (
+	"os"
 	"slices"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/wavilen/golangci-lint-mcp/internal/guides"
 )
 
 func TestSimpleLinterIntegration(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	messyLinters := []string{
@@ -37,7 +36,7 @@ func TestSimpleLinterIntegration(t *testing.T) {
 }
 
 func TestCrossReferenceValidity(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	nameSet := make(map[string]bool)
@@ -65,7 +64,7 @@ func TestCrossReferenceValidity(t *testing.T) {
 }
 
 func TestContentQualitySpotCheck(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	sampleLinters := []string{
@@ -109,7 +108,7 @@ func TestContentQualitySpotCheck(t *testing.T) {
 	}
 }
 
-func assertRefValid(t *testing.T, name string, ref string, nameSet map[string]bool, store *guides.Store) {
+func assertRefValid(t *testing.T, name string, ref string, nameSet map[string]bool, store *Store) {
 	t.Helper()
 	ref = strings.TrimSpace(ref)
 	if ref == "" {
@@ -142,7 +141,7 @@ func assertCompoundRefValid(
 	rule string,
 	ref string,
 	nameSet map[string]bool,
-	store *guides.Store,
+	store *Store,
 ) {
 	t.Helper()
 	ref = strings.TrimSpace(ref)
@@ -199,7 +198,7 @@ func extractRelatedTag(content string) string {
 }
 
 func TestCompoundLinterIntegration(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	compoundLinters := map[string]int{
@@ -238,7 +237,7 @@ func TestCompoundLinterIntegration(t *testing.T) {
 }
 
 func TestCompoundCrossReferenceValidity(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	nameSet := make(map[string]bool)
@@ -274,7 +273,7 @@ func TestCompoundCrossReferenceValidity(t *testing.T) {
 }
 
 func TestCompoundContentQualitySpotCheck(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	sampleRules := []struct {

@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-const ReferenceVersion = "2.0.0"
+const ReferenceVersion = "2.11.1"
 const MinVersion = "2.0.0"
 const MaxMinorDrift = 6
 

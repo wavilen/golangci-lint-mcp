@@ -28,7 +28,7 @@ jobs:
         run: go test ./...
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
           version: v2.11.4
 
@@ -48,3 +48,20 @@ jobs:
 
       - name: ESLint
         run: npx eslint plugins/ shared/ hooks/ bin/install.js
+
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          version: "latest"
+
+      - name: Ruff check
+        run: ruff check agents/ndjson-analysis/ scripts/
+
+      - name: Ruff format check
+        run: ruff format --check agents/ndjson-analysis/ scripts/

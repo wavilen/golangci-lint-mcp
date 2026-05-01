@@ -176,7 +176,7 @@ func TestCheck(t *testing.T) {
 
 	t.Run("significantly newer version", func(_ *testing.T) {
 		checkerInstance := newTestChecker(func() (string, error) {
-			return "golangci-lint has version 2.11.1 built with go1.26.1", nil
+			return "golangci-lint has version 2.18.1 built with go1.27.0", nil
 		}, nil)
 		checkerInstance.check()
 	})
@@ -245,7 +245,7 @@ func TestCheckLogs(t *testing.T) {
 	t.Run("significantly newer logs warning", func(t *testing.T) {
 		var buf bytes.Buffer
 		checkerInstance := newTestChecker(func() (string, error) {
-			return "2.11.1", nil
+			return "2.18.1", nil
 		}, &buf)
 		checkerInstance.check()
 

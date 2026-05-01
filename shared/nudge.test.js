@@ -13,6 +13,7 @@ const {
   truncateNudge,
   extractRule,
   splitCompoundCommand,
+  splitOnUnquotedSemicolons,
   injectJqFilter,
   COMPOUND_LINTERS,
   OUTPUT_FLAG_PATTERNS_VALUE,
@@ -831,5 +832,47 @@ describe('injectJqFilter', () => {
   it('falsy input returns empty string', () => {
     const result = injectJqFilter(null);
     assert.equal(result, '');
+  });
+});
+
+// ─── splitOnUnquotedSemicolons ────────────────────────────────────────────
+
+describe('splitOnUnquotedSemicolons', () => {
+  it('is importable (not undefined)', () => {
+    assert.equal(typeof splitOnUnquotedSemicolons, 'function');
+  });
+
+  it('splits basic: hello;world', () => {
+    assert.deepEqual(splitOnUnquotedSemicolons('hello;world'), ['hello', 'world']);
+  });
+
+  it('trims whitespace: a; b; c', () => {
+    assert.deepEqual(splitOnUnquotedSemicolons('a; b; c'), ['a', 'b', 'c']);
+  });
+
+  it('preserves semicolon inside single quotes', () => {
+    assert.deepEqual(
+      splitOnUnquotedSemicolons("echo 'a;b'; golangci-lint run"),
+      ["echo 'a;b'", 'golangci-lint run']
+    );
+  });
+
+  it('preserves semicolon inside double quotes', () => {
+    assert.deepEqual(
+      splitOnUnquotedSemicolons('echo "a;b"; golangci-lint run'),
+      ['echo "a;b"', 'golangci-lint run']
+    );
+  });
+
+  it('empty string returns empty array', () => {
+    assert.deepEqual(splitOnUnquotedSemicolons(''), []);
+  });
+
+  it('single segment with no semicolons', () => {
+    assert.deepEqual(splitOnUnquotedSemicolons('no semicolons'), ['no semicolons']);
+  });
+
+  it('consecutive semicolons produce no empty segments', () => {
+    assert.deepEqual(splitOnUnquotedSemicolons('a;;b'), ['a', 'b']);
   });
 });

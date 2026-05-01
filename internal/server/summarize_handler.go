@@ -29,7 +29,7 @@ func makeSummarizeHandler(
 			firstLine = before
 		}
 
-		var result lintJSONResult
+		var result LintJSONResult
 		unmarshalErr := json.Unmarshal([]byte(firstLine), &result)
 		if unmarshalErr != nil || len(result.Issues) == 0 {
 			ndjsonResult := parseNDJSON(output)
@@ -49,28 +49,10 @@ func makeSummarizeHandler(
 			return mcp.NewToolResultText("No issues found."), nil
 		}
 
-		unique := deduplicateIssues(result.Issues)
-		packages := extractPackagesFromIssues(unique)
-		strategyName, strategyReason := recommendStrategy(len(result.Issues), len(packages))
-		linterBreakdown := buildLinterBreakdown(unique)
-		packageBreakdown := buildPackageBreakdown(packages)
-
-		var builder strings.Builder
-		fmt.Fprintf(&builder, "<summary>\n\n")
-		fmt.Fprintf(&builder, "- Total issues: %d\n", len(result.Issues))
-		fmt.Fprintf(&builder, "- Unique diagnostics: %d\n", len(unique))
-		fmt.Fprintf(&builder, "- Packages affected: %d\n", len(packages))
-		fmt.Fprintf(&builder, "- Strategy: %s (%s)\n", strategyName, strategyReason)
-
-		if packageBreakdown != "" {
-			fmt.Fprintf(&builder, "\n%s\n", packageBreakdown)
-		}
-
-		fmt.Fprintf(&builder, "\n%s\n", linterBreakdown)
-		fmt.Fprintf(&builder, "\n</summary>")
-
-		builder.WriteString(buildStrategyInstructions(strategyName, packages, len(result.Issues)))
-
-		return mcp.NewToolResultText(builder.String()), nil
+		// Unified pipeline: analyze → build response (D-03)
+		// includeGuidance=false: summarize never shows guidance (D-09)
+		strategyResult := AnalyzeStrategy(result.Issues)
+		return mcp.NewToolResultText(
+			BuildResponse(strategyResult, "", nil, Options{}, false, false)), nil
 	}
 }

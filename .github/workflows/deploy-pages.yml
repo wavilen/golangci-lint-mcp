@@ -1,0 +1,112 @@
+name: deploy-pages
+
+on:
+  workflow_dispatch:  # Manual trigger only per D-02
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout main branch (has pages/*.html, assets/*.png)
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Configure GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 3. Stage static assets from main branch
+      - name: Stage deploy content
+        run: |
+          mkdir -p _site/assets _site/diagrams
+          cp pages/index.html _site/
+          cp pages/diagrams.html _site/
+          cp assets/graphify.png _site/assets/
+          cp assets/desloppify-scorecard.png _site/assets/scorecard.png
+          touch _site/.nojekyll
+
+      # 4. Fetch e2e-report.html from e2e-artifacts branch (D-03)
+      - name: Fetch e2e-report from artifacts branch
+        run: |
+          if git fetch origin e2e-artifacts --depth=1 2>/dev/null; then
+            LATEST_REPORT=$(git ls-tree -r --name-only origin/e2e-artifacts | grep 'e2e-report.html' | sort -r | head -1)
+            if [ -n "$LATEST_REPORT" ]; then
+              git show "origin/e2e-artifacts:${LATEST_REPORT}" > _site/e2e-report.html
+              echo "Fetched e2e-report.html from e2e-artifacts: ${LATEST_REPORT}"
+            else
+              echo "::warning::e2e-report.html not found on e2e-artifacts branch"
+            fi
+          else
+            echo "::warning::e2e-artifacts branch not found — skipping e2e-report.html"
+          fi
+
+      # 5. Fetch ndjson analysis PNGs from e2e-artifacts branch (D-03)
+      - name: Fetch ndjson analysis diagrams
+        run: |
+          if git fetch origin e2e-artifacts --depth=1 2>/dev/null; then
+            LATEST_DIAGRAMS=$(git ls-tree -r --name-only origin/e2e-artifacts | grep 'diagrams/.*\.png' | sort -r | head -8)
+            if [ -n "$LATEST_DIAGRAMS" ]; then
+              echo "$LATEST_DIAGRAMS" | while read png; do
+                filename=$(basename "$png")
+                git show "origin/e2e-artifacts:${png}" > "_site/diagrams/${filename}"
+              done
+              echo "Fetched $(echo "$LATEST_DIAGRAMS" | wc -l) diagram PNGs"
+            else
+              echo "::warning::No diagram PNGs found on e2e-artifacts branch"
+            fi
+          fi
+
+      # 6. Fetch graph.html from previous gh-pages deploy (D-03)
+      - name: Fetch graph.html from previous deploy
+        run: |
+          if git fetch origin gh-pages --depth=1 2>/dev/null; then
+            if git show origin/gh-pages:graph.html > _site/graph.html 2>/dev/null; then
+              echo "Fetched graph.html from previous gh-pages deploy"
+            else
+              echo "::warning::graph.html not found on gh-pages branch — site will lack the linter graph"
+            fi
+          else
+            echo "::warning::gh-pages branch not found — graph.html unavailable"
+          fi
+
+      # 7. Validate required assets exist (D-05, D-07, D-08)
+      - name: Validate required assets
+        run: |
+          ERRORS=0
+          for f in index.html diagrams.html .nojekyll; do
+            if [ ! -f "_site/$f" ]; then
+              echo "::error::Required file missing: _site/$f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          if [ ! -f "_site/assets/graphify.png" ]; then
+            echo "::error::Required asset missing: _site/assets/graphify.png"
+            ERRORS=$((ERRORS + 1))
+          fi
+          if [ $ERRORS -gt 0 ]; then
+            echo "::error::$ERRORS required asset(s) missing. Deploy aborted."
+            exit 1
+          fi
+          echo "All required assets present. Optional: graph.html=$([ -f _site/graph.html ] && echo 'YES' || echo 'NO'), e2e-report=$([ -f _site/e2e-report.html ] && echo 'YES' || echo 'NO')"
+
+      # 8. Upload and deploy
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: '_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

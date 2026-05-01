@@ -22,7 +22,6 @@ import os
 import re
 import sys
 
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 GUIDES_ROOT = os.path.join(PROJECT_ROOT, "guides")
@@ -39,7 +38,7 @@ def parse_cluster_membership(filepath):
     Returns dict: {cluster_name: set_of_member_ids}
     Member IDs are normalized to use slashes (e.g., 'gosec/G101').
     """
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     clusters = {}
@@ -102,7 +101,7 @@ def node_id_to_display(node_id):
 
 def load_graph_links(filepath):
     """Load graph.json and return all links as list of (source, target, weight) tuples."""
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         data = json.load(f)
 
     links = []
@@ -117,7 +116,7 @@ def load_graph_links(filepath):
 
 def build_node_community_map(filepath):
     """Build node_id -> community number from graph.json nodes."""
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         data = json.load(f)
 
     node_comm = {}
@@ -212,9 +211,9 @@ def read_all_guide_related_tags():
 def _read_guide_related(filepath, node_id, result_dict):
     """Read a single guide file and extract its related refs."""
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             content = f.read()
-    except (IOError, OSError):
+    except OSError:
         return
 
     inner = parse_related(content)
@@ -256,7 +255,7 @@ def compute_intra_cluster_graph_links(links, cluster_node_ids):
     Returns count of such links.
     """
     count = 0
-    for src, tgt, weight in links:
+    for src, tgt, _weight in links:
         if src in cluster_node_ids and tgt in cluster_node_ids:
             count += 1
     return count
@@ -332,7 +331,7 @@ def main():
         graph_links = compute_intra_cluster_graph_links(links, cluster_node_ids)
 
         # Intra-cluster related-tag cross-references
-        tagged_pairs, isolated_members, per_member_refs = compute_tagged_intra_cluster_refs(
+        tagged_pairs, isolated_members, _per_member_refs = compute_tagged_intra_cluster_refs(
             guide_related, cluster_node_ids
         )
 
@@ -343,21 +342,21 @@ def main():
         avg_refs = tagged_pairs / max(member_count, 1)
 
         # Find guides in cluster that we have data for
-        guides_in_cluster_with_data = sum(
-            1 for nid in cluster_node_ids if nid in guide_related
-        )
+        guides_in_cluster_with_data = sum(1 for nid in cluster_node_ids if nid in guide_related)
 
-        cluster_results.append({
-            "name": cluster_name,
-            "members": member_count,
-            "graph_links": graph_links,
-            "tagged_links": tagged_pairs,
-            "coverage": coverage,
-            "isolated_count": len(isolated_members),
-            "isolated_members": isolated_members,
-            "avg_refs": avg_refs,
-            "guides_found": guides_in_cluster_with_data,
-        })
+        cluster_results.append(
+            {
+                "name": cluster_name,
+                "members": member_count,
+                "graph_links": graph_links,
+                "tagged_links": tagged_pairs,
+                "coverage": coverage,
+                "isolated_count": len(isolated_members),
+                "isolated_members": isolated_members,
+                "avg_refs": avg_refs,
+                "guides_found": guides_in_cluster_with_data,
+            }
+        )
 
     # Print per-cluster table
     header = f"{'Cluster':<28} {'Members':>7} {'GLinks':>7} {'TLinks':>7} {'Cover%':>7} {'Isol':>5} {'AvgRef':>7}"
@@ -365,7 +364,7 @@ def main():
     print("-" * len(header))
 
     for r in cluster_results:
-        cover_pct = f"{r['coverage']*100:.1f}%"
+        cover_pct = f"{r['coverage'] * 100:.1f}%"
         print(
             f"{r['name']:<28} {r['members']:>7} {r['graph_links']:>7} "
             f"{r['tagged_links']:>7} {cover_pct:>7} {r['isolated_count']:>5} "
@@ -387,7 +386,7 @@ def main():
     print(f"Total cluster members: {total_members}")
     print(f"Total intra-cluster graph links: {total_graph_links}")
     print(f"Total intra-cluster tagged links: {total_tagged_links}")
-    print(f"Average coverage: {avg_coverage*100:.1f}%")
+    print(f"Average coverage: {avg_coverage * 100:.1f}%")
     print(f"Total isolated members: {total_isolated}")
 
     # Print isolated members details
@@ -411,46 +410,32 @@ def main():
     empty_clusters = [r["name"] for r in cluster_results if r["tagged_links"] == 0]
 
     # 2. Clusters with >0 graph.json intra-cluster links show >0% coverage
-    zero_coverage_clusters = [
-        r["name"] for r in cluster_results
-        if r["graph_links"] > 0 and r["tagged_links"] == 0
-    ]
+    zero_coverage_clusters = [r["name"] for r in cluster_results if r["graph_links"] > 0 and r["tagged_links"] == 0]
 
     # 3. No cluster has >50% isolated members
-    high_isolation_clusters = [
-        r["name"] for r in cluster_results
-        if r["isolated_count"] > r["members"] * 0.5
-    ]
+    high_isolation_clusters = [r["name"] for r in cluster_results if r["isolated_count"] > r["members"] * 0.5]
 
     passed = True
     reasons = []
 
     if empty_clusters:
         passed = False
-        reasons.append(
-            f"Empty clusters (zero tagged links): {', '.join(empty_clusters)}"
-        )
+        reasons.append(f"Empty clusters (zero tagged links): {', '.join(empty_clusters)}")
 
     if zero_coverage_clusters:
         passed = False
-        reasons.append(
-            f"Zero coverage clusters (graph links but no tagged refs): "
-            f"{', '.join(zero_coverage_clusters)}"
-        )
+        reasons.append(f"Zero coverage clusters (graph links but no tagged refs): {', '.join(zero_coverage_clusters)}")
 
     if high_isolation_clusters:
         passed = False
-        reasons.append(
-            f"High isolation clusters (>50% isolated): "
-            f"{', '.join(high_isolation_clusters)}"
-        )
+        reasons.append(f"High isolation clusters (>50% isolated): {', '.join(high_isolation_clusters)}")
 
     if passed:
         print("PASS — All clusters show coherent related-tag structure")
         print()
         for r in cluster_results:
-            cover_pct = f"{r['coverage']*100:.1f}%"
-            iso_pct = f"{r['isolated_count']/max(r['members'],1)*100:.0f}%"
+            cover_pct = f"{r['coverage'] * 100:.1f}%"
+            iso_pct = f"{r['isolated_count'] / max(r['members'], 1) * 100:.0f}%"
             print(f"  {r['name']}: {cover_pct} coverage, {iso_pct} isolated")
     else:
         print("FAIL — Cluster coherence issues detected:")

@@ -260,7 +260,7 @@ func TestSmoke_Run_Valid(t *testing.T) {
 	// Result may be error (issues found) or success (no issues) — both are valid
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.True(t,
-		strings.Contains(text, "No issues found") ||
+		strings.Contains(text, "Auto-fix applied") ||
 			strings.Contains(text, "<summary>"),
 		"expected structured response, got: %s", text)
 }

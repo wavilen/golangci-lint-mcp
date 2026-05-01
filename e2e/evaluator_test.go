@@ -1,27 +1,12 @@
-package e2e_test
+//go:build e2e
+
+package e2e
 
 import (
 	"context"
 	"fmt"
 	"strings"
 )
-
-type EvalResult struct {
-	TestCase       string  `json:"TestCase"`
-	Model          string  `json:"Model"`
-	BeforeIssues   int     `json:"BeforeIssues"`
-	AfterIssues    int     `json:"AfterIssues"`
-	BuildsClean    bool    `json:"BuildsClean"`
-	LintClean      bool    `json:"LintClean"`
-	NolintCount    int     `json:"NolintCount"`
-	IssueReduction float64 `json:"IssueReduction"`
-	ToolCalls      int     `json:"ToolCalls"`
-	Retries        int     `json:"Retries"`
-	Pass           bool    `json:"Pass"`
-	Error          string  `json:"Error"`
-	ConfigModified bool    `json:"ConfigModified"`
-	ConfigDiff     string  `json:"ConfigDiff,omitempty"`
-}
 
 func CountLintIssues(ctx context.Context, workDir string) (int, error) {
 	_, output, err := containerExec(ctx, []string{
@@ -66,10 +51,6 @@ func Evaluate(ctx context.Context, workDir string) (*EvalResult, error) {
 
 	result.Pass = result.LintClean && result.BuildsClean
 	return result, nil
-}
-
-func countJSONIssues(output string) int {
-	return strings.Count(output, `"FromLinter"`)
 }
 
 func CheckConfigTamper(ctx context.Context, workDir string, fixtureDir string) (bool, string) {

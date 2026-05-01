@@ -1,17 +1,16 @@
-package main
+package guides
 
 import (
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/wavilen/golangci-lint-mcp/internal/guides"
 )
 
 func TestGuideStructure(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	names := store.LinterNames()
@@ -39,7 +38,7 @@ func TestGuideStructure(t *testing.T) {
 }
 
 func TestWordLimits(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	for _, name := range store.LinterNames() {
@@ -60,7 +59,7 @@ func TestWordLimits(t *testing.T) {
 }
 
 func TestCompoundWordLimits(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	compoundLinters := []string{
@@ -94,7 +93,7 @@ func TestCompoundWordLimits(t *testing.T) {
 }
 
 func TestGocriticCheckerCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("gocritic")
@@ -103,7 +102,7 @@ func TestGocriticCheckerCount(t *testing.T) {
 }
 
 func TestReviveRuleCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("revive")
@@ -113,7 +112,7 @@ func TestReviveRuleCount(t *testing.T) {
 }
 
 func TestStaticcheckCheckCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("staticcheck")
@@ -123,7 +122,7 @@ func TestStaticcheckCheckCount(t *testing.T) {
 }
 
 func TestGosecRuleCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("gosec")
@@ -133,7 +132,7 @@ func TestGosecRuleCount(t *testing.T) {
 }
 
 func TestGovetAnalyzerCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("govet")
@@ -143,7 +142,7 @@ func TestGovetAnalyzerCount(t *testing.T) {
 }
 
 func TestModernizeAnalyzerCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("modernize")
@@ -153,7 +152,7 @@ func TestModernizeAnalyzerCount(t *testing.T) {
 }
 
 func TestTestifylintCheckerCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("testifylint")
@@ -163,7 +162,7 @@ func TestTestifylintCheckerCount(t *testing.T) {
 }
 
 func TestGinkgolinterCheckCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("ginkgolinter")
@@ -173,7 +172,7 @@ func TestGinkgolinterCheckCount(t *testing.T) {
 }
 
 func TestErrorlintCheckCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("errorlint")
@@ -183,7 +182,7 @@ func TestErrorlintCheckCount(t *testing.T) {
 }
 
 func TestGrouperGroupCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	rules := store.ListRules("grouper")
@@ -193,7 +192,7 @@ func TestGrouperGroupCount(t *testing.T) {
 }
 
 func TestTemplateNotLoaded(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	_, found := store.Lookup("_template", "")
@@ -201,7 +200,7 @@ func TestTemplateNotLoaded(t *testing.T) {
 }
 
 func TestSimpleLinterCount(t *testing.T) {
-	store, err := guides.NewStore(guideFS)
+	store, err := NewStore(os.DirFS(getProjectRoot(t)))
 	require.NoError(t, err)
 
 	count := 0

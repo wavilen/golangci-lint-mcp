@@ -11,7 +11,9 @@ process.stdin.on('end', function () {
     if (data.tool_name !== 'Shell') process.exit(0);
     const command = (data.tool_input && data.tool_input.command) || '';
     if (!shared.isGolangciLintCommand(command)) process.exit(0);
-    // Extract output from tool_output (Cursor format)
+    // Skip nudge when golangci-lint-mcp intercept was used (per D-11)
+    if (shared.hasGolangciLintMcp()) process.exit(0);
+    // Fallback: v1.3 behavior — inject nudge into raw output
     let output = data.tool_output || '';
     if (typeof output === 'string' && output.length > 0) {
       try {

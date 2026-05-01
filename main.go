@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/wavilen/golangci-lint-mcp/cmd"
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
 	"github.com/wavilen/golangci-lint-mcp/internal/server"
 	"github.com/wavilen/golangci-lint-mcp/internal/version"
@@ -19,6 +20,14 @@ import (
 func main() {
 	log.SetOutput(os.Stderr)
 	log.SetFlags(0)
+
+	// Subcommand routing: intercept → RunIntercept, otherwise MCP stdio server.
+	if len(os.Args) > 1 && os.Args[1] == "intercept" {
+		if err := cmd.RunIntercept(guideFS, os.Args[2:], os.Stdout, os.Stderr); err != nil {
+			os.Exit(1)
+		}
+		return
+	}
 
 	gosecAI := flag.Bool("gosec-ai", false, "append AI autofix hints to gosec guide responses")
 	flag.Parse()

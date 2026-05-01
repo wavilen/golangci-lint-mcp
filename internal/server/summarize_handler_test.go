@@ -95,7 +95,7 @@ func TestSummarizeHandler_StrategySingleAgent(t *testing.T) {
 	assert.Contains(t, text, "single-agent flow")
 }
 
-// Test 3: >30 issues → subagent-per-package strategy.
+// Test 3: >30 issues → subagent-per-package strategy with guide refs.
 func TestSummarizeHandler_StrategySubagent(t *testing.T) {
 	srv, ctx := setupSummarizeTestServer(t)
 
@@ -118,6 +118,9 @@ func TestSummarizeHandler_StrategySubagent(t *testing.T) {
 	text := result.Content[0].(mcp.TextContent).Text
 
 	assert.Contains(t, text, "Strategy: subagent-per-package")
+	// Strategy instructions should contain guide call references
+	assert.Contains(t, text, "<strategy_instructions>")
+	assert.Contains(t, text, `golangci_lint_guide(linter=`, "subagent strategy should include guide call references")
 }
 
 // Test 4: Empty issues array → "No issues found".

@@ -8,7 +8,7 @@ permission:
 ---
 
 <objective>
-Execute the pre-publishing workflow for the golangci-lint-mcp project. This agent runs AFTER `gsd-complete-milestone` (which creates the release tag). It performs a 5-step sequence: verify documentation reflects the milestone, create a backup branch, clean all gitignored files, squash milestone commits into one, and verify all tests pass. Each step must complete before the next begins. The agent aborts safely on any failure.
+Execute the pre-publishing workflow for the golangci-lint-mcp project. This agent runs AFTER `gsd-complete-milestone` (which creates the release tag). It performs a 6-step sequence: verify documentation reflects the milestone, scan codebase health with desloppify, create a backup branch, clean all gitignored files, squash milestone commits into one, and verify all tests pass. Each step must complete before the next begins. The agent aborts safely on any failure.
 </objective>
 
 <execution_context>
@@ -44,16 +44,16 @@ git branch --show-current
 If the output is NOT `main` or `master`, ABORT with the message:
 > "Not on main/master branch. Current branch: {branch}. Switch to main before running pre-publish."
 
-Only proceed to Step 1 if BOTH checks pass.
+Only proceed to Step 0 if BOTH checks pass.
 </safety>
 
 <process>
 
-## Step 1: Verify Documentation
+## Step 0: Verify Documentation
 
-Read and verify that project documentation reflects the current milestone.
+Read and verify that project documentation reflects the current milestone. This step runs first so the agent can fix any documentation issues before the codebase health scan validates them.
 
-**1a. Verify PROJECT.md**
+**0a. Verify PROJECT.md**
 
 Read `.planning/PROJECT.md` and check:
 - "What This Is" section reflects the current milestone
@@ -62,13 +62,187 @@ Read `.planning/PROJECT.md` and check:
 - "Active" requirements section contains only in-progress work
 - Completed phases are reflected in the Context section
 
-**1b. Verify REQUIREMENTS.md**
+**0b. Verify REQUIREMENTS.md**
 
 Read `.planning/REQUIREMENTS.md` and check:
 - Validated requirements match shipped features
 - No stale Active requirements remain for completed work
 
 **Action:** If either file is outdated or inconsistent, STOP and report exactly what needs updating. You may make minor factual corrections (e.g., updating phase references, moving completed items from Active to Validated) but do NOT rewrite sections — flag larger issues for manual review.
+
+---
+
+## Step 1: Codebase Health Scan (Desloppify Full Workflow)
+
+Run the full desloppify workflow — scan, review, triage, and fix — to catch technical debt and quality issues before any destructive operations. This step runs after documentation verification so the agent has a chance to fix docs first. The workflow follows the desloppify cycle: **scan → plan → execute → rescan**.
+
+**1a. Check desloppify availability**
+
+```bash
+command -v desloppify >/dev/null 2>&1 && echo "desloppify: installed" || echo "NOT INSTALLED"
+```
+
+If output is "NOT INSTALLED", report the warning:
+> "⚠ desloppify is not installed. Skipping codebase health scan. Install with: `uvx --from git+https://github.com/peteromallet/desloppify.git desloppify`"
+
+Then skip to Step 2. This is a non-blocking prerequisite — the pre-publish workflow continues without desloppify, but the health gate is bypassed.
+
+**1b. Initial scan**
+
+Scan the codebase and regenerate the scorecard badge:
+
+```bash
+desloppify scan --path . --badge-path assets/desloppify-scorecard.png
+```
+
+Review the scan output for:
+- **Overall health score** — if below 60, ABORT
+- **Strict health score** — if below 50, ABORT
+- **Critical findings** — any findings marked as critical severity, ABORT
+
+**1c. Run batch review with Claude runner (parallel subagents)**
+
+Run the batch review to populate subjective scores (75% of overall score). This uses the Claude manual runner path with parallel subagents:
+
+**Step 1 — Prepare review:**
+```bash
+desloppify review --prepare
+```
+
+This writes `query.json` and `.desloppify/review_packet_blind.json` containing the review batches.
+
+**Step 2 — Generate batch prompt files:**
+
+```bash
+desloppify review --run-batches --dry-run
+```
+
+This generates prompt files in `.desloppify/subagents/runs/<timestamp>/prompts/` (one per batch) and creates a results directory for subagent output.
+
+**Step 3 — Launch parallel subagents:**
+
+For each batch prompt file (e.g., `batch-1.md`, `batch-2.md`, ...), launch a parallel subagent (Task tool) that:
+1. Reads its prompt file from the prompts directory
+2. Reads the blind packet `.desloppify/review_packet_blind.json` for scoring rules and calibration
+3. Explores the codebase against the specified dimension
+4. Writes results to `results/batch-N.raw.txt` (plain JSON, MUST use `.raw.txt` extension — NOT `.json`)
+
+Each subagent returns JSON in the required review format:
+```json
+{
+  "batch": "<dimension_name>",
+  "batch_index": <N>,
+  "assessments": {"<dimension>": <0-100 with one decimal place>},
+  "dimension_notes": {
+    "<dimension>": {
+      "evidence": ["specific code observations"],
+      "impact_scope": "local|module|subsystem|codebase",
+      "fix_scope": "single_edit|multi_file_refactor|architectural_change",
+      "confidence": "high|medium|low"
+    }
+  },
+  "dimension_judgment": {
+    "<dimension>": {
+      "dimension_character": "2-3 sentences characterizing the dimension",
+      "score_rationale": "2-3 sentences explaining the score"
+    }
+  },
+  "issues": [{
+    "dimension": "<dimension>",
+    "identifier": "short_id",
+    "summary": "one-line defect summary",
+    "related_files": ["relative/path/to/file"],
+    "evidence": ["specific code observation"],
+    "suggestion": "concrete fix recommendation",
+    "confidence": "high|medium|low",
+    "impact_scope": "local|module|subsystem|codebase",
+    "fix_scope": "single_edit|multi_file_refactor|architectural_change"
+  }],
+  "context_updates": {
+    "<dimension>": {
+      "add": [{"header": "short label", "description": "why", "settled": true, "positive": true}]
+    }
+  }
+}
+```
+
+**Step 4 — Import run results and rescan:**
+
+```bash
+desloppify review --import-run .desloppify/subagents/runs/<timestamp> --scan-after-import
+```
+
+Use the run directory printed by the `--dry-run` command. The `--scan-after-import` flag triggers an automatic rescan after importing to update scores.
+
+> **Note:** Do NOT use `--runner opencode` — it has a known bug with NDJSON stream processing. Use the Claude manual runner path above instead.
+
+**1d. Triage and plan**
+
+After the review completes, run triage and create an execution plan:
+
+```bash
+desloppify next
+```
+
+Follow the `next` instructions exactly. If triage stages are needed:
+
+```bash
+desloppify plan triage --stage observe --report "themes and root causes observed"
+desloppify plan triage --stage reflect --report "comparison against completed work"
+desloppify plan triage --stage organize --report "summary of priorities"
+desloppify plan triage --complete --strategy "execution plan summary"
+```
+
+Or use automated triage:
+```bash
+desloppify plan triage --run-stages --runner claude
+```
+
+Review and shape the execution queue:
+```bash
+desloppify plan queue
+desloppify plan reorder <pat> top       # prioritize what unblocks the most
+desloppify plan cluster create <name>   # group related issues to batch-fix
+```
+
+**1e. Execute fixes**
+
+Work through the execution queue. Fix issues, resolve them, and commit in logical batches:
+
+```bash
+desloppify next                           # get next item
+# ... fix the code ...
+desloppify plan resolve <pattern>         # mark as fixed (next shows the exact command)
+git add <files> && git commit -m "desloppify: fix <finding-type>"
+desloppify plan commit-log record         # update tracking
+```
+
+Repeat until the queue is empty. For auto-fixable issues:
+```bash
+desloppify autofix <fixer> --dry-run      # preview first
+desloppify autofix <fixer>                # apply
+```
+
+**1f. Rescan and verify final scores**
+
+After all fixes are applied and committed, rescan to verify the final state:
+
+```bash
+desloppify scan --path . --badge-path assets/desloppify-scorecard.png
+desloppify status
+```
+
+Extract the final overall and strict scores from the output.
+
+**Failure handling:**
+- If final health scores are below thresholds OR critical findings remain: ABORT immediately
+- Report: the health scores, the number and categories of remaining open findings, and the top 3 issues to address
+- Tell the user: "Codebase health check failed. Fix issues and re-run @pre-publish. Run `desloppify next` for guided remediation."
+- Do NOT proceed to Step 2 — the backup branch from Step 2 has not been created yet, so the working tree is untouched
+
+**Success:**
+- Report: "Codebase health check passed (overall: {score}, strict: {score}). {N} open findings tracked, none critical."
+- Proceed to Step 2.
 
 ---
 
@@ -206,12 +380,13 @@ node --test plugins/golangci-lint.test.js shared/nudge.test.js
 
 ## Success Output
 
-When all 5 steps complete successfully, report:
+When all 6 steps complete successfully, report:
 
 ```
 Pre-publish workflow complete.
 
 Documentation verified ✓
+Codebase health scan passed (scan + review + fixes) ✓
 Backup branch: {name} ✓
 Gitignored files untracked from index ✓
 {N} commits squashed into {tag} ✓

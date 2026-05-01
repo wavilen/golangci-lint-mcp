@@ -12,11 +12,11 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
-type lintJSONResult struct {
-	Issues []lintIssue `json:"Issues"`
+type LintJSONResult struct {
+	Issues []LintIssue `json:"Issues"`
 }
 
-type lintIssue struct {
+type LintIssue struct {
 	FromLinter string `json:"FromLinter"`
 	Text       string `json:"Text"`
 	Pos        struct {
@@ -31,7 +31,7 @@ type diagnostic struct {
 	rule   string
 }
 
-func extractRule(text string) string {
+func ExtractRule(text string) string {
 	before, _, found := strings.Cut(text, ": ")
 	if !found {
 		return ""
@@ -39,11 +39,11 @@ func extractRule(text string) string {
 	return strings.TrimSpace(before)
 }
 
-func deduplicateIssues(issues []lintIssue) []lintIssue {
+func DeduplicateIssues(issues []LintIssue) []LintIssue {
 	seen := make(map[diagnostic]bool)
-	var unique []lintIssue
+	var unique []LintIssue
 	for _, issue := range issues {
-		rule := extractRule(issue.Text)
+		rule := ExtractRule(issue.Text)
 		key := diagnostic{linter: issue.FromLinter, rule: rule}
 		if !seen[key] {
 			seen[key] = true
@@ -53,7 +53,7 @@ func deduplicateIssues(issues []lintIssue) []lintIssue {
 	return unique
 }
 
-func buildLinterBreakdown(unique []lintIssue) string {
+func buildLinterBreakdown(unique []LintIssue) string {
 	linterCounts := make(map[string]int)
 	for _, issue := range unique {
 		linterCounts[issue.FromLinter]++
@@ -81,7 +81,6 @@ func buildLinterBreakdown(unique []lintIssue) string {
 	return strings.Join(parts, ", ")
 }
 
-//nolint:gocognit // Parse dispatch: validate→wrapped JSON→NDJSON fallback→build response. Splitting would add indirection without reducing actual complexity.
 func makeParseHandler(
 	store *guides.Store,
 	opts Options,
@@ -100,7 +99,7 @@ func makeParseHandler(
 		if before, _, found := strings.Cut(output, "\n"); found {
 			firstLine = before
 		}
-		var result lintJSONResult
+		var result LintJSONResult
 		err = json.Unmarshal([]byte(firstLine), &result)
 		if err != nil || len(result.Issues) == 0 {
 			// If there are more lines, try NDJSON fallback
@@ -122,55 +121,28 @@ func makeParseHandler(
 			return mcp.NewToolResultText("No issues found in the golangci-lint output."), nil
 		}
 
-		unique := deduplicateIssues(result.Issues)
-		packages := extractPackagesFromIssues(unique)
-		strategyName, strategyReason := recommendStrategy(len(result.Issues), len(packages))
-
-		var builder strings.Builder
-		fmt.Fprintf(&builder, "<summary>\n\n- Unique diagnostics: %d\n- Strategy: %s (%s)\n",
-			len(unique), strategyName, strategyReason)
-
-		if len(packages) > 1 {
-			fmt.Fprintf(&builder, "\n%s\n", buildPackageBreakdown(packages))
-		}
-
-		fmt.Fprintf(&builder, "\n- Breakdown: %s\n\n</summary>\n\n", buildLinterBreakdown(unique))
-
-		builder.WriteString("<guidance>\n\n")
-		for idx, issue := range unique {
-			if idx > 0 {
-				builder.WriteString("\n---\n\n")
-			}
-			writeGuideForIssue(&builder, store, opts, issue)
-		}
-		builder.WriteString("\n</guidance>")
-
-		relatedSection := buildRelatedContext(unique, store)
-		if relatedSection != "" {
-			builder.WriteString("\n\n" + relatedSection)
-		}
-
-		builder.WriteString(buildStrategyInstructions(strategyName, packages, len(unique)))
-
-		return mcp.NewToolResultText(builder.String()), nil
+		// Unified pipeline: analyze → build response (D-03)
+		strategyResult := AnalyzeStrategy(result.Issues)
+		return mcp.NewToolResultText(
+			BuildResponse(strategyResult, "", store, opts, true, false)), nil
 	}
 }
 
 // parseNDJSON attempts to parse newline-delimited individual lintIssue objects.
 // Non-JSON lines are skipped. Returns collected issues in a lintJSONResult.
-func parseNDJSON(input string) lintJSONResult {
-	var issues []lintIssue
+func parseNDJSON(input string) LintJSONResult {
+	var issues []LintIssue
 	for line := range strings.SplitSeq(input, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
-		var issue lintIssue
+		var issue LintIssue
 		if json.Unmarshal([]byte(line), &issue) == nil && issue.FromLinter != "" {
 			issues = append(issues, issue)
 		}
 	}
-	return lintJSONResult{Issues: issues}
+	return LintJSONResult{Issues: issues}
 }
 
 // relatedEntry tracks a candidate related linter with its best fix hint and score.
@@ -186,11 +158,11 @@ type relatedEntry struct {
 // enforces max 5 entries / ~500 byte budget.
 //
 //nolint:gocognit,funlen // Single-pass related context builder: collect→dedup→sort→budget. Splitting would add indirection without reducing actual complexity.
-func buildRelatedContext(unique []lintIssue, store *guides.Store) string {
+func buildRelatedContext(unique []LintIssue, store *guides.Store) string {
 	// Build primary diagnostic set for exclusion
 	primarySet := make(map[string]bool)
 	for _, issue := range unique {
-		rule := extractRule(issue.Text)
+		rule := ExtractRule(issue.Text)
 		if rule != "" {
 			primarySet[issue.FromLinter+"/"+rule] = true
 		}
@@ -202,7 +174,7 @@ func buildRelatedContext(unique []lintIssue, store *guides.Store) string {
 
 	for _, issue := range unique {
 		linter := issue.FromLinter
-		rule := extractRule(issue.Text)
+		rule := ExtractRule(issue.Text)
 
 		var guide *guides.Guide
 		if rule != "" {
@@ -305,9 +277,26 @@ func resolveGuide(store *guides.Store, linter, rule string) (string, bool) {
 	return "", false
 }
 
-func writeGuideForIssue(builder *strings.Builder, store *guides.Store, opts Options, issue lintIssue) {
+// stripGuideHeading removes the leading markdown h1 heading (e.g., "# errcheck" or
+// "# gocritic: badCall") from the guide body. The writeGuideForIssue function writes
+// its own h2 heading ("## linter: rule"), so the guide's h1 is redundant and produces
+// duplicate headers in the output.
+func stripGuideHeading(body string) string {
+	if !strings.HasPrefix(body, "# ") {
+		return body
+	}
+	// Find end of first line using strings.Cut (modernize:stringscut)
+	_, after, ok := strings.Cut(body, "\n")
+	if !ok {
+		return ""
+	}
+	// Skip any trailing blank lines after the heading
+	return strings.TrimLeft(after, "\n")
+}
+
+func writeGuideForIssue(builder *strings.Builder, store *guides.Store, opts Options, issue LintIssue) {
 	linter := issue.FromLinter
-	rule := extractRule(issue.Text)
+	rule := ExtractRule(issue.Text)
 
 	body, ok := resolveGuide(store, linter, rule)
 	if ok {
@@ -316,6 +305,7 @@ func writeGuideForIssue(builder *strings.Builder, store *guides.Store, opts Opti
 		} else {
 			fmt.Fprintf(builder, "## %s\n\n", linter)
 		}
+		body = stripGuideHeading(body)
 		body = stripRelatedTag(maybeAppendGosecAI(body, opts, linter))
 		builder.WriteString(body)
 		return

@@ -1,3 +1,13 @@
-# Go Code Validation Policy
+# Go Lint Validation
+
+When you need to validate or fix Go code quality, use the MCP tools below through the `golangci-lint-guide` skill.
+
+| Tool | Purpose |
+|------|---------|
+| `golangci_lint_run` | Run golangci-lint and get fix guidance in one call. Primary entry point. |
+| `golangci_lint_parse` | Parse existing golangci-lint JSON output into fix guidance. |
+| `golangci_lint_guide` | Per-diagnostic lookup by linter + optional rule ID. |
+| `golangci_lint_list` | Discover all supported linters with classification and rule counts. |
+| `golangci_lint_summarize` | Strategy summary of raw JSON output. |
 
 Go code must be validated with golangci-lint. Load the `golangci-lint-guide` skill to run golangci-lint and apply fix guidance.

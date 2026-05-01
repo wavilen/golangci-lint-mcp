@@ -1,4 +1,4 @@
-package e2e_test
+package e2e
 
 import (
 	"os"
@@ -48,6 +48,37 @@ func TestGenerateReport(t *testing.T) {
 		html := generateAndRead(t, results, outputPath)
 		assertContains(t, html, "67%", "pass rate")
 		assertContains(t, html, "2/3 tests", "test count")
+	})
+
+	t.Run("renders compound tool calls with subagents", func(t *testing.T) {
+		outputPath := filepath.Join(tmpDir, "compound-report.html")
+		results := []*EvalResult{
+			{TestCase: "f", Model: "m", ToolCalls: 20, SubagentToolCalls: 48, SubagentCount: 4, Pass: true, IssueReduction: 100.0},
+			{TestCase: "f2", Model: "m", ToolCalls: 5, SubagentToolCalls: 0, SubagentCount: 0, Pass: true, IssueReduction: 100.0},
+		}
+		html := generateAndRead(t, results, outputPath)
+		assertContains(t, html, "20 (48 via 4 subagents)", "compound cell")
+		assertContains(t, html, ">5<", "plain cell without subagents")
+	})
+
+	t.Run("renders tokens and cost columns", func(t *testing.T) {
+		outputPath := filepath.Join(tmpDir, "tokens-report.html")
+		results := []*EvalResult{
+			{TestCase: "f", Model: "m", TokenUsage: TokenUsage{Input: 18700, Output: 3000}, TotalCost: 0.05, Pass: true, IssueReduction: 100.0},
+		}
+		html := generateAndRead(t, results, outputPath)
+		assertContains(t, html, "21.7k", "formatted tokens")
+		assertContains(t, html, "$0.05", "formatted cost")
+	})
+
+	t.Run("handles zero tokens and cost", func(t *testing.T) {
+		outputPath := filepath.Join(tmpDir, "zero-tokens-report.html")
+		results := []*EvalResult{
+			{TestCase: "f", Model: "m", Pass: true, IssueReduction: 100.0},
+		}
+		html := generateAndRead(t, results, outputPath)
+		assertContains(t, html, "0", "zero tokens")
+		assertContains(t, html, "$0.00", "zero cost")
 	})
 }
 

@@ -19,7 +19,7 @@ def guide_path(rel: str) -> str:
     """Resolve a guide path like 'guides/gosec/G107.md' to full path."""
     # Strip leading 'guides/' if present since GUIDES_ROOT already points to guides/
     if rel.startswith("guides/"):
-        rel = rel[len("guides/"):]
+        rel = rel[len("guides/") :]
     return os.path.join(GUIDES_ROOT, rel)
 
 
@@ -28,7 +28,7 @@ def get_linter_dir(rel_path: str) -> str:
     # Strip 'guides/' prefix if present
     p = rel_path.replace("\\", "/")
     if p.startswith("guides/"):
-        p = p[len("guides/"):]
+        p = p[len("guides/") :]
     parts = p.split("/")
     if len(parts) == 2:
         return parts[0]
@@ -80,7 +80,7 @@ def update_related_section(filepath: str, new_refs: list) -> bool:
     Update the <related> section in a file with the new reference list.
     Returns True if the file was modified, False otherwise.
     """
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     result = parse_related_tags(content)
@@ -88,14 +88,10 @@ def update_related_section(filepath: str, new_refs: list) -> bool:
         print(f"  WARNING: No <related> tag found in {filepath}")
         return False
 
-    start, end, old_refs, has_close_tag = result
+    start, end, _old_refs, has_close_tag = result
     new_content_str = ", ".join(new_refs)
 
-    if has_close_tag:
-        replacement = f"\n{new_content_str}\n"
-    else:
-        # Open tag (no </related>) — content is at end of file
-        replacement = f"{new_content_str}\n"
+    replacement = f"\n{new_content_str}\n" if has_close_tag else f"{new_content_str}\n"
 
     new_file_content = content[:start] + replacement + content[end:]
 
@@ -113,7 +109,7 @@ def do_add(rel_path: str, refs_to_add: list) -> tuple:
     if not os.path.exists(filepath):
         return (False, f"File not found: {filepath}")
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     result = parse_related_tags(content)
@@ -142,7 +138,7 @@ def do_replace(rel_path: str, old_ref: str, new_ref: str) -> tuple:
     if not os.path.exists(filepath):
         return (False, f"File not found: {filepath}")
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     result = parse_related_tags(content)
@@ -183,7 +179,7 @@ def do_remove(rel_path: str, ref_to_remove: str) -> tuple:
     if not os.path.exists(filepath):
         return (False, f"File not found: {filepath}")
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     result = parse_related_tags(content)
@@ -216,7 +212,7 @@ def do_set(rel_path: str, refs_to_set: list) -> tuple:
     if not os.path.exists(filepath):
         return (False, f"File not found: {filepath}")
 
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         content = f.read()
 
     result = parse_related_tags(content)
@@ -254,7 +250,6 @@ ACTIONS = [
     ("guides/gosec/G101.md", "add", {"refs": ["bidichk"]}),
     # 3. durationcheck — set refs: gosec/G109 (expected empty)
     ("guides/durationcheck.md", "set", {"refs": ["gosec/G109"]}),
-
     # ── Error Handling cluster ─────────────────────────────────────────────────
     # 4. errcheck — add refs: nilerr, rowserrcheck
     ("guides/errcheck.md", "add", {"refs": ["nilerr", "rowserrcheck"]}),
@@ -276,7 +271,6 @@ ACTIONS = [
     ("guides/revive/unhandled-error.md", "add", {"refs": ["errcheck"]}),
     # 13. revive/error-strings — add ref: errname
     ("guides/revive/error-strings.md", "add", {"refs": ["errname"]}),
-
     # ── Concurrency Safety cluster ─────────────────────────────────────────────
     # 14. bodyclose — add refs: contextcheck, noctx
     ("guides/bodyclose.md", "add", {"refs": ["contextcheck", "noctx"]}),
@@ -295,7 +289,6 @@ ACTIONS = [
     ("guides/govet/waitgroup.md", "add", {"refs": ["revive/waitgroup-by-value"]}),
     # 21. govet/atomic — add ref: gocritic/badLock
     ("guides/govet/atomic.md", "add", {"refs": ["gocritic/badLock"]}),
-
     # ── Style and Formatting cluster ───────────────────────────────────────────
     # 22. lll — replace revive with revive/line-length-limit
     ("guides/lll.md", "replace", {"old": "revive", "new": "revive/line-length-limit"}),
@@ -305,7 +298,6 @@ ACTIONS = [
     ("guides/sloglint.md", "add", {"refs": ["zerologlint"]}),
     # 25. loggercheck — add refs: sloglint, zerologlint
     ("guides/loggercheck.md", "add", {"refs": ["sloglint", "zerologlint"]}),
-
     # ── Dead Code Detection cluster ────────────────────────────────────────────
     # 26. unused — add ref: unparam
     ("guides/unused.md", "add", {"refs": ["unparam"]}),
@@ -317,7 +309,6 @@ ACTIONS = [
     ("guides/govet/errorsas.md", "add", {"refs": ["errorlint/asserts"]}),
     # 30. staticcheck/SA4006 — add ref: ineffassign
     ("guides/staticcheck/SA4006.md", "add", {"refs": ["ineffassign"]}),
-
     # ── Code Complexity cluster ────────────────────────────────────────────────
     # 31. gocyclo — add ref: revive/cyclomatic
     ("guides/gocyclo.md", "add", {"refs": ["revive/cyclomatic"]}),
@@ -336,7 +327,6 @@ ACTIONS = [
     ("guides/dogsled.md", "remove", {"ref": "unparam"}),
     ("guides/dogsled.md", "remove", {"ref": "errcheck"}),
     ("guides/dogsled.md", "add", {"refs": ["gocritic/tooManyResultsChecker"]}),
-
     # ── Performance Optimization cluster ───────────────────────────────────────
     # 38. prealloc — add refs: wastedassign, ineffassign
     ("guides/prealloc.md", "add", {"refs": ["wastedassign", "ineffassign"]}),
@@ -358,17 +348,14 @@ ACTIONS = [
     ("guides/gocritic/hugeParam.md", "add", {"refs": ["gocritic/rangeValCopy", "prealloc"]}),
     # 47. gocritic/rangeValCopy — add refs: gocritic/rangeExprCopy, gocritic/hugeParam
     ("guides/gocritic/rangeValCopy.md", "add", {"refs": ["gocritic/rangeExprCopy", "gocritic/hugeParam"]}),
-
     # ── Code Simplification cluster ────────────────────────────────────────────
     # 48. gocritic/unlambda — add ref: gocritic/deferUnlambda
     ("guides/gocritic/unlambda.md", "add", {"refs": ["gocritic/deferUnlambda"]}),
     # 49. gocritic/unslice — add ref: gocritic/typeUnparen
     ("guides/gocritic/unslice.md", "add", {"refs": ["gocritic/typeUnparen"]}),
-
     # ── Deprecated API Patterns cluster ────────────────────────────────────────
     # 50. staticcheck/SA1000 — remove ref: gosec/G204
     ("guides/staticcheck/SA1000.md", "remove", {"ref": "gosec/G204"}),
-
     # ── Testing Frameworks cluster ─────────────────────────────────────────────
     # 51. paralleltest — add ref: usetesting
     ("guides/paralleltest.md", "add", {"refs": ["usetesting"]}),
@@ -400,6 +387,7 @@ ACTIONS = [
 
 
 # ─── Main ──────────────────────────────────────────────────────────────────────
+
 
 def main():
     modified_count = 0
@@ -447,7 +435,9 @@ def main():
 
     print()
     print("=" * 70)
-    print(f"Results: {modified_count} modified, {skipped_count} skipped ({warning_count} warnings), {len(errors)} errors")
+    print(
+        f"Results: {modified_count} modified, {skipped_count} skipped ({warning_count} warnings), {len(errors)} errors"
+    )
 
     if errors:
         print("\nErrors:")

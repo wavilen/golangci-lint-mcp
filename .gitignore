@@ -29,7 +29,6 @@ node_modules/
 
 # Temporary files
 tmp/
-e2e-report.html
 
 # Planning workflow (internal)
 .planning/

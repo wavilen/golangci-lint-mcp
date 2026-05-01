@@ -3,7 +3,8 @@ import {
   isGolangciLintCommand, extractInnerCommand, stripOutputFilters,
   injectJsonOutputFlag, parseDiagnostics, buildStrategyANudge,
   buildStrategyBNudge, truncateNudge,
-  splitCompoundCommand, injectJqFilter
+  splitCompoundCommand, injectJqFilter,
+  hasGolangciLintMcp, buildInterceptCommand
 } from '../shared/nudge.js';
 
 export const GolangciLintPlugin = async function ({ project: _project, client: _client, $: _$, directory: _directory, worktree: _worktree }) {
@@ -13,6 +14,12 @@ export const GolangciLintPlugin = async function ({ project: _project, client: _
         if (input.tool !== 'bash') return;
         let command = (output.args && output.args.command) || '';
         if (!isGolangciLintCommand(command)) return;
+        // Route through golangci-lint-mcp intercept when binary is available (per D-06, D-08)
+        if (hasGolangciLintMcp()) {
+          output.args.command = buildInterceptCommand(command);
+          return;
+        }
+        // Fallback: v1.3 behavior — inject JSON output flag for nudge pipeline
         const cdMatch = command.match(/^(cd\s+(?:"[^"]+"|'[^']+'|\S+)\s*(?:&&|;)\s*)/);
         const cdPrefix = cdMatch ? cdMatch[0] : '';
         command = extractInnerCommand(command);
@@ -28,6 +35,9 @@ export const GolangciLintPlugin = async function ({ project: _project, client: _
         if (input.tool !== 'bash') return;
         const command = (input.args && input.args.command) || '';
         if (!isGolangciLintCommand(command)) return;
+        // Skip nudge when golangci-lint-mcp intercept was used — it produces enriched output (per D-11)
+        if (hasGolangciLintMcp()) return;
+        // Fallback: v1.3 behavior — inject nudge into raw output
         let rawOutput = '';
         if (output) {
           rawOutput = output.output || output.stdout || output.result || '';
@@ -52,5 +62,5 @@ export const GolangciLintPlugin = async function ({ project: _project, client: _
   };
 };
 
-export { isGolangciLintCommand, extractInnerCommand, stripOutputFilters, injectJsonOutputFlag, parseDiagnostics, splitCompoundCommand, injectJqFilter };
+export { isGolangciLintCommand, extractInnerCommand, stripOutputFilters, injectJsonOutputFlag, parseDiagnostics, splitCompoundCommand, injectJqFilter, hasGolangciLintMcp, buildInterceptCommand };
 export default GolangciLintPlugin;

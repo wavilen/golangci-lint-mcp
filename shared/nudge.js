@@ -391,6 +391,48 @@ function truncateNudge(nudge) {
   return nudge.substring(0, budget) + truncationNotice;
 }
 
+var _golangciLintMcpCache = null;
+
+function hasGolangciLintMcp() {
+  if (_golangciLintMcpCache === null) {
+    try {
+      var child_process = require('child_process');
+      var result = child_process.spawnSync('which', ['golangci-lint-mcp'], {
+        timeout: 2000,
+        stdio: 'pipe'
+      });
+      _golangciLintMcpCache = result.status === 0;
+    } catch (_e) {
+      _golangciLintMcpCache = false;
+    }
+  }
+  return _golangciLintMcpCache;
+}
+
+function buildInterceptCommand(command) {
+  var cdMatch = command.match(/^(cd\s+(?:"[^"]+"|'[^']+'|\S+)\s*(?:&&|;)\s*)/);
+  var cdPrefix = cdMatch ? cdMatch[0] : '';
+  var inner = extractInnerCommand(command);
+
+  // Replace: golangci-lint [run] → golangci-lint-mcp intercept
+  var replaced = inner.replace(/\bgolangci-lint(\s+run)?\b/, 'golangci-lint-mcp intercept');
+
+  // Strip output format flags — intercept produces its own structured output
+  replaced = replaced.replace(/\s*--output\.\S+(?:\s+\S+)?/g, '');
+  replaced = replaced.replace(/\s*--out-format(?:\s+\S+|= \S+|--\S+)/g, '');
+  // Strip pipe — intercept writes to stdout directly
+  var pipeIdx = replaced.indexOf('|');
+  if (pipeIdx !== -1) replaced = replaced.substring(0, pipeIdx);
+  // Strip redirects: 2>&1, 2>file, >file, >>file
+  replaced = replaced.replace(/\s*2>&1/g, '');
+  replaced = replaced.replace(/\s*2>>?\s*\S+/g, '');
+  replaced = replaced.replace(/\s*&>\S*/g, '');
+  replaced = replaced.replace(/\s*>>\s*\S+/g, '');
+  replaced = replaced.replace(/\s*[>]\s*\S+/g, '');
+
+  return cdPrefix + replaced.trim();
+}
+
 module.exports = {
   COMPOUND_LINTERS: COMPOUND_LINTERS,
   OUTPUT_FLAG_PATTERNS_VALUE: OUTPUT_FLAG_PATTERNS_VALUE,
@@ -402,9 +444,12 @@ module.exports = {
   stripOutputFilters: stripOutputFilters,
   injectJsonOutputFlag: injectJsonOutputFlag,
   splitCompoundCommand: splitCompoundCommand,
+  splitOnUnquotedSemicolons: splitOnUnquotedSemicolons,
   injectJqFilter: injectJqFilter,
   parseDiagnostics: parseDiagnostics,
   buildStrategyANudge: buildStrategyANudge,
   buildStrategyBNudge: buildStrategyBNudge,
-  truncateNudge: truncateNudge
+  truncateNudge: truncateNudge,
+  hasGolangciLintMcp: hasGolangciLintMcp,
+  buildInterceptCommand: buildInterceptCommand
 };

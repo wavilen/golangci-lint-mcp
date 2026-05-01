@@ -111,6 +111,84 @@ func TestParseHandler_Deduplication(t *testing.T) {
 	assert.Equal(t, 1, strings.Count(text, "## errcheck"))
 }
 
+// Test: No duplicate headers in guidance output. The synthetic h2 heading
+// ("## linter: rule") must not be followed by the guide body's own h1 heading
+// ("# linter: rule"), which was the bug in writeGuideForIssue.
+func TestParseHandler_NoDuplicateHeaders(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	json := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"main.go","Line":10,"Column":5}}],"Report":{}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
+	require.NoError(t, err)
+	text := result.Content[0].(mcp.TextContent).Text
+
+	// Should have the synthetic h2 heading
+	assert.Contains(t, text, "## errcheck")
+
+	// Should NOT have the guide's original h1 heading (which was "# errcheck\n\n")
+	// after the h2. The guide body starts with "# errcheck\n\n<instructions>..."
+	// so the h1 should be stripped.
+	assert.NotContains(t, text, "## errcheck\n\n# errcheck", "duplicate h1 after h2 heading")
+
+	// Also check compound linter:rule case
+	t.Run("compound_linter_rule", func(t *testing.T) {
+		json2 := `{"Issues":[{"FromLinter":"gocritic","Text":"dupSubExpr: suspicious identical LHS and RHS","Pos":{"Filename":"main.go","Line":10,"Column":5}}],"Report":{}}`
+		call := testGuideCall("golangci_lint_parse", map[string]any{"output": json2})
+		result2, err2 := srv.Client().CallTool(ctx, call)
+		require.NoError(t, err2)
+		text2 := result2.Content[0].(mcp.TextContent).Text
+
+		assert.Contains(t, text2, "## gocritic: dupSubExpr")
+		assert.NotContains(t, text2, "## gocritic: dupSubExpr\n\n# gocritic: dupSubExpr",
+			"duplicate h1 after h2 heading for compound linter:rule")
+	})
+}
+
+func TestStripGuideHeading(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "simple linter heading",
+			input:    "# errcheck\n\n<instructions>Check errors</instructions>",
+			expected: "<instructions>Check errors</instructions>",
+		},
+		{
+			name:     "compound linter:rule heading",
+			input:    "# gocritic: badCall\n\n<instructions>Detect suspicious calls</instructions>",
+			expected: "<instructions>Detect suspicious calls</instructions>",
+		},
+		{
+			name:     "rule-only heading",
+			input:    "# G101\n\n<instructions>Hardcoded creds</instructions>",
+			expected: "<instructions>Hardcoded creds</instructions>",
+		},
+		{
+			name:     "no heading returns as-is",
+			input:    "<instructions>No heading here</instructions>",
+			expected: "<instructions>No heading here</instructions>",
+		},
+		{
+			name:     "heading only no body",
+			input:    "# errcheck\n",
+			expected: "",
+		},
+		{
+			name:     "h2 heading not stripped",
+			input:    "## errcheck\n\n<instructions>Not touched</instructions>",
+			expected: "## errcheck\n\n<instructions>Not touched</instructions>",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := stripGuideHeading(tt.input)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
 func TestParseHandler_CompoundRuleExtraction(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	json := `{"Issues":[{"FromLinter":"gocritic","Text":"dupSubExpr: suspicious identical LHS and RHS","Pos":{"Filename":"main.go","Line":10,"Column":5}}],"Report":{}}`
@@ -245,6 +323,42 @@ func TestParseHandler_SummaryBlock_StrategyB(t *testing.T) {
 	assert.Contains(t, text, "Unique diagnostics: 31")
 	assert.Contains(t, text, "Strategy: subagent-per-file")
 	assert.Contains(t, text, "subagent-per-file strategy")
+	// Per D-01: subagent strategy responses should NOT contain guidance or related_context
+	assert.NotContains(t, text, "<guidance>")
+	assert.NotContains(t, text, "<related_context>")
+	// Should contain strategy_instructions with guide call references
+	assert.Contains(t, text, "<strategy_instructions>")
+	assert.Contains(t, text, `golangci_lint_guide(linter=`)
+}
+
+// Test: Subagent strategy responses skip guidance and related_context blocks.
+func TestParseHandler_SubagentStrategy_NoGuidance(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	// 31 unique issues → subagent-per-file strategy
+	linters := []string{"errcheck", "gocritic", "gosec", "staticcheck", "govet"}
+	issueParts := make([]string, 0, 31)
+	for i := range 31 {
+		linter := linters[i%len(linters)]
+		rule := fmt.Sprintf("RULE%02d: issue", i)
+		issueParts = append(issueParts,
+			fmt.Sprintf(`{"FromLinter":"%s","Text":"%s","Pos":{"Filename":"pkg/file%d.go","Line":%d,"Column":1}}`,
+				linter, rule, i, i+1))
+	}
+	json := `{"Issues":[` + strings.Join(issueParts, ",") + `],"Report":{}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
+	require.NoError(t, err)
+	text := result.Content[0].(mcp.TextContent).Text
+
+	// Must have summary and strategy_instructions
+	assert.Contains(t, text, "<summary>")
+	assert.Contains(t, text, "<strategy_instructions>")
+
+	// Must NOT have guidance or related_context for subagent strategy
+	assert.NotContains(t, text, "<guidance>", "subagent response should not contain <guidance>")
+	assert.NotContains(t, text, "<related_context>", "subagent response should not contain <related_context>")
+
+	// Strategy instructions must contain guide call references
+	assert.Contains(t, text, `golangci_lint_guide(linter=`, "strategy must include guide call references")
 }
 
 func TestParseHandler_ExistingGuideToolUnchanged(t *testing.T) {

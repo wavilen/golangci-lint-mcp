@@ -1,9 +1,10 @@
-.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js deploy-pages integration-test
+.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js lint-py deploy-pages push-e2e-artifacts integration-test
 
 BINARY := golangci-lint-mcp
 VERSION := $(shell git describe --tags --always 2>/dev/null | sed 's/^v//')
 SKILL_SRC := skills/golangci-lint-guide/SKILL.md
 SKILL_DEST := $(HOME)/.agents/skills/golangci-lint-guide
+comma := ,
 
 build:
 	go build -ldflags "-X github.com/wavilen/golangci-lint-mcp/internal/version.Server=$(VERSION)" -o $(BINARY) .
@@ -130,20 +131,26 @@ sync-version: ## Update package.json version from git tag
 lint-js: ## Run ESLint on JavaScript source files
 	npx eslint plugins/ shared/ hooks/ bin/install.js
 
+lint-py: ## Run ruff check and format on Python files
+	uv tool run ruff check agents/ndjson-analysis/ scripts/
+	uv tool run ruff format --check agents/ndjson-analysis/ scripts/
+
 deploy-pages: ## Deploy documentation site to GitHub Pages
 	@bash scripts/deploy-pages.sh
 
+push-e2e-artifacts: ## Push E2E test artifacts to orphan branch (run after integration-test)
+	@bash scripts/push-e2e-artifacts.sh
+
 integration-test: build ## Run e2e integration tests (requires Docker, parallel 3 procs)
 	@echo "Preparing Docker build context..."
-	@mkdir -p e2e/build/skills/golangci-lint-guide e2e/build/rules
+	@mkdir -p e2e/build
 	@cp $(BINARY) e2e/build/golangci-lint-mcp
 	@cp ~/.opencode/bin/opencode e2e/build/opencode
-	@cp skills/golangci-lint-guide/SKILL.md e2e/build/skills/golangci-lint-guide/SKILL.md
-	@cp ~/.config/opencode/rules/golang.md e2e/build/rules/golang.md
-	@cp rules/opencode.md e2e/build/rules/golangci-lint.md
+	@npm pack --pack-destination e2e/build/
+	@mv e2e/build/wavilen-golangci-lint-guide-*.tgz e2e/build/golangci-lint-guide.tgz
 	@echo "Building Docker image..."
 	docker build -t golangci-lint-mcp-e2e ./e2e/
 	@$(RM) -r e2e/build
 	@echo "Running integration tests (parallel, 3 procs, 30m timeout)..."
 	go install github.com/onsi/ginkgo/v2/ginkgo@latest
-	ginkgo -vv -procs=3 ./e2e/ -- -test.timeout=90m
+	ginkgo -vv -procs=3 -tags=e2e $(if $(LABELS),--label-filter='$(subst $(comma), && ,$(LABELS))',) ./e2e/ -- -test.timeout=90m

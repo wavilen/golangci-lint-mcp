@@ -57,6 +57,8 @@
             <th>Builds</th>
             <th>nolint</th>
             <th>Tool Calls</th>
+            <th>Tokens</th>
+            <th>Cost</th>
             <th>Retries</th>
             <th>Status</th>
         </tr>
@@ -69,7 +71,9 @@
             <td>{{printf "%.1f" .IssueReduction}}%</td>
             <td>{{if .BuildsClean}}<span class="pass">✓</span>{{else}}<span class="fail">✗</span>{{end}}</td>
             <td>{{.NolintCount}}</td>
-            <td>{{.ToolCalls}}</td>
+            <td>{{.ToolCalls}}{{if .SubagentCount}} ({{.SubagentToolCalls}} via {{.SubagentCount}} subagent{{if gt .SubagentCount 1}}s{{end}}){{end}}</td>
+            <td>{{.TokenUsage.Total | formatTokens}}</td>
+            <td>{{printf "$%.2f" .TotalCost}}</td>
             <td>{{.Retries}}</td>
             <td>{{if .Pass}}<span class="pass">PASS</span>{{else if .Error}}<span class="fail">ERROR</span>{{else}}<span class="skip">PARTIAL</span>{{end}}</td>
         </tr>

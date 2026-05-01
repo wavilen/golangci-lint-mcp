@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"os/exec"
 	"strings"
 	"testing"
@@ -164,7 +165,7 @@ func TestRunHandler_Integration_NoIssues(t *testing.T) {
 
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.True(t,
-		strings.Contains(text, "No issues found") ||
+		strings.Contains(text, "Auto-fix applied") ||
 			strings.Contains(text, "<summary>"),
 		"expected structured response, got: %s", text)
 }
@@ -195,10 +196,17 @@ func TestRunHandler_FullProjectPath(t *testing.T) {
 
 	text := result.Content[0].(mcp.TextContent).Text
 	if strings.Contains(text, "<summary>") {
-		assert.Contains(t, text, "Total issues:")
-		assert.Contains(t, text, "Unique diagnostics:")
-		assert.Contains(t, text, "Strategy:")
-		assert.NotContains(t, text, "## errcheck:")
+		// Routing is issue-count-based: >30 unique → summary-only, ≤30 → per-issue guidance.
+		if strings.Contains(text, "Total issues:") {
+			// Full-project response (>30 unique issues)
+			assert.Contains(t, text, "Unique diagnostics:")
+			assert.Contains(t, text, "Strategy:")
+			assert.NotContains(t, text, "## errcheck:")
+		} else {
+			// Per-package response (≤30 unique issues)
+			assert.Contains(t, text, "Unique diagnostics:")
+			assert.Contains(t, text, "Strategy:")
+		}
 	}
 }
 
@@ -213,7 +221,7 @@ func TestPanicDetection(t *testing.T) {
 
 func TestBuildPanicResponse_WithLinter(t *testing.T) {
 	stderr := "panic: runtime error: index out of range\n\ngoroutine 1 [running]:\ngithub.com/golangci/golangci-lint/pkg/golinters/exhaustruct.analyze(0x0)\n\t/build/pkg/golinters/exhaustruct/exhaustruct.go:42 +0x123"
-	resp := buildPanicResponse(stderr)
+	resp := BuildPanicResponse(stderr)
 	assert.Contains(t, resp, "<summary>")
 	assert.Contains(t, resp, "golangci-lint crashed")
 	assert.Contains(t, resp, "runtime error: index out of range")
@@ -224,7 +232,7 @@ func TestBuildPanicResponse_WithLinter(t *testing.T) {
 
 func TestBuildPanicResponse_WithoutLinter(t *testing.T) {
 	stderr := "panic: something broke\nno useful stack trace"
-	resp := buildPanicResponse(stderr)
+	resp := BuildPanicResponse(stderr)
 	assert.Contains(t, resp, "something broke")
 	assert.NotContains(t, resp, "disable:")
 	assert.Contains(t, resp, "Update golangci-lint")
@@ -232,7 +240,7 @@ func TestBuildPanicResponse_WithoutLinter(t *testing.T) {
 
 func TestBuildPanicResponse_NoPanicMessage(t *testing.T) {
 	stderr := "panic:\ngoroutine 1 [running]:\nsome/path.go:1"
-	resp := buildPanicResponse(stderr)
+	resp := BuildPanicResponse(stderr)
 	assert.Contains(t, resp, "<summary>")
 	assert.Contains(t, resp, "golangci-lint crashed")
 }
@@ -276,7 +284,7 @@ func TestExtractPanicLinter(t *testing.T) {
 // Test: Full wrapped JSON returns issues from partial output.
 func TestParsePartialOutput_ValidJSON(t *testing.T) {
 	stdout := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value not checked","Pos":{"Filename":"main.go","Line":1,"Column":1}},{"FromLinter":"govet","Text":"Printf issue","Pos":{"Filename":"main.go","Line":2,"Column":1}}],"Report":{}}`
-	issues := parsePartialOutput(stdout)
+	issues := ParsePartialOutput(stdout)
 	assert.Len(t, issues, 2)
 	assert.Equal(t, "errcheck", issues[0].FromLinter)
 	assert.Equal(t, "govet", issues[1].FromLinter)
@@ -286,7 +294,7 @@ func TestParsePartialOutput_ValidJSON(t *testing.T) {
 func TestParsePartialOutput_NDJSONFallback(t *testing.T) {
 	stdout := `{"FromLinter":"errcheck","Text":"Error return value not checked","Pos":{"Filename":"main.go","Line":1,"Column":1}}
 {"FromLinter":"gosec","Text":"G101: hardcoded credentials","Pos":{"Filename":"main.go","Line":2,"Column":1}}`
-	issues := parsePartialOutput(stdout)
+	issues := ParsePartialOutput(stdout)
 	assert.Len(t, issues, 2)
 	assert.Equal(t, "errcheck", issues[0].FromLinter)
 	assert.Equal(t, "gosec", issues[1].FromLinter)
@@ -295,15 +303,15 @@ func TestParsePartialOutput_NDJSONFallback(t *testing.T) {
 // Test: Garbage input returns empty slice.
 func TestParsePartialOutput_Unparseable(t *testing.T) {
 	stdout := "some random garbage output\nnot json at all"
-	issues := parsePartialOutput(stdout)
+	issues := ParsePartialOutput(stdout)
 	assert.Empty(t, issues)
 }
 
 // Test: Timeout message includes partial issue count.
 func TestBuildTimeoutMessage_WithPartialIssues(t *testing.T) {
 	stdout := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value not checked","Pos":{"Filename":"main.go","Line":1,"Column":1}}],"Report":{}}`
-	issues := parsePartialOutput(stdout)
-	msg := buildTimeoutMessage(30*time.Second, issues)
+	issues := ParsePartialOutput(stdout)
+	msg := BuildTimeoutMessage(30*time.Second, issues)
 	assert.Contains(t, msg, "timed out")
 	assert.Contains(t, msg, "1 issues collected before timeout")
 	assert.Contains(t, msg, "specific package path")
@@ -311,7 +319,207 @@ func TestBuildTimeoutMessage_WithPartialIssues(t *testing.T) {
 
 // Test: Timeout message with 0 issues.
 func TestBuildTimeoutMessage_NoPartialIssues(t *testing.T) {
-	msg := buildTimeoutMessage(30*time.Second, nil)
+	msg := BuildTimeoutMessage(30*time.Second, nil)
 	assert.Contains(t, msg, "timed out")
 	assert.Contains(t, msg, "0 issues collected before timeout")
+}
+
+// Test: BuildResponse with subagent-per-package strategy skips guidance.
+func TestBuildResponse_SubagentPerPackage_SkipsGuidance(t *testing.T) {
+	issues := make([]LintIssue, 0, 35)
+	for idx := range 35 {
+		issues = append(issues, LintIssue{
+			FromLinter: "errcheck",
+			Text:       fmt.Sprintf("RULE%02d: unchecked error", idx),
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: fmt.Sprintf("pkg/%c/file.go", 'a'+idx%5), Line: idx, Column: 1},
+		})
+	}
+
+	// 5 packages → subagent-per-package strategy
+	strategyResult := AnalyzeStrategy(issues)
+	assert.Equal(t, "subagent-per-package", strategyResult.StrategyName)
+
+	result := BuildResponse(strategyResult, "", nil, Options{}, true, true)
+
+	assert.Contains(t, result, "<summary>")
+	assert.Contains(t, result, "<strategy_instructions>")
+	assert.NotContains(t, result, "<guidance>")
+	assert.NotContains(t, result, "<related_context>")
+}
+
+// BuildResponse tests
+
+// Test: BuildResponse with SummaryOnly (high-volume) produces summary + strategy, no guidance.
+func TestBuildResponse_SummaryOnly(t *testing.T) {
+	// 35 unique issues → SummaryOnly=true (>30 threshold)
+	issues := make([]LintIssue, 0, 35)
+	for idx := range 35 {
+		issues = append(issues, LintIssue{
+			FromLinter: fmt.Sprintf("linter_%d", idx),
+			Text:       fmt.Sprintf("RULE%02d: error", idx),
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: "pkg/main.go", Line: idx, Column: 1},
+		})
+	}
+
+	strategyResult := AnalyzeStrategy(issues)
+	result := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+
+	assert.Contains(t, result, "<summary>")
+	assert.Contains(t, result, "golangci-lint results for ./...")
+	assert.Contains(t, result, "Total issues: 35")
+	assert.Contains(t, result, "Unique diagnostics: 35")
+	assert.Contains(t, result, "Call golangci_lint_run with a specific package path")
+	assert.Contains(t, result, "</summary>")
+	assert.NotContains(t, result, "<guidance>")
+	assert.True(t, strategyResult.SummaryOnly)
+}
+
+// Test: BuildResponse with single-agent strategy produces guidance.
+func TestBuildResponse_SingleAgentWithGuidance(t *testing.T) {
+	issues := []LintIssue{
+		{FromLinter: "errcheck", Text: "SA1001: unchecked error",
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: "pkg/main.go", Line: 1, Column: 1}},
+		{FromLinter: "govet", Text: "SA1002: printf mismatch",
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: "pkg/main.go", Line: 2, Column: 1}},
+	}
+
+	testFS := fstest.MapFS{
+		"guides/errcheck.md": testMapFile("# errcheck\n\n<instructions>test</instructions>"),
+		"guides/govet.md":    testMapFile("# govet\n\n<instructions>test</instructions>"),
+	}
+	store, err := guides.NewStore(testFS)
+	require.NoError(t, err)
+
+	strategyResult := AnalyzeStrategy(issues)
+	result := BuildResponse(strategyResult, "./pkg/main.go", store, Options{}, true, true)
+
+	assert.Contains(t, result, "<summary>")
+	assert.Contains(t, result, "golangci-lint results for ./pkg/main.go")
+	assert.Contains(t, result, "<guidance>")
+	assert.Contains(t, result, "errcheck")
+	assert.Contains(t, result, "govet")
+	assert.Contains(t, result, "</guidance>")
+	assert.NotContains(t, result, "<strategy_instructions>")
+}
+
+// Test: BuildResponse with includeGuidance=false skips guidance (summarize handler).
+func TestBuildResponse_IncludeGuidanceFalse(t *testing.T) {
+	issues := []LintIssue{
+		{FromLinter: "errcheck", Text: "SA1001: error",
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: "pkg/main.go", Line: 1, Column: 1}},
+	}
+
+	strategyResult := AnalyzeStrategy(issues)
+	result := BuildResponse(strategyResult, "", nil, Options{}, false, false)
+
+	assert.Contains(t, result, "<summary>")
+	assert.Contains(t, result, "Unique diagnostics: 1")
+	assert.Contains(t, result, "Total issues: 1")
+	assert.NotContains(t, result, "<guidance>")
+}
+
+// Test: BuildResponse with subagent-per-package strategy, no guidance.
+func TestBuildResponse_SubagentPerPackage(t *testing.T) {
+	issues := make([]LintIssue, 0, 5)
+	for idx := range 5 {
+		issues = append(issues, LintIssue{
+			FromLinter: fmt.Sprintf("linter_%d", idx),
+			Text:       fmt.Sprintf("RULE%02d: error", idx),
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: fmt.Sprintf("pkg_%d/file.go", idx), Line: idx, Column: 1},
+		})
+	}
+
+	strategyResult := AnalyzeStrategy(issues)
+	// 5 packages → subagent-per-package
+	assert.Equal(t, "subagent-per-package", strategyResult.StrategyName)
+
+	result := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+	assert.Contains(t, result, "<summary>")
+	assert.Contains(t, result, "<strategy_instructions>")
+	assert.NotContains(t, result, "<guidance>")
+}
+
+// Test: BuildResponse without path still shows total issues and packages.
+func TestBuildResponse_NoPathStillShowsTotalAndPackages(t *testing.T) {
+	issues := []LintIssue{
+		{FromLinter: "errcheck", Text: "SA1001: error",
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: "pkg/main.go", Line: 1, Column: 1}},
+	}
+
+	strategyResult := AnalyzeStrategy(issues)
+	result := BuildResponse(strategyResult, "", nil, Options{}, false, false)
+
+	assert.Contains(t, result, "<summary>")
+	assert.NotContains(t, result, "golangci-lint results for")
+	assert.Contains(t, result, "Total issues: 1")
+	assert.Contains(t, result, "Unique diagnostics: 1")
+	assert.Contains(t, result, "Packages affected:")
+}
+
+// Test: BuildResponse with issues shows "Auto-fix applied. N issues remain.".
+func TestBuildResponse_AutoFixApplied_IssuesRemain(t *testing.T) {
+	issues := []LintIssue{
+		{FromLinter: "errcheck", Text: "SA1001: unchecked error",
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: "pkg/main.go", Line: 1, Column: 1}},
+		{FromLinter: "govet", Text: "SA1002: printf mismatch",
+			Pos: struct {
+				Filename string `json:"Filename"`
+				Line     int    `json:"Line"`
+				Column   int    `json:"Column"`
+			}{Filename: "pkg/main.go", Line: 2, Column: 1}},
+	}
+
+	strategyResult := AnalyzeStrategy(issues)
+	// Use includeGuidance=false since store is nil; autoFixApplied=true to test auto-fix message
+	result := BuildResponse(strategyResult, "./pkg/main.go", nil, Options{}, false, true)
+
+	assert.Contains(t, result, "Auto-fix applied.")
+	assert.Contains(t, result, "2 issues remain.")
+	assert.Contains(t, result, "<summary>")
+}
+
+// Test: BuildResponse with zero issues shows "Auto-fix applied. No issues remain.".
+func TestBuildResponse_AutoFixApplied_NoIssuesRemain(t *testing.T) {
+	// Edge case: empty issues slice passed to BuildResponse
+	// (normally caught by early return in handlers, but BuildResponse should handle it)
+	issues := []LintIssue{}
+
+	strategyResult := AnalyzeStrategy(issues)
+	result := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+
+	assert.Contains(t, result, "Auto-fix applied.")
+	assert.Contains(t, result, "No issues remain.")
+	assert.Contains(t, result, "<summary>")
 }

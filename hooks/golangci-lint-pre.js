@@ -11,7 +11,13 @@ process.stdin.on('end', function () {
     if (data.tool_name !== 'Bash') process.exit(0);
     const command = (data.tool_input && data.tool_input.command) || '';
     if (!shared.isGolangciLintCommand(command)) process.exit(0);
-    // Apply command modification (same logic as plugins/golangci-lint.js tool.execute.before)
+    // Route through golangci-lint-mcp intercept when binary is available (per D-07)
+    if (shared.hasGolangciLintMcp()) {
+      var interceptCmd = shared.buildInterceptCommand(command);
+      console.log(JSON.stringify({ hookSpecificOutput: { permissionDecision: 'allow', updatedInput: { command: interceptCmd } } }));
+      process.exit(0);
+    }
+    // Fallback: v1.3 behavior — inject JSON output flag for nudge pipeline
     const cdMatch = command.match(/^(cd\s+(?:"[^"]+"|'[^']+'|\S+)\s*(?:&&|;)\s*)/);
     const cdPrefix = cdMatch ? cdMatch[0] : '';
     const inner = shared.extractInnerCommand(command);

@@ -1,4 +1,4 @@
-.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js lint-py deploy-pages push-e2e-artifacts integration-test
+.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js lint-py generate-diagrams deploy-pages push-e2e-artifacts integration-test
 
 BINARY := golangci-lint-mcp
 VERSION := $(shell git describe --tags --always 2>/dev/null | sed 's/^v//')
@@ -135,7 +135,18 @@ lint-py: ## Run ruff check and format on Python files
 	uv tool run ruff check agents/ndjson-analysis/ scripts/
 	uv tool run ruff format --check agents/ndjson-analysis/ scripts/
 
-deploy-pages: ## Deploy documentation site to GitHub Pages
+generate-diagrams: ## Generate PNG diagrams from PlantUML sources in assets/
+	@mkdir -p tmp/ndjson_analysis
+	@for puml in assets/ndjson_analysis/*.puml; do \
+		base=$$(basename "$$puml" .puml); \
+		out="tmp/ndjson_analysis/$$base.png"; \
+		if [ ! -f "$$out" ] || [ "$$puml" -nt "$$out" ]; then \
+			echo "Generating $$out from $$puml..."; \
+			docker run --rm -v "$(CURDIR)/assets/ndjson_analysis:/src" -v "$(CURDIR)/tmp/ndjson_analysis:/out" plantuml/plantuml:latest -tpng "/src/$$base.puml" -o "/out"; \
+		fi; \
+	done
+
+deploy-pages: generate-diagrams ## Deploy documentation site to GitHub Pages
 	@bash scripts/deploy-pages.sh
 
 push-e2e-artifacts: ## Push E2E test artifacts to orphan branch (run after integration-test)

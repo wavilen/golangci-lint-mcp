@@ -3,10 +3,12 @@ package e2e
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -118,6 +120,8 @@ const (
 	scannerBufSize  = 1024 * 1024
 	scannerMaxRatio = 10
 	percentage      = 100
+	million         = 1_000_000
+	thousand        = 1_000
 )
 
 func ParseNDJSON(reader io.Reader) (*NDJSONResult, error) {
@@ -280,11 +284,12 @@ type ParseExportResult struct {
 // ParseSessionList parses opencode session list --format json output and returns the first session ID.
 func ParseSessionList(output string) (string, error) {
 	var entries []sessionListEntry
-	if err := json.Unmarshal([]byte(output), &entries); err != nil {
+	err := json.Unmarshal([]byte(output), &entries)
+	if err != nil {
 		return "", fmt.Errorf("parsing session list: %w", err)
 	}
 	if len(entries) == 0 {
-		return "", fmt.Errorf("session list is empty")
+		return "", errors.New("session list is empty")
 	}
 	return entries[0].ID, nil
 }
@@ -293,60 +298,83 @@ func ParseSessionList(output string) (string, error) {
 // tool call counts, subagent session IDs, token usage, and total cost.
 func ParseSessionExport(output string) (*ParseExportResult, error) {
 	var exp sessionExport
-	if err := json.Unmarshal([]byte(output), &exp); err != nil {
+	err := json.Unmarshal([]byte(output), &exp)
+	if err != nil {
 		return nil, fmt.Errorf("parsing session export: %w", err)
 	}
 
-	result := &ParseExportResult{}
+	result := &ParseExportResult{
+		ToolCalls:   0,
+		SubagentIDs: nil,
+		TokenUsage: TokenUsage{
+			Input:      0,
+			Output:     0,
+			Reasoning:  0,
+			CacheRead:  0,
+			CacheWrite: 0,
+		},
+		TotalCost: 0,
+	}
 
 	for _, msg := range exp.Messages {
-		// Sum tokens
-		if msg.Info.Tokens != nil {
-			result.TokenUsage.Input += msg.Info.Tokens.Input
-			result.TokenUsage.Output += msg.Info.Tokens.Output
-			result.TokenUsage.Reasoning += msg.Info.Tokens.Reasoning
-			if msg.Info.Tokens.Cache != nil {
-				result.TokenUsage.CacheRead += msg.Info.Tokens.Cache.Read
-				result.TokenUsage.CacheWrite += msg.Info.Tokens.Cache.Write
-			}
-		}
-
-		// Sum cost
-		if msg.Info.Cost != nil {
-			result.TotalCost += *msg.Info.Cost
-		}
-
-		// Count tool calls and extract subagent IDs
-		for _, part := range msg.Parts {
-			if part.Type == "tool" {
-				result.ToolCalls++
-				if part.Tool == "task" && part.State != nil && part.State.Metadata != nil {
-					if sid := part.State.Metadata.SessionID; sid != "" {
-						result.SubagentIDs = append(result.SubagentIDs, sid)
-					}
-				}
-			}
-		}
+		accumulateTokenUsage(result, msg)
+		accumulateCost(result, msg)
+		accumulateToolCalls(result, msg)
 	}
 
 	return result, nil
 }
 
+// accumulateTokenUsage adds token counts from a single export message.
+func accumulateTokenUsage(result *ParseExportResult, msg exportMessage) {
+	if msg.Info.Tokens == nil {
+		return
+	}
+	result.TokenUsage.Input += msg.Info.Tokens.Input
+	result.TokenUsage.Output += msg.Info.Tokens.Output
+	result.TokenUsage.Reasoning += msg.Info.Tokens.Reasoning
+	if msg.Info.Tokens.Cache != nil {
+		result.TokenUsage.CacheRead += msg.Info.Tokens.Cache.Read
+		result.TokenUsage.CacheWrite += msg.Info.Tokens.Cache.Write
+	}
+}
+
+// accumulateCost adds cost from a single export message.
+func accumulateCost(result *ParseExportResult, msg exportMessage) {
+	if msg.Info.Cost != nil {
+		result.TotalCost += *msg.Info.Cost
+	}
+}
+
+// accumulateToolCalls counts tool calls and extracts subagent session IDs from message parts.
+func accumulateToolCalls(result *ParseExportResult, msg exportMessage) {
+	for _, part := range msg.Parts {
+		if part.Type == "tool" {
+			result.ToolCalls++
+			if part.Tool == "task" && part.State != nil && part.State.Metadata != nil {
+				if sid := part.State.Metadata.SessionID; sid != "" {
+					result.SubagentIDs = append(result.SubagentIDs, sid)
+				}
+			}
+		}
+	}
+}
+
 // FormatTokenCount formats a token count with k/M suffix for human-readable display.
 func FormatTokenCount(count int) string {
-	if count >= 1_000_000 {
-		s := fmt.Sprintf("%.1fM", float64(count)/1_000_000)
+	if count >= million {
+		s := fmt.Sprintf("%.1fM", float64(count)/million)
 		if strings.HasSuffix(s, ".0M") {
-			return fmt.Sprintf("%.0fM", float64(count)/1_000_000)
+			return fmt.Sprintf("%.0fM", float64(count)/million)
 		}
 		return s
 	}
-	if count >= 1_000 {
-		s := fmt.Sprintf("%.1fk", float64(count)/1_000)
+	if count >= thousand {
+		s := fmt.Sprintf("%.1fk", float64(count)/thousand)
 		if strings.HasSuffix(s, ".0k") {
-			return fmt.Sprintf("%.0fk", float64(count)/1_000)
+			return fmt.Sprintf("%.0fk", float64(count)/thousand)
 		}
 		return s
 	}
-	return fmt.Sprintf("%d", count)
+	return strconv.Itoa(count)
 }

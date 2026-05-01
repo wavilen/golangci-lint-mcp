@@ -16,7 +16,7 @@ func runValidators() {
 }
 
 func validateEmail(email string) bool {
-	if len(email) > 0 == true {
+	if len(email) > 0 {
 		return true
 	}
 	return false
@@ -71,7 +71,7 @@ func validatePrefix(prefix, s string) bool {
 }
 
 func validateSuffix(suffix, s string) bool {
-	if len(s) > 0 == true {
+	if len(s) > 0 {
 		return true
 	}
 	return false

@@ -391,13 +391,13 @@ function truncateNudge(nudge) {
   return nudge.substring(0, budget) + truncationNotice;
 }
 
-var _golangciLintMcpCache = null;
+let _golangciLintMcpCache = null;
 
 function hasGolangciLintMcp() {
   if (_golangciLintMcpCache === null) {
     try {
-      var child_process = require('child_process');
-      var result = child_process.spawnSync('which', ['golangci-lint-mcp'], {
+      const child_process = require('child_process');
+      const result = child_process.spawnSync('which', ['golangci-lint-mcp'], {
         timeout: 2000,
         stdio: 'pipe'
       });
@@ -410,18 +410,18 @@ function hasGolangciLintMcp() {
 }
 
 function buildInterceptCommand(command) {
-  var cdMatch = command.match(/^(cd\s+(?:"[^"]+"|'[^']+'|\S+)\s*(?:&&|;)\s*)/);
-  var cdPrefix = cdMatch ? cdMatch[0] : '';
-  var inner = extractInnerCommand(command);
+  const cdMatch = command.match(/^(cd\s+(?:"[^"]+"|'[^']+'|\S+)\s*(?:&&|;)\s*)/);
+  const cdPrefix = cdMatch ? cdMatch[0] : '';
+  const inner = extractInnerCommand(command);
 
   // Replace: golangci-lint [run] → golangci-lint-mcp intercept
-  var replaced = inner.replace(/\bgolangci-lint(\s+run)?\b/, 'golangci-lint-mcp intercept');
+  let replaced = inner.replace(/\bgolangci-lint(\s+run)?\b/, 'golangci-lint-mcp intercept');
 
   // Strip output format flags — intercept produces its own structured output
   replaced = replaced.replace(/\s*--output\.\S+(?:\s+\S+)?/g, '');
   replaced = replaced.replace(/\s*--out-format(?:\s+\S+|= \S+|--\S+)/g, '');
   // Strip pipe — intercept writes to stdout directly
-  var pipeIdx = replaced.indexOf('|');
+  const pipeIdx = replaced.indexOf('|');
   if (pipeIdx !== -1) replaced = replaced.substring(0, pipeIdx);
   // Strip redirects: 2>&1, 2>file, >file, >>file
   replaced = replaced.replace(/\s*2>&1/g, '');

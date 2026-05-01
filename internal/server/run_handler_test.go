@@ -3,7 +3,9 @@ package server
 import (
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -16,6 +18,26 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// chdirProjectRoot changes to the Go module root (directory containing go.mod).
+// Tests that use file-system-relative paths need this since go test runs from
+// the package directory, not the project root.
+func chdirProjectRoot(t *testing.T) {
+	t.Helper()
+	dir, err := os.Getwd()
+	require.NoError(t, err)
+	for {
+		if _, statErr := os.Stat(filepath.Join(dir, "go.mod")); statErr == nil {
+			t.Chdir(dir)
+			return
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			t.Fatal("could not find project root (go.mod)")
+		}
+		dir = parent
+	}
+}
 
 func setupRunTestServer(t *testing.T) (*mcptest.Server, context.Context) {
 	t.Helper()
@@ -343,7 +365,7 @@ func TestBuildResponse_SubagentPerPackage_SkipsGuidance(t *testing.T) {
 	strategyResult := AnalyzeStrategy(issues)
 	assert.Equal(t, "subagent-per-package", strategyResult.StrategyName)
 
-	result := BuildResponse(strategyResult, "", nil, Options{}, true, true)
+	result := BuildResponse(strategyResult, ResponseConfig{AutoFixApplied: true})
 
 	assert.Contains(t, result, "<summary>")
 	assert.Contains(t, result, "<strategy_instructions>")
@@ -370,7 +392,7 @@ func TestBuildResponse_SummaryOnly(t *testing.T) {
 	}
 
 	strategyResult := AnalyzeStrategy(issues)
-	result := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+	result := BuildResponse(strategyResult, ResponseConfig{Path: "./...", AutoFixApplied: true})
 
 	assert.Contains(t, result, "<summary>")
 	assert.Contains(t, result, "golangci-lint results for ./...")
@@ -407,7 +429,10 @@ func TestBuildResponse_SingleAgentWithGuidance(t *testing.T) {
 	require.NoError(t, err)
 
 	strategyResult := AnalyzeStrategy(issues)
-	result := BuildResponse(strategyResult, "./pkg/main.go", store, Options{}, true, true)
+	result := BuildResponse(
+		strategyResult,
+		ResponseConfig{Path: "./pkg/main.go", Store: store, IncludeGuidance: true, AutoFixApplied: true},
+	)
 
 	assert.Contains(t, result, "<summary>")
 	assert.Contains(t, result, "golangci-lint results for ./pkg/main.go")
@@ -430,7 +455,7 @@ func TestBuildResponse_IncludeGuidanceFalse(t *testing.T) {
 	}
 
 	strategyResult := AnalyzeStrategy(issues)
-	result := BuildResponse(strategyResult, "", nil, Options{}, false, false)
+	result := BuildResponse(strategyResult, ResponseConfig{})
 
 	assert.Contains(t, result, "<summary>")
 	assert.Contains(t, result, "Unique diagnostics: 1")
@@ -457,7 +482,7 @@ func TestBuildResponse_SubagentPerPackage(t *testing.T) {
 	// 5 packages → subagent-per-package
 	assert.Equal(t, "subagent-per-package", strategyResult.StrategyName)
 
-	result := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+	result := BuildResponse(strategyResult, ResponseConfig{Path: "./...", AutoFixApplied: true})
 	assert.Contains(t, result, "<summary>")
 	assert.Contains(t, result, "<strategy_instructions>")
 	assert.NotContains(t, result, "<guidance>")
@@ -475,7 +500,7 @@ func TestBuildResponse_NoPathStillShowsTotalAndPackages(t *testing.T) {
 	}
 
 	strategyResult := AnalyzeStrategy(issues)
-	result := BuildResponse(strategyResult, "", nil, Options{}, false, false)
+	result := BuildResponse(strategyResult, ResponseConfig{})
 
 	assert.Contains(t, result, "<summary>")
 	assert.NotContains(t, result, "golangci-lint results for")
@@ -503,7 +528,7 @@ func TestBuildResponse_AutoFixApplied_IssuesRemain(t *testing.T) {
 
 	strategyResult := AnalyzeStrategy(issues)
 	// Use includeGuidance=false since store is nil; autoFixApplied=true to test auto-fix message
-	result := BuildResponse(strategyResult, "./pkg/main.go", nil, Options{}, false, true)
+	result := BuildResponse(strategyResult, ResponseConfig{Path: "./pkg/main.go", AutoFixApplied: true})
 
 	assert.Contains(t, result, "Auto-fix applied.")
 	assert.Contains(t, result, "2 issues remain.")
@@ -517,9 +542,58 @@ func TestBuildResponse_AutoFixApplied_NoIssuesRemain(t *testing.T) {
 	issues := []LintIssue{}
 
 	strategyResult := AnalyzeStrategy(issues)
-	result := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+	result := BuildResponse(strategyResult, ResponseConfig{Path: "./...", AutoFixApplied: true})
 
 	assert.Contains(t, result, "Auto-fix applied.")
 	assert.Contains(t, result, "No issues remain.")
 	assert.Contains(t, result, "<summary>")
+}
+
+// --- isExternalModule tests (D-01, D-02) ---
+
+func TestIsExternalModule(t *testing.T) {
+	chdirProjectRoot(t)
+	tests := []struct {
+		name string
+		path string
+		want bool
+	}{
+		{"root path ./...", "./...", false},
+		{"dot path", ".", false},
+		{"empty path", "", false},
+		{"normal subdirectory no go.mod", "./internal/server", false},
+		{"normal subdirectory with trailing /...", "./internal/server/...", false},
+		{"external module e2e/testdata/large", "e2e/testdata/large", true},
+		{"external module with leading ./", "./e2e/testdata/large", true},
+		{"external module with trailing /", "./e2e/testdata/large/", true},
+		{"external module with trailing /...", "./e2e/testdata/large/...", true},
+		{"external module e2e/testdata/simple", "e2e/testdata/simple", true},
+		{"external module e2e/testdata/multipkg", "e2e/testdata/multipkg", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, isExternalModule(tt.path))
+		})
+	}
+}
+
+func TestExecuteLint_ExternalModule(t *testing.T) {
+	chdirProjectRoot(t)
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+	_, lookErr := exec.LookPath("golangci-lint")
+	if lookErr != nil {
+		t.Skip("golangci-lint not installed — skipping integration test")
+	}
+
+	ctx := context.Background()
+	// This path is an external module (e2e/testdata/large has its own go.mod)
+	result := ExecuteLint(ctx, "e2e/testdata/large", 60*time.Second)
+
+	assert.False(t, result.NotPath, "golangci-lint binary should be found")
+	assert.False(t, result.TimedOut, "should not time out")
+	assert.NoError(t, result.JSONErr, "JSON parse should succeed: %v", result.JSONErr)
+	// The large fixture has known issues — verify some were found
+	assert.NotEmpty(t, result.Parsed.Issues, "expected issues in large fixture")
 }

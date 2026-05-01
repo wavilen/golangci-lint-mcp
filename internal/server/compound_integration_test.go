@@ -38,12 +38,17 @@ func setupRealGuideServer(t *testing.T, opts ...Options) (*mcptest.Server, conte
 
 	tool := mcp.NewTool("golangci_lint_guide",
 		mcp.WithDescription("Get concise guidance for fixing golangci-lint issues"),
-		mcp.WithString("linter",
+		mcp.WithArray("queries",
 			mcp.Required(),
-			mcp.Description("The linter name"),
-		),
-		mcp.WithString("rule",
-			mcp.Description("Optional rule ID"),
+			mcp.Description("Array of query objects"),
+			mcp.Items(map[string]any{
+				"type": "object",
+				"properties": map[string]any{
+					"linter": map[string]any{"type": "string"},
+					"rule":   map[string]any{"type": "string"},
+				},
+				"required": []string{"linter"},
+			}),
 		),
 	)
 
@@ -78,10 +83,11 @@ func TestCompoundMCPHandlerIntegration(t *testing.T) {
 
 	for _, sample := range samples {
 		t.Run(sample.linter+"/"+sample.rule, func(t *testing.T) {
-			result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{
-				"linter": sample.linter,
-				"rule":   sample.rule,
-			}))
+			result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+				testBatchArgs(map[string]string{
+					"linter": sample.linter,
+					"rule":   sample.rule,
+				})))
 			require.NoError(t, err)
 			require.Len(t, result.Content, 1)
 
@@ -98,9 +104,10 @@ func TestCompoundMCPHandlerIntegration(t *testing.T) {
 	}
 
 	t.Run("compound_no_rule", func(t *testing.T) {
-		result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{
-			"linter": "gocritic",
-		}))
+		result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+			testBatchArgs(map[string]string{
+				"linter": "gocritic",
+			})))
 		require.NoError(t, err)
 		require.True(t, result.IsError, "expected error result for compound linter without rule")
 
@@ -112,10 +119,11 @@ func TestCompoundMCPHandlerIntegration(t *testing.T) {
 	})
 
 	t.Run("compound_unknown_rule", func(t *testing.T) {
-		result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{
-			"linter": "gocritic",
-			"rule":   "nonexistent",
-		}))
+		result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+			testBatchArgs(map[string]string{
+				"linter": "gocritic",
+				"rule":   "nonexistent",
+			})))
 		require.NoError(t, err)
 		require.True(t, result.IsError, "expected error result for unknown rule")
 

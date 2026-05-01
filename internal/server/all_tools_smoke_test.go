@@ -58,8 +58,18 @@ func setupAllToolsServer(t *testing.T) (*mcptest.Server, context.Context) {
 
 	guideTool := mcp.NewTool("golangci_lint_guide",
 		mcp.WithDescription("Get concise guidance for fixing golangci-lint issues"),
-		mcp.WithString("linter", mcp.Required(), mcp.Description("The linter name")),
-		mcp.WithString("rule", mcp.Description("Optional rule ID")),
+		mcp.WithArray("queries",
+			mcp.Required(),
+			mcp.Description("Array of query objects"),
+			mcp.Items(map[string]any{
+				"type": "object",
+				"properties": map[string]any{
+					"linter": map[string]any{"type": "string"},
+					"rule":   map[string]any{"type": "string"},
+				},
+				"required": []string{"linter"},
+			}),
+		),
 	)
 	parseTool := mcp.NewTool("golangci_lint_parse",
 		mcp.WithDescription("Parse golangci-lint JSON and return fix guidance"),
@@ -98,7 +108,7 @@ func TestSmoke_Guide_Valid(t *testing.T) {
 
 	t.Run("simple_linter", func(t *testing.T) {
 		result, err := srv.Client().CallTool(ctx,
-			testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck"}))
+			testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "errcheck"})))
 		require.NoError(t, err)
 		require.False(t, result.IsError, "expected non-error result")
 		text := result.Content[0].(mcp.TextContent).Text
@@ -107,7 +117,10 @@ func TestSmoke_Guide_Valid(t *testing.T) {
 
 	t.Run("compound_linter_with_rule", func(t *testing.T) {
 		result, err := srv.Client().CallTool(ctx,
-			testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "badcall"}))
+			testGuideCall(
+				"golangci_lint_guide",
+				testBatchArgs(map[string]string{"linter": "gocritic", "rule": "badcall"}),
+			))
 		require.NoError(t, err)
 		require.False(t, result.IsError, "expected non-error result")
 		text := result.Content[0].(mcp.TextContent).Text
@@ -120,16 +133,16 @@ func TestSmoke_Guide_Invalid(t *testing.T) {
 
 	t.Run("missing_linter", func(t *testing.T) {
 		result, err := srv.Client().CallTool(ctx,
-			testGuideCall("golangci_lint_guide", map[string]any{}))
+			testGuideCall("golangci_lint_guide", map[string]any{"queries": []any{}}))
 		require.NoError(t, err)
 		require.True(t, result.IsError, "expected error result")
 		text := result.Content[0].(mcp.TextContent).Text
-		assert.Contains(t, strings.ToLower(text), "missing")
+		assert.Contains(t, text, "non-empty array")
 	})
 
 	t.Run("unknown_linter", func(t *testing.T) {
 		result, err := srv.Client().CallTool(ctx,
-			testGuideCall("golangci_lint_guide", map[string]any{"linter": "nonexistent_linter_xyz"}))
+			testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "nonexistent_linter_xyz"})))
 		require.NoError(t, err)
 		require.True(t, result.IsError, "expected error result")
 		text := result.Content[0].(mcp.TextContent).Text
@@ -138,7 +151,10 @@ func TestSmoke_Guide_Invalid(t *testing.T) {
 
 	t.Run("simple_linter_with_bogus_rule", func(t *testing.T) {
 		result, err := srv.Client().CallTool(ctx,
-			testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck", "rule": "bogus"}))
+			testGuideCall(
+				"golangci_lint_guide",
+				testBatchArgs(map[string]string{"linter": "errcheck", "rule": "bogus"}),
+			))
 		require.NoError(t, err)
 		require.True(t, result.IsError, "expected error result")
 		text := result.Content[0].(mcp.TextContent).Text

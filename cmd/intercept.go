@@ -43,10 +43,22 @@ var lintRunFunc = server.ExecuteLint
 // given path, enriches output with guide content, and writes structured
 // guidance to stdout. Stderr from golangci-lint passes through to stderr.
 func RunIntercept(fsys fs.FS, args []string, stdout, stderr io.Writer) error {
+	// Parse --raw flag from args before processing path
+	raw := false
+	for i := 0; i < len(args); i++ {
+		if args[i] == "--raw" || args[i] == "-raw" {
+			raw = true
+			args = append(args[:i], args[i+1:]...)
+			i--
+		}
+	}
+
 	if len(args) == 0 {
-		fmt.Fprintln(stderr, "Usage: golangci-lint-mcp intercept <path>")
+		fmt.Fprintln(stderr, "Usage: golangci-lint-mcp intercept [--raw] <path>")
 		fmt.Fprintln(stderr, "")
 		fmt.Fprintln(stderr, "Run golangci-lint and output enriched guidance.")
+		fmt.Fprintln(stderr, "Flags:")
+		fmt.Fprintln(stderr, "  --raw   Output raw golangci-lint JSON to stdout without parsing or summarization")
 		fmt.Fprintln(stderr, "Example: golangci-lint-mcp intercept ./...")
 		fmt.Fprintln(stderr, "Error: missing required argument: path")
 		return errors.New("missing required argument: path")
@@ -75,6 +87,16 @@ func RunIntercept(fsys fs.FS, args []string, stdout, stderr io.Writer) error {
 		fmt.Fprint(stderr, filtered)
 	}
 
+	// Raw mode: output raw golangci-lint JSON without parsing/summarization
+	if raw {
+		if result.NotPath {
+			fmt.Fprintln(stderr, "golangci-lint binary not found in PATH.")
+			return errors.New("golangci-lint binary not found")
+		}
+		fmt.Fprint(stdout, result.Stdout)
+		return nil
+	}
+
 	// Handle special cases
 	if result.NotPath {
 		fmt.Fprintln(stderr, "golangci-lint binary not found in PATH. "+
@@ -98,13 +120,13 @@ func RunIntercept(fsys fs.FS, args []string, stdout, stderr io.Writer) error {
 	}
 
 	// JSON parse errors
-	if result.JsonErr != nil {
+	if result.JSONErr != nil {
 		if result.HadIssues {
 			fmt.Fprintln(stderr, "golangci-lint exited with error and output was not valid JSON.")
 			fmt.Fprintln(stderr, "Stdout:", result.Stdout)
 			fmt.Fprintln(stderr, "Stderr:", result.Stderr)
 		} else {
-			fmt.Fprintf(stderr, "failed to parse golangci-lint JSON output: %v\n", result.JsonErr)
+			fmt.Fprintf(stderr, "failed to parse golangci-lint JSON output: %v\n", result.JSONErr)
 		}
 		return errors.New("failed to parse golangci-lint output")
 	}
@@ -117,12 +139,10 @@ func RunIntercept(fsys fs.FS, args []string, stdout, stderr io.Writer) error {
 
 	// Unified pipeline: analyze → build response (D-03)
 	strategyResult := server.AnalyzeStrategy(result.Parsed.Issues)
-	response := server.BuildResponse(strategyResult, cleaned, store,
-		//nolint:exhaustruct // CLI intercept uses default zero-value Options — no AI/SSL features needed.
-		server.Options{},
-		true,
-		true,
-	)
+	response := server.BuildResponse(strategyResult, server.ResponseConfig{
+		Path: cleaned, Store: store,
+		IncludeGuidance: true, AutoFixApplied: true,
+	})
 
 	fmt.Fprintln(stdout, response)
 	return nil

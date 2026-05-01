@@ -11,7 +11,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 INDEX_HTML="${REPO_ROOT}/pages/index.html"
 DIAGRAMS_HTML="${REPO_ROOT}/pages/diagrams.html"
 GRAPH_HTML="${REPO_ROOT}/graphify-out/graph.html"
-E2E_REPORT="${REPO_ROOT}/tmp/ndjson_analysis/e2e-report.html"
+E2E_REPORT="${REPO_ROOT}/tmp/ndjson/e2e-report.html"
 NDJSON_PNGS="${REPO_ROOT}/tmp/ndjson_analysis"
 
 # --- Guard: refuse to run with uncommitted changes ---
@@ -56,6 +56,16 @@ if [ "$_NDJSON_PNG_LOCAL" -eq 0 ]; then
     fi
 fi
 
+# Fallback: generate missing PNGs from git-tracked PUML sources
+if [ "$_NDJSON_PNG_LOCAL" -eq 0 ] && [ -f "${REPO_ROOT}/assets/ndjson_analysis/probe.puml" ]; then
+    echo "Generating probe.png from assets/ndjson_analysis/probe.puml..."
+    mkdir -p "$NDJSON_PNGS"
+    docker run --rm \
+        -v "${REPO_ROOT}/assets/ndjson_analysis:/src" \
+        -v "${NDJSON_PNGS}:/out" \
+        plantuml/plantuml:latest -tpng "/src/probe.puml" -o "/out"
+fi
+
 # --- Fail-fast: validate ALL required assets exist (D-05, D-07, D-08) ---
 ERRORS=0
 for f in "$INDEX_HTML" "$DIAGRAMS_HTML"; do
@@ -83,15 +93,36 @@ if [ ! -f "$E2E_REPORT" ]; then
     ERRORS=$((ERRORS + 1))
 fi
 
-# Check ndjson_analysis PNGs
-NDJSON_PNG_COUNT=0
-if [ -d "$NDJSON_PNGS" ]; then
-    NDJSON_PNG_COUNT=$(find "$NDJSON_PNGS" -maxdepth 1 -name '*.png' -type f 2>/dev/null | wc -l | tr -d ' ')
-fi
-if [ "$NDJSON_PNG_COUNT" -eq 0 ]; then
-    echo "Error: No ndjson analysis PNGs found in ${NDJSON_PNGS}/" >&2
-    echo "  Run 'make push-e2e-artifacts' to generate diagrams, or run ndjson-analysis agent." >&2
-    ERRORS=$((ERRORS + 1))
+# Validate expected ndjson analysis PNGs by name (DIAG-03, D-07)
+EXPECTED_PNGS=(
+    "autofix-glm-4-7.png"
+    "autofix-glm-5-1.png"
+    "autofix-glm-5-turbo.png"
+    "comparison-overview.png"
+    "large-glm-4-7.png"
+    "large-glm-5-1.png"
+    "large-glm-5-turbo.png"
+    "medium-glm-4-7.png"
+    "medium-glm-5-1.png"
+    "medium-glm-5-turbo.png"
+    "multipkg-glm-4-7.png"
+    "multipkg-glm-5-1.png"
+    "multipkg-glm-5-turbo.png"
+    "probe.png"
+    "simple-glm-4-7.png"
+    "simple-glm-5-1.png"
+    "simple-glm-5-turbo.png"
+)
+PNG_ERRORS=0
+for expected_png in "${EXPECTED_PNGS[@]}"; do
+    if [ ! -f "${NDJSON_PNGS}/${expected_png}" ]; then
+        echo "Error: Expected PNG not found: ${NDJSON_PNGS}/${expected_png}" >&2
+        PNG_ERRORS=$((PNG_ERRORS + 1))
+    fi
+done
+if [ "$PNG_ERRORS" -gt 0 ]; then
+    echo "Error: ${PNG_ERRORS} expected PNG(s) missing from ${NDJSON_PNGS}/" >&2
+    ERRORS=$((ERRORS + PNG_ERRORS))
 fi
 
 if [ "$ERRORS" -gt 0 ]; then

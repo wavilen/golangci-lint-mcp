@@ -236,33 +236,86 @@ func TestExtractGuideRefsByFile_Deduplication(t *testing.T) {
 	require.Len(t, mainRefs, 1, "multiple errcheck issues in same file should produce single guide ref")
 }
 
-func TestFormatGuideCall(t *testing.T) {
+func TestFormatBatchCall(t *testing.T) {
 	tests := []struct {
 		name     string
-		ref      GuideRef
+		refs     []GuideRef
 		expected string
 	}{
 		{
-			name:     "linter only, no rule",
-			ref:      GuideRef{Linter: "errcheck", Rule: ""},
-			expected: `golangci_lint_guide(linter="errcheck")`,
+			name:     "single ref linter only",
+			refs:     []GuideRef{{Linter: "errcheck"}},
+			expected: `golangci_lint_guide(queries=[{linter:"errcheck"}])`,
 		},
 		{
-			name:     "linter with rule",
-			ref:      GuideRef{Linter: "staticcheck", Rule: "SA1000"},
-			expected: `golangci_lint_guide(linter="staticcheck", rule="SA1000")`,
+			name:     "single ref with rule",
+			refs:     []GuideRef{{Linter: "staticcheck", Rule: "SA1000"}},
+			expected: `golangci_lint_guide(queries=[{linter:"staticcheck", rule:"SA1000"}])`,
 		},
 		{
 			name:     "gosec with rule",
-			ref:      GuideRef{Linter: "gosec", Rule: "G101"},
-			expected: `golangci_lint_guide(linter="gosec", rule="G101")`,
+			refs:     []GuideRef{{Linter: "gosec", Rule: "G101"}},
+			expected: `golangci_lint_guide(queries=[{linter:"gosec", rule:"G101"}])`,
+		},
+		{
+			name: "multiple refs",
+			refs: []GuideRef{
+				{Linter: "errcheck"},
+				{Linter: "staticcheck", Rule: "SA1000"},
+			},
+			expected: `golangci_lint_guide(queries=[{linter:"errcheck"}, {linter:"staticcheck", rule:"SA1000"}])`,
+		},
+		{
+			name:     "empty refs",
+			refs:     []GuideRef{},
+			expected: "",
+		},
+		{
+			name:     "empty rule omitted",
+			refs:     []GuideRef{{Linter: "errcheck", Rule: ""}},
+			expected: `golangci_lint_guide(queries=[{linter:"errcheck"}])`,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.expected, formatGuideCall(tt.ref))
+			result := formatBatchCall(tt.refs)
+			assert.Equal(t, tt.expected, result)
+			// Verify empty rule never appears as rule:""
+			if len(tt.refs) > 0 {
+				assert.NotContains(t, result, `rule:""`)
+			}
 		})
 	}
+}
+
+func TestFormatBatchCall_BatchCapOver(t *testing.T) {
+	// Create defaultBatchMax + 5 unique refs to exceed the cap
+	refs := make([]GuideRef, defaultBatchMax+5)
+	for i := range refs {
+		refs[i] = GuideRef{Linter: fmt.Sprintf("linter%d", i)}
+	}
+
+	result := formatBatchCall(refs)
+
+	// Should contain the batch call with defaultBatchMax items
+	assert.Contains(t, result, "golangci_lint_guide(queries=[")
+	// Should contain the note about golangci_lint_parse
+	assert.Contains(t, result, "golangci_lint_parse")
+	assert.Contains(t, result, "5 additional")
+}
+
+func TestFormatBatchCall_BatchCapExact(t *testing.T) {
+	// Exactly defaultBatchMax refs — no note should appear
+	refs := make([]GuideRef, defaultBatchMax)
+	for i := range refs {
+		refs[i] = GuideRef{Linter: fmt.Sprintf("linter%d", i)}
+	}
+
+	result := formatBatchCall(refs)
+
+	assert.Contains(t, result, "golangci_lint_guide(queries=[")
+	assert.NotContains(t, result, "golangci_lint_parse")
+	assert.NotContains(t, result, "additional")
 }
 
 func TestIsSubagentStrategy(t *testing.T) {
@@ -314,7 +367,7 @@ func TestAnalyzeStrategy_SingleAgent_NoEscalation(t *testing.T) {
 func TestAnalyzeStrategy_PerPackage_NoEscalation(t *testing.T) {
 	// 5 raw issues across 5 packages → per-package, no escalation (no package exceeds threshold)
 	// Each issue needs unique (linter, rule) to survive dedup and produce 5 packages
-	var issues []LintIssue
+	issues := make([]LintIssue, 0, 5)
 	for i := range 5 {
 		dir := fmt.Sprintf("pkg/%d", i)
 		issues = append(issues, makeIssue("errcheck", fmt.Sprintf("SA%d: error", i), dir+"/file.go"))
@@ -344,7 +397,7 @@ func TestAnalyzeStrategy_PerFileStrategy_NoEscalation(t *testing.T) {
 
 func TestAnalyzeStrategy_PerPackage_WithEscalation(t *testing.T) {
 	// 100+ raw issues across 6 packages where 2 packages have 35+ issues each → per-package with 2 escalated
-	var issues []LintIssue
+	issues := make([]LintIssue, 0, 102)
 	// pkg/big1: 35 issues (escalated) — unique linter so it survives dedup
 	issues = append(issues, makeIssues(35, "errcheck", "SA1001: error", "pkg/big1")...)
 	// pkg/big2: 35 issues (escalated) — different unique linter+rule
@@ -476,10 +529,10 @@ func TestBuildStrategyInstructions_FromResult_PerFile(t *testing.T) {
 
 	assert.Contains(t, out, "<strategy_instructions>")
 	assert.Contains(t, out, "</strategy_instructions>")
-	assert.Contains(t, out, "main.go — call")
-	assert.Contains(t, out, "pkg/auth/handler.go — call")
-	assert.Contains(t, out, `golangci_lint_guide(linter="errcheck")`)
-	assert.Contains(t, out, `golangci_lint_guide(linter="govet")`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in main.go",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/auth/handler.go",`)
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"errcheck\"}])`)
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"govet\"}])`)
 }
 
 func TestBuildStrategyInstructions_FromResult_PerPackage_NoEscalation(t *testing.T) {
@@ -503,10 +556,10 @@ func TestBuildStrategyInstructions_FromResult_PerPackage_NoEscalation(t *testing
 
 	assert.Contains(t, out, "<strategy_instructions>")
 	assert.Contains(t, out, "</strategy_instructions>")
-	assert.Contains(t, out, "pkg/auth")
-	assert.Contains(t, out, "pkg/db")
-	assert.Contains(t, out, `golangci_lint_guide(linter="errcheck")`)
-	assert.Contains(t, out, `golangci_lint_guide(linter="govet")`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/auth",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/db",`)
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"errcheck\"}])`)
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"govet\"}])`)
 }
 
 func TestBuildStrategyInstructions_FromResult_PerPackage_WithEscalation(t *testing.T) {
@@ -536,20 +589,18 @@ func TestBuildStrategyInstructions_FromResult_PerPackage_WithEscalation(t *testi
 	assert.Contains(t, out, "<strategy_instructions>")
 	assert.Contains(t, out, "</strategy_instructions>")
 
-	// Escalated package gets [PER-FILE] label and individual files
-	assert.Contains(t, out, "[PER-FILE] pkg/big", "escalated package should have PER-FILE label")
-	assert.Contains(t, out, "a.go", "escalated package should show individual files")
-	assert.Contains(t, out, "b.go", "escalated package should show individual files")
-	assert.Contains(t, out, "c.go", "escalated package should show individual files")
-	assert.Contains(t, out, "escalated", "escalated packages should mention escalation")
+	// Escalated package produces one task() per file
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/big/a.go",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/big/b.go",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/big/c.go",`)
 
-	// Non-escalated packages get [PER-PACKAGE] label
-	assert.Contains(t, out, "[PER-PACKAGE] pkg/small1", "non-escalated package should have PER-PACKAGE label")
-	assert.Contains(t, out, "[PER-PACKAGE] pkg/small2", "non-escalated package should have PER-PACKAGE label")
+	// Non-escalated packages produce one task() per package
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/small1",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/small2",`)
 
-	// Non-escalated packages show package-level guide calls
-	assert.Contains(t, out, `golangci_lint_guide(linter="staticcheck", rule="SA5001")`)
-	assert.Contains(t, out, `golangci_lint_guide(linter="gosec", rule="G101")`)
+	// Guide calls are embedded in task prompts
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"staticcheck\", rule:\"SA5001\"}])`)
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"gosec\", rule:\"G101\"}])`)
 }
 
 func TestSortedKeysContainingPath(t *testing.T) {
@@ -572,4 +623,172 @@ func TestSortedKeysContainingPath_Empty(t *testing.T) {
 	result := sortedKeysContainingPath(fileRefs, "pkg/a")
 
 	assert.Empty(t, result)
+}
+
+// --- Plan 124 Task 1: TDD RED tests for task() block format ---
+
+func TestBuildStrategyInstructions_PerPackage_TaskBlocks(t *testing.T) {
+	issues := []LintIssue{
+		makeIssue("errcheck", "error not checked", "pkg/auth/handler.go"),
+		makeIssue("govet", "argument mismatch", "pkg/db/conn.go"),
+	}
+	packages := []PackageEntry{
+		{Path: "pkg/auth", Count: 1},
+		{Path: "pkg/db", Count: 1},
+	}
+	result := StrategyResult{
+		StrategyName:  "subagent-per-package",
+		Packages:      packages,
+		UniqueIssues:  issues,
+		EscalatedPkgs: map[string]bool{},
+		FileThreshold: IssueCountThreshold,
+	}
+
+	out := buildStrategyInstructions(result)
+
+	// Task block format: task(description="Fix golangci-lint in pkg/auth", prompt="...")
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/auth",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/db",`)
+
+	// Each task prompt contains guide call with correct linter/rule pairs
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"errcheck\"}])`)
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"govet\"}])`)
+
+	// Each task prompt contains verification step
+	assert.Contains(t, out, "golangci_lint_run")
+
+	// No placeholder syntax
+	assert.NotContains(t, out, "{unit}")
+	assert.NotContains(t, out, "{filename}")
+
+	// Output wrapped in strategy_instructions tags
+	assert.Contains(t, out, "<strategy_instructions>")
+	assert.Contains(t, out, "</strategy_instructions>")
+}
+
+func TestBuildStrategyInstructions_PerFile_TaskBlocks(t *testing.T) {
+	issues := []LintIssue{
+		makeIssue("errcheck", "error not checked", "main.go"),
+		makeIssue("govet", "argument mismatch", "pkg/auth/handler.go"),
+	}
+	result := StrategyResult{
+		StrategyName:   "subagent-per-file",
+		TotalRawIssues: 2,
+		UniqueIssues:   issues,
+	}
+
+	out := buildStrategyInstructions(result)
+
+	// One task() per file with concrete filename
+	assert.Contains(t, out, `task(description="Fix golangci-lint in main.go",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/auth/handler.go",`)
+
+	// Each prompt has guide call + verify step
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"errcheck\"}])`)
+	assert.Contains(t, out, `golangci_lint_guide(queries=[{linter:\"govet\"}])`)
+	assert.Contains(t, out, "golangci_lint_run")
+
+	// No placeholders
+	assert.NotContains(t, out, "{unit}")
+	assert.NotContains(t, out, "{filename}")
+}
+
+func TestBuildStrategyInstructions_PerPackage_Escalated_TaskBlocks(t *testing.T) {
+	// 3 packages: pkg/big escalated with 3 files, pkg/small1 and pkg/small2 standard
+	issues := []LintIssue{
+		makeIssue("errcheck", "SA1001: error", "pkg/big/a.go"),
+		makeIssue("errcheck", "SA1001: error", "pkg/big/b.go"),
+		makeIssue("govet", "argument mismatch", "pkg/big/c.go"),
+		makeIssue("staticcheck", "SA5001: error", "pkg/small1/a.go"),
+		makeIssue("gosec", "G101: hardcoded", "pkg/small2/a.go"),
+	}
+	packages := []PackageEntry{
+		{Path: "pkg/big", Count: 3},
+		{Path: "pkg/small1", Count: 1},
+		{Path: "pkg/small2", Count: 1},
+	}
+	result := StrategyResult{
+		StrategyName:  "subagent-per-package",
+		Packages:      packages,
+		UniqueIssues:  issues,
+		EscalatedPkgs: map[string]bool{"pkg/big": true},
+		FileThreshold: IssueCountThreshold,
+	}
+
+	out := buildStrategyInstructions(result)
+
+	// Total: 5 task() blocks (3 per-file in pkg/big + 1 per-package for pkg/small1 + 1 per-package for pkg/small2)
+	assert.Equal(t, 5, strings.Count(out, "task(description="),
+		"expected 5 task blocks: 3 per-file + 2 per-package, got %d", strings.Count(out, "task(description="))
+
+	// Escalated files have individual task blocks with full path
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/big/a.go",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/big/b.go",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/big/c.go",`)
+
+	// Standard packages have one task block each
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/small1",`)
+	assert.Contains(t, out, `task(description="Fix golangci-lint in pkg/small2",`)
+
+	// No [PER-FILE] or [PER-PACKAGE] labels (replaced by task blocks)
+	assert.NotContains(t, out, "[PER-FILE]")
+	assert.NotContains(t, out, "[PER-PACKAGE]")
+
+	// No "Guide call:" prefix (embedded in task prompt)
+	assert.NotContains(t, out, "Guide call:")
+}
+
+func TestBuildStrategyInstructions_SingleAgent_Unchanged(t *testing.T) {
+	result := StrategyResult{StrategyName: "single-agent"}
+
+	out := buildStrategyInstructions(result)
+
+	// Single-agent mode returns empty string
+	assert.Empty(t, out, "single-agent mode should return empty string")
+	assert.Equal(t, 0, strings.Count(out, "task(description="))
+}
+
+func TestBuildStrategyInstructions_NoPlaceholders(t *testing.T) {
+	// Test all strategy modes produce no placeholder syntax
+
+	// Single-agent
+	singleResult := StrategyResult{StrategyName: "single-agent"}
+	assert.Empty(t, buildStrategyInstructions(singleResult))
+
+	// Per-package
+	pkgIssues := []LintIssue{
+		makeIssue("errcheck", "error", "pkg/a/file.go"),
+	}
+	pkgResult := StrategyResult{
+		StrategyName:  "subagent-per-package",
+		Packages:      []PackageEntry{{Path: "pkg/a", Count: 1}},
+		UniqueIssues:  pkgIssues,
+		EscalatedPkgs: map[string]bool{},
+		FileThreshold: IssueCountThreshold,
+	}
+	pkgOut := buildStrategyInstructions(pkgResult)
+	assert.NotContains(t, pkgOut, "{unit}")
+	assert.NotContains(t, pkgOut, "{filename}")
+	assert.NotContains(t, pkgOut, "{path}")
+
+	// Per-file
+	fileResult := StrategyResult{
+		StrategyName:   "subagent-per-file",
+		TotalRawIssues: 1,
+		UniqueIssues:   pkgIssues,
+	}
+	fileOut := buildStrategyInstructions(fileResult)
+	assert.NotContains(t, fileOut, "{unit}")
+	assert.NotContains(t, fileOut, "{filename}")
+	assert.NotContains(t, fileOut, "{path}")
+}
+
+func TestFormatTaskBlock_EscapesInnerQuotes(t *testing.T) {
+	refs := []GuideRef{{Linter: "errcheck"}}
+	prompt := fmt.Sprintf("Fix issues. Call %s", formatBatchCall(refs))
+	block := formatTaskBlock("Fix lint", prompt)
+	// The task block should have properly escaped inner quotes
+	assert.Contains(t, block, `\"errcheck\"`)
+	assert.NotContains(t, block, `golangci_lint_guide(queries=[{linter:"errcheck"}])`,
+		"inner quotes should be escaped, not raw")
 }

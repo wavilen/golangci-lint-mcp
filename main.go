@@ -23,7 +23,8 @@ func main() {
 
 	// Subcommand routing: intercept → RunIntercept, otherwise MCP stdio server.
 	if len(os.Args) > 1 && os.Args[1] == "intercept" {
-		if err := cmd.RunIntercept(guideFS, os.Args[2:], os.Stdout, os.Stderr); err != nil {
+		err := cmd.RunIntercept(guideFS, os.Args[2:], os.Stdout, os.Stderr)
+		if err != nil {
 			os.Exit(1)
 		}
 		return

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -21,16 +20,9 @@ func makeGosecAutofixHandler(
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("missing required parameter 'path': %v", err)), nil
 		}
-		path = strings.TrimSpace(path)
-		if path == "" {
-			return mcp.NewToolResultError("parameter 'path' must not be empty"), nil
-		}
-		if filepath.IsAbs(path) {
-			return mcp.NewToolResultError("parameter 'path' must be a relative path, got absolute path"), nil
-		}
-		cleaned := filepath.Clean(path)
-		if strings.HasPrefix(cleaned, "../") {
-			return mcp.NewToolResultError("parameter 'path' must not traverse above the current directory"), nil
+		cleaned, validateErr := ValidateRunPath(path)
+		if validateErr != nil {
+			return mcp.NewToolResultError(validateErr.Error()), nil
 		}
 
 		args := []string{"-ai-api-provider=" + opts.GosecAIProvider, "-ai-api-key=" + opts.GosecAIKey}
@@ -40,7 +32,7 @@ func makeGosecAutofixHandler(
 		if opts.GosecAISkipSSL {
 			args = append(args, "-ai-skip-ssl")
 		}
-		args = append(args, path)
+		args = append(args, cleaned)
 
 		ctx, cancel := context.WithTimeout(ctx, gosecAutofixTimeout)
 		defer cancel()

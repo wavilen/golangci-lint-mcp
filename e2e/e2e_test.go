@@ -46,6 +46,7 @@ var testCases = []TestCase{
 	{Name: "Medium", FixtureDir: "medium", MinIssues: 30, MaxIssues: 30, SourceFiles: 3},
 	{Name: "Large", FixtureDir: "large", MinIssues: 116, MaxIssues: 116, SourceFiles: 5},
 	{Name: "Multipkg", FixtureDir: "multipkg", MinIssues: 29, MaxIssues: 29, SourceFiles: 1},
+	{Name: "Autofix", FixtureDir: "autofix", MinIssues: 4, MaxIssues: 4, SourceFiles: 1},
 }
 
 var _ = Describe("E2E Integration", func() {
@@ -108,6 +109,7 @@ var _ = Describe("E2E Integration", func() {
 		Entry("Medium fixture", Label("validation", "medium"), testCases[1]),
 		Entry("Large fixture", Label("validation", "large"), testCases[2]),
 		Entry("Multipkg fixture", Label("validation", "multipkg"), testCases[3]),
+		Entry("Autofix fixture", Label("validation", "autofix"), testCases[4]),
 	)
 
 	DescribeTable("Agent fixes lint issues",
@@ -251,6 +253,9 @@ var _ = Describe("E2E Integration", func() {
 		Entry("Multipkg/GLM-5-Turbo", Label("agent", "multipkg", "glm-5-turbo"), testCases[3], models[0], SpecTimeout(30*time.Minute)),
 		Entry("Multipkg/GLM-5.1", Label("agent", "multipkg", "glm-5.1"), testCases[3], models[1], SpecTimeout(30*time.Minute)),
 		Entry("Multipkg/GLM-4.7", Label("agent", "multipkg", "glm-4.7"), testCases[3], models[2], SpecTimeout(30*time.Minute)),
+		Entry("Autofix/GLM-5-Turbo", Label("agent", "autofix", "glm-5-turbo"), testCases[4], models[0], SpecTimeout(30*time.Minute)),
+		Entry("Autofix/GLM-5.1", Label("agent", "autofix", "glm-5.1"), testCases[4], models[1], SpecTimeout(30*time.Minute)),
+		Entry("Autofix/GLM-4.7", Label("agent", "autofix", "glm-4.7"), testCases[4], models[2], SpecTimeout(30*time.Minute)),
 	)
 })
 

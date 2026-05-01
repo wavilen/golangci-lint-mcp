@@ -71,8 +71,18 @@ func setupParseTestServer(t *testing.T, opts ...Options) (*mcptest.Server, conte
 
 	guideTool := mcp.NewTool("golangci_lint_guide",
 		mcp.WithDescription("Get concise guidance for fixing golangci-lint issues"),
-		mcp.WithString("linter", mcp.Required(), mcp.Description("The linter name")),
-		mcp.WithString("rule", mcp.Description("Optional rule ID")),
+		mcp.WithArray("queries",
+			mcp.Required(),
+			mcp.Description("Array of query objects"),
+			mcp.Items(map[string]any{
+				"type": "object",
+				"properties": map[string]any{
+					"linter": map[string]any{"type": "string"},
+					"rule":   map[string]any{"type": "string"},
+				},
+				"required": []string{"linter"},
+			}),
+		),
 	)
 	parseTool := mcp.NewTool("golangci_lint_parse",
 		mcp.WithDescription("Parse golangci-lint JSON and return fix guidance"),
@@ -328,7 +338,7 @@ func TestParseHandler_SummaryBlock_StrategyB(t *testing.T) {
 	assert.NotContains(t, text, "<related_context>")
 	// Should contain strategy_instructions with guide call references
 	assert.Contains(t, text, "<strategy_instructions>")
-	assert.Contains(t, text, `golangci_lint_guide(linter=`)
+	assert.Contains(t, text, `golangci_lint_guide(queries=`)
 }
 
 // Test: Subagent strategy responses skip guidance and related_context blocks.
@@ -358,13 +368,13 @@ func TestParseHandler_SubagentStrategy_NoGuidance(t *testing.T) {
 	assert.NotContains(t, text, "<related_context>", "subagent response should not contain <related_context>")
 
 	// Strategy instructions must contain guide call references
-	assert.Contains(t, text, `golangci_lint_guide(linter=`, "strategy must include guide call references")
+	assert.Contains(t, text, `golangci_lint_guide(queries=`, "strategy must include guide call references")
 }
 
 func TestParseHandler_ExistingGuideToolUnchanged(t *testing.T) {
 	srv, ctx := setupParseTestServer(t)
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "errcheck"})))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "Errcheck detects unchecked errors")

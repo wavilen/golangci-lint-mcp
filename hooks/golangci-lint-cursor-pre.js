@@ -13,7 +13,7 @@ process.stdin.on('end', function () {
     if (!shared.isGolangciLintCommand(command)) process.exit(0);
     // Route through golangci-lint-mcp intercept when binary is available (per D-07)
     if (shared.hasGolangciLintMcp()) {
-      var interceptCmd = shared.buildInterceptCommand(command);
+      const interceptCmd = shared.buildInterceptCommand(command);
       console.log(JSON.stringify({ decision: 'allow', updated_input: { command: interceptCmd } }));
       process.exit(0);
     }

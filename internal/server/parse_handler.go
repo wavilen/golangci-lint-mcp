@@ -2,55 +2,29 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
 
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
+	"github.com/wavilen/golangci-lint-mcp/internal/linttypes"
 
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
-type LintJSONResult struct {
-	Issues []LintIssue `json:"Issues"`
-}
+// Type aliases — single source of truth in internal/linttypes.
+type LintIssue = linttypes.LintIssue
+type LintJSONResult = linttypes.LintJSONResult
 
-type LintIssue struct {
-	FromLinter string `json:"FromLinter"`
-	Text       string `json:"Text"`
-	Pos        struct {
-		Filename string `json:"Filename"`
-		Line     int    `json:"Line"`
-		Column   int    `json:"Column"`
-	} `json:"Pos"`
-}
+// Function redirects — delegate to linttypes implementations.
+// Kept for backward compatibility with existing test code.
 
-type diagnostic struct {
-	linter string
-	rule   string
-}
+// ExtractRule extracts the rule name from a lint issue text.
+func ExtractRule(text string) string { return linttypes.ExtractRule(text) }
 
-func ExtractRule(text string) string {
-	before, _, found := strings.Cut(text, ": ")
-	if !found {
-		return ""
-	}
-	return strings.TrimSpace(before)
-}
-
+// DeduplicateIssues removes duplicate (linter, rule) pairs from the issue slice.
 func DeduplicateIssues(issues []LintIssue) []LintIssue {
-	seen := make(map[diagnostic]bool)
-	var unique []LintIssue
-	for _, issue := range issues {
-		rule := ExtractRule(issue.Text)
-		key := diagnostic{linter: issue.FromLinter, rule: rule}
-		if !seen[key] {
-			seen[key] = true
-			unique = append(unique, issue)
-		}
-	}
-	return unique
+	return linttypes.DeduplicateIssues(issues)
 }
 
 func buildLinterBreakdown(unique []LintIssue) string {
@@ -95,26 +69,15 @@ func makeParseHandler(
 			return mcp.NewToolResultError("parameter 'output' must not be empty"), nil
 		}
 
-		firstLine := output
-		if before, _, found := strings.Cut(output, "\n"); found {
-			firstLine = before
-		}
-		var result LintJSONResult
-		err = json.Unmarshal([]byte(firstLine), &result)
-		if err != nil || len(result.Issues) == 0 {
-			// If there are more lines, try NDJSON fallback
-			ndjsonResult := parseNDJSON(output)
-			if len(ndjsonResult.Issues) > 0 {
-				result = ndjsonResult
-			} else if err != nil {
-				return mcp.NewToolResultError(
-					fmt.Sprintf(
-						"invalid JSON: %v. Try golangci_lint_run(path=\"./pkg/...\") "+
-							"for pre-parsed results, or golangci_lint_guide(linter=\"<name>\") "+
-							"for individual diagnostics.",
-						err,
-					)), nil
-			}
+		result, parseErr := linttypes.ParseLintOutput(output)
+		if parseErr != nil {
+			return mcp.NewToolResultError(
+				fmt.Sprintf(
+					"invalid JSON: %v. Try golangci_lint_run(path=\"./pkg/...\") "+
+						"for pre-parsed results, or golangci_lint_guide(linter=\"<name>\") "+
+						"for individual diagnostics.",
+					parseErr,
+				)), nil
 		}
 
 		if len(result.Issues) == 0 {
@@ -124,25 +87,10 @@ func makeParseHandler(
 		// Unified pipeline: analyze → build response (D-03)
 		strategyResult := AnalyzeStrategy(result.Issues)
 		return mcp.NewToolResultText(
-			BuildResponse(strategyResult, "", store, opts, true, false)), nil
+			BuildResponse(strategyResult, ResponseConfig{
+				Store: store, Opts: opts, IncludeGuidance: true,
+			})), nil
 	}
-}
-
-// parseNDJSON attempts to parse newline-delimited individual lintIssue objects.
-// Non-JSON lines are skipped. Returns collected issues in a lintJSONResult.
-func parseNDJSON(input string) LintJSONResult {
-	var issues []LintIssue
-	for line := range strings.SplitSeq(input, "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-		var issue LintIssue
-		if json.Unmarshal([]byte(line), &issue) == nil && issue.FromLinter != "" {
-			issues = append(issues, issue)
-		}
-	}
-	return LintJSONResult{Issues: issues}
 }
 
 // relatedEntry tracks a candidate related linter with its best fix hint and score.
@@ -162,7 +110,7 @@ func buildRelatedContext(unique []LintIssue, store *guides.Store) string {
 	// Build primary diagnostic set for exclusion
 	primarySet := make(map[string]bool)
 	for _, issue := range unique {
-		rule := ExtractRule(issue.Text)
+		rule := linttypes.ExtractRule(issue.Text)
 		if rule != "" {
 			primarySet[issue.FromLinter+"/"+rule] = true
 		}
@@ -174,7 +122,7 @@ func buildRelatedContext(unique []LintIssue, store *guides.Store) string {
 
 	for _, issue := range unique {
 		linter := issue.FromLinter
-		rule := ExtractRule(issue.Text)
+		rule := linttypes.ExtractRule(issue.Text)
 
 		var guide *guides.Guide
 		if rule != "" {
@@ -296,7 +244,7 @@ func stripGuideHeading(body string) string {
 
 func writeGuideForIssue(builder *strings.Builder, store *guides.Store, opts Options, issue LintIssue) {
 	linter := issue.FromLinter
-	rule := ExtractRule(issue.Text)
+	rule := linttypes.ExtractRule(issue.Text)
 
 	body, ok := resolveGuide(store, linter, rule)
 	if ok {

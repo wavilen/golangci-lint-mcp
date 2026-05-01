@@ -37,17 +37,32 @@ func NewServer(store *guides.Store, opts ...Options) *server.MCPServer {
 
 	tool := mcp.NewTool("golangci_lint_guide",
 		mcp.WithDescription(
-			"Get concise, actionable guidance for fixing golangci-lint issues. "+
+			"Get concise, actionable guidance for fixing multiple golangci-lint diagnostics at once. "+
 				"Call this when you encounter golangci-lint diagnostics such as errcheck, "+
 				"govet, staticcheck SA*, gosec G*, gocritic, or revive warnings. "+
 				"Returns what the issue means, how to fix it, and a code example."),
-		mcp.WithString("linter",
+		mcp.WithArray("queries",
 			mcp.Required(),
-			mcp.Description("The linter name (e.g., errcheck, gocritic, gosec, revive, staticcheck, govet)"),
-		),
-		mcp.WithString("rule",
-			mcp.Description("Optional rule ID for compound linters "+
-				"(e.g., 'badcall' for gocritic, 'G101' for gosec, 'SA1000' for staticcheck)"),
+			mcp.Description(
+				"Array of query objects. Each object has 'linter' (required) and 'rule' (optional for compound linters). "+
+					"Returns consolidated guidance for all queried (linter, rule) pairs. "+
+					"Fuzzy matching suggests similar linter names for typos. "+
+					"Duplicate queries are silently deduplicated.",
+			),
+			mcp.Items(map[string]any{
+				"type": "object",
+				"properties": map[string]any{
+					"linter": map[string]any{
+						"type":        "string",
+						"description": "The linter name (e.g., errcheck, gocritic, gosec, revive, staticcheck, govet)",
+					},
+					"rule": map[string]any{
+						"type":        "string",
+						"description": "Optional rule ID for compound linters (e.g., 'badcall' for gocritic, 'G101' for gosec, 'SA1000' for staticcheck)",
+					},
+				},
+				"required": []string{"linter"},
+			}),
 		),
 	)
 

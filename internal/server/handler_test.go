@@ -50,6 +50,19 @@ func testAIOptions() Options {
 	}
 }
 
+// testBatchArgs builds a queries array argument for the batch guide handler.
+func testBatchArgs(queries ...map[string]string) map[string]any {
+	items := make([]any, 0, len(queries))
+	for _, q := range queries {
+		item := make(map[string]any, len(q))
+		for k, v := range q {
+			item[k] = v
+		}
+		items = append(items, item)
+	}
+	return map[string]any{"queries": items}
+}
+
 func setupTestServer(t *testing.T, opts ...Options) (*mcptest.Server, context.Context) {
 	t.Helper()
 
@@ -94,12 +107,17 @@ func setupTestServer(t *testing.T, opts ...Options) (*mcptest.Server, context.Co
 	// Create MCP tool
 	tool := mcp.NewTool("golangci_lint_guide",
 		mcp.WithDescription("Get concise guidance for fixing golangci-lint issues"),
-		mcp.WithString("linter",
+		mcp.WithArray("queries",
 			mcp.Required(),
-			mcp.Description("The linter name"),
-		),
-		mcp.WithString("rule",
-			mcp.Description("Optional rule ID"),
+			mcp.Description("Array of query objects"),
+			mcp.Items(map[string]any{
+				"type": "object",
+				"properties": map[string]any{
+					"linter": map[string]any{"type": "string"},
+					"rule":   map[string]any{"type": "string"},
+				},
+				"required": []string{"linter"},
+			}),
 		),
 	)
 
@@ -117,11 +135,12 @@ func TestHandler_SimpleLinter(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "errcheck"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"errcheck\">")
 	assert.Contains(t, text, "Errcheck detects unchecked errors")
 }
 
@@ -130,11 +149,12 @@ func TestHandler_CompoundRule(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "badcall"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gocritic", "rule": "badcall"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"gocritic\" rule=\"badcall\">")
 	assert.Contains(t, text, "suspicious function calls")
 }
 
@@ -142,11 +162,13 @@ func TestHandler_CompoundRule(t *testing.T) {
 func TestHandler_UnknownLinter(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errchek"}))
+	result, err := srv.Client().
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "errchek"})))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<error linter=\"errchek\">")
 	assert.Contains(t, text, "Unknown linter")
 	assert.Contains(t, text, "errchek")
 	// Should suggest errcheck as close match via Levenshtein
@@ -160,7 +182,7 @@ func TestHandler_CompoundNoRule(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gocritic"})))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
@@ -172,19 +194,16 @@ func TestHandler_CompoundNoRule(t *testing.T) {
 	assert.Contains(t, text, "commentedoutcode")
 }
 
-// Test 5: Missing linter parameter returns error about missing parameter.
+// Test 5: Empty queries array returns error about non-empty array.
 func TestHandler_MissingLinter(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
-	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{}))
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"queries": []any{}}))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, strings.ToLower(text), "missing")
-	assert.Contains(t, strings.ToLower(text), "linter")
-	// Should suggest golangci_lint_guide and golangci_lint_list tools (D-01, D-04)
-	assert.Contains(t, text, "golangci_lint_guide")
+	assert.Contains(t, text, "non-empty array")
 	assert.Contains(t, text, "golangci_lint_list")
 }
 
@@ -193,7 +212,7 @@ func TestHandler_SimpleWithRule(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck", "rule": "anything"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "errcheck", "rule": "anything"})))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
@@ -207,11 +226,12 @@ func TestHandler_GosecWithoutAIFlag(t *testing.T) {
 	srv, ctx := setupTestServer(t) // default: no options
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gosec", "rule": "G101"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gosec", "rule": "G101"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"gosec\" rule=\"G101\">")
 	assert.Contains(t, text, "hardcoded credentials")
 	assert.NotContains(t, text, "<autofix>")
 	assert.NotContains(t, text, "-ai-api-provider")
@@ -222,11 +242,12 @@ func TestHandler_GosecWithAIFlag(t *testing.T) {
 	srv, ctx := setupTestServer(t, testAIOptions())
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gosec", "rule": "G101"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gosec", "rule": "G101"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"gosec\" rule=\"G101\">")
 	assert.Contains(t, text, "hardcoded credentials")
 	assert.Contains(t, text, "<autofix>")
 	assert.Contains(t, text, "gosec_ai_autofix")
@@ -240,11 +261,12 @@ func TestHandler_NonGosecWithAIFlag(t *testing.T) {
 	srv, ctx := setupTestServer(t, testAIOptions())
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "badcall"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gocritic", "rule": "badcall"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"gocritic\" rule=\"badcall\">")
 	assert.Contains(t, text, "suspicious function calls")
 	assert.NotContains(t, text, "<autofix>")
 }
@@ -254,7 +276,7 @@ func TestHandler_UnknownRuleForCompound(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "nonexistent"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gocritic", "rule": "nonexistent"})))
 	require.NoError(t, err)
 	require.True(t, result.IsError, "expected error result")
 
@@ -268,11 +290,12 @@ func TestHandler_RelatedContext_SimpleLinter(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "errcheck"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"errcheck\">")
 	assert.Contains(t, text, "Errcheck detects unchecked errors")
 	assert.Contains(t, text, "<related_context>")
 	assert.NotContains(t, text, "<related>")
@@ -284,11 +307,12 @@ func TestHandler_RelatedContext_NoRelated(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gocritic", "rule": "badcall"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gocritic", "rule": "badcall"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"gocritic\" rule=\"badcall\">")
 	assert.NotContains(t, text, "<related_context>")
 }
 
@@ -300,11 +324,12 @@ func TestHandler_RelatedContext_OrphanRef(t *testing.T) {
 	// so this should show related context. But we also test that only valid
 	// entries appear.
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "gosec", "rule": "G101"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "gosec", "rule": "G101"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"gosec\" rule=\"G101\">")
 	assert.Contains(t, text, "<related_context>")
 	assert.Contains(t, text, "gosec/G304")
 }
@@ -319,15 +344,116 @@ func TestHandler_RelatedContext_FixHintFromPatterns(t *testing.T) {
 	srv, ctx := setupTestServer(t)
 
 	result, err := srv.Client().
-		CallTool(ctx, testGuideCall("golangci_lint_guide", map[string]any{"linter": "errcheck"}))
+		CallTool(ctx, testGuideCall("golangci_lint_guide", testBatchArgs(map[string]string{"linter": "errcheck"})))
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"errcheck\">")
 	assert.Contains(t, text, "<related_context>")
 	// govet should have a fix hint from its patterns, selected by keyword overlap
 	// with errcheck's instructions ("unchecked errors")
 	assert.Contains(t, text, "govet:")
 	// rowserrcheck should have a fix hint from its patterns
 	assert.Contains(t, text, "rowserrcheck:")
+}
+
+// Test 16: Batch with two valid queries returns both guides in input order.
+func TestHandler_BatchMultipleSuccess(t *testing.T) {
+	srv, ctx := setupTestServer(t)
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+		testBatchArgs(
+			map[string]string{"linter": "errcheck"},
+			map[string]string{"linter": "gocritic", "rule": "badcall"},
+		)))
+	require.NoError(t, err)
+	require.False(t, result.IsError)
+	text := result.Content[0].(mcp.TextContent).Text
+	// Both guides present
+	assert.Contains(t, text, "<guide linter=\"errcheck\">")
+	assert.Contains(t, text, "<guide linter=\"gocritic\" rule=\"badcall\">")
+	// Order: errcheck before gocritic
+	assert.Less(t, strings.Index(text, "errcheck"), strings.Index(text, "gocritic"))
+	assert.Contains(t, text, "Errcheck detects unchecked errors")
+	assert.Contains(t, text, "suspicious function calls")
+}
+
+// Test 17: Batch with mixed success and failure.
+func TestHandler_BatchPartialFailure(t *testing.T) {
+	srv, ctx := setupTestServer(t)
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+		testBatchArgs(
+			map[string]string{"linter": "errcheck"},
+			map[string]string{"linter": "nonexistent"},
+		)))
+	require.NoError(t, err)
+	require.False(t, result.IsError, "partial failure should NOT be MCP error")
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<guide linter=\"errcheck\">")
+	assert.Contains(t, text, "<error linter=\"nonexistent\">")
+	assert.Contains(t, text, "Unknown linter")
+}
+
+// Test 18: Batch where all queries fail returns MCP error.
+func TestHandler_BatchAllFail(t *testing.T) {
+	srv, ctx := setupTestServer(t)
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+		testBatchArgs(
+			map[string]string{"linter": "nonexistent1"},
+			map[string]string{"linter": "nonexistent2"},
+		)))
+	require.NoError(t, err)
+	require.True(t, result.IsError, "all-fail should be MCP error")
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "<error linter=\"nonexistent1\">")
+	assert.Contains(t, text, "<error linter=\"nonexistent2\">")
+}
+
+// Test 19: Duplicate queries are silently deduplicated.
+func TestHandler_BatchDuplicateDedup(t *testing.T) {
+	srv, ctx := setupTestServer(t)
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+		testBatchArgs(
+			map[string]string{"linter": "errcheck"},
+			map[string]string{"linter": "errcheck"},
+		)))
+	require.NoError(t, err)
+	text := result.Content[0].(mcp.TextContent).Text
+	// Should contain exactly one <guide linter="errcheck">
+	count := strings.Count(text, "<guide linter=\"errcheck\">")
+	assert.Equal(t, 1, count, "duplicate queries should be deduplicated to one guide section")
+}
+
+// Test 20: Batch with related context deduplication across queries.
+func TestHandler_BatchRelatedContextDedup(t *testing.T) {
+	srv, ctx := setupTestServer(t)
+	// errcheck and gosec/G101 both reference related linters
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+		testBatchArgs(
+			map[string]string{"linter": "errcheck"},
+			map[string]string{"linter": "gosec", "rule": "G101"},
+		)))
+	require.NoError(t, err)
+	text := result.Content[0].(mcp.TextContent).Text
+	// Should have related_context at the end (batch-level, not per-guide)
+	assert.Contains(t, text, "<related_context>")
+	// Related context should appear once, after all guide sections
+	assert.Less(t, strings.LastIndex(text, "</guide>"), strings.Index(text, "<related_context>"))
+}
+
+// Test 21: Over-max batch returns error suggesting alternatives.
+func TestHandler_BatchOverMax(t *testing.T) {
+	t.Setenv("GOLANGCI_LINT_BATCH_MAX", "2")
+	srv, ctx := setupTestServer(t)
+	queries := make([]map[string]string, 3)
+	for i := range queries {
+		queries[i] = map[string]string{"linter": "errcheck"}
+	}
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_guide",
+		testBatchArgs(queries...)))
+	require.NoError(t, err)
+	require.True(t, result.IsError)
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "exceeds maximum")
+	assert.Contains(t, text, "golangci_lint_parse")
 }

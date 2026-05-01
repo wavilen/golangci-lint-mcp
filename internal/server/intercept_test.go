@@ -96,7 +96,7 @@ func TestIntercept_BuildResponse_PerPackage(t *testing.T) {
 	}
 
 	strategyResult := AnalyzeStrategy(issues)
-	response := BuildResponse(strategyResult, "", store, Options{}, true, true)
+	response := BuildResponse(strategyResult, ResponseConfig{Store: store, IncludeGuidance: true, AutoFixApplied: true})
 
 	assert.Contains(t, response, "<summary>")
 	assert.Contains(t, response, "<guidance>")
@@ -119,7 +119,7 @@ func TestIntercept_BuildResponse_SummaryOnly(t *testing.T) {
 	}
 
 	strategyResult := AnalyzeStrategy(issues)
-	response := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+	response := BuildResponse(strategyResult, ResponseConfig{Path: "./...", AutoFixApplied: true})
 
 	assert.Contains(t, response, "<summary>")
 	assert.Contains(t, response, "Total issues:")
@@ -176,7 +176,7 @@ func TestIntercept_FullFlow_SummaryOnly(t *testing.T) {
 		"expected >%d unique issues, got %d", IssueCountThreshold, len(unique))
 
 	strategyResult := AnalyzeStrategy(issues)
-	response := BuildResponse(strategyResult, "./...", nil, Options{}, true, true)
+	response := BuildResponse(strategyResult, ResponseConfig{Path: "./...", AutoFixApplied: true})
 
 	assert.Contains(t, response, "<summary>")
 	assert.NotContains(t, response, "<guidance>")

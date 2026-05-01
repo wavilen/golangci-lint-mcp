@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/wavilen/golangci-lint-mcp/internal/linttypes"
 )
 
 const (
@@ -54,7 +56,7 @@ func extractGuideRefsByDir(issues []LintIssue) map[string][]GuideRef {
 		}
 		ref := GuideRef{
 			Linter: issue.FromLinter,
-			Rule:   ExtractRule(issue.Text),
+			Rule:   linttypes.ExtractRule(issue.Text),
 		}
 		if seen[dir] == nil {
 			seen[dir] = make(map[GuideRef]bool)
@@ -87,7 +89,7 @@ func extractGuideRefsByFile(issues []LintIssue) map[string][]GuideRef {
 		filename := issue.Pos.Filename
 		ref := GuideRef{
 			Linter: issue.FromLinter,
-			Rule:   ExtractRule(issue.Text),
+			Rule:   linttypes.ExtractRule(issue.Text),
 		}
 		if seen[filename] == nil {
 			seen[filename] = make(map[GuideRef]bool)
@@ -111,12 +113,45 @@ func extractGuideRefsByFile(issues []LintIssue) map[string][]GuideRef {
 	return result
 }
 
-// formatGuideCall formats a GuideRef as a golangci_lint_guide tool call string.
-func formatGuideCall(ref GuideRef) string {
-	if ref.Rule != "" {
-		return fmt.Sprintf(`golangci_lint_guide(linter=%q, rule=%q)`, ref.Linter, ref.Rule)
+// formatBatchCall formats a slice of GuideRefs as a single batch golangci_lint_guide tool call.
+// Returns empty string if refs is empty. Empty rule fields are omitted (D-03).
+// If len(refs) exceeds defaultBatchMax, output is truncated with a remainder note (D-05).
+func formatBatchCall(refs []GuideRef) string {
+	if len(refs) == 0 {
+		return ""
 	}
-	return fmt.Sprintf(`golangci_lint_guide(linter=%q)`, ref.Linter)
+
+	visible := refs
+	remainder := 0
+	if len(refs) > defaultBatchMax {
+		visible = refs[:defaultBatchMax]
+		remainder = len(refs) - defaultBatchMax
+	}
+
+	items := formatBatchQueryItems(visible)
+	result := fmt.Sprintf("golangci_lint_guide(queries=[%s])", items)
+
+	if remainder > 0 {
+		result += fmt.Sprintf(
+			"\n     Note: %d additional (linter, rule) pairs not shown. Use golangci_lint_parse for full diagnostics.",
+			remainder,
+		)
+	}
+
+	return result
+}
+
+// formatBatchQueryItems builds comma-separated Go-style struct strings for batch queries.
+func formatBatchQueryItems(refs []GuideRef) string {
+	parts := make([]string, 0, len(refs))
+	for _, ref := range refs {
+		if ref.Rule != "" {
+			parts = append(parts, fmt.Sprintf(`{linter:%q, rule:%q}`, ref.Linter, ref.Rule))
+		} else {
+			parts = append(parts, fmt.Sprintf(`{linter:%q}`, ref.Linter))
+		}
+	}
+	return strings.Join(parts, ", ")
 }
 
 // isSubagentStrategy returns true for "subagent-per-package" or "subagent-per-file".
@@ -189,8 +224,10 @@ func RecommendStrategy(totalIssues, totalPackages int) (string, string) {
 // GOLANGCI_LINT_FILE_THRESHOLD env var, defaulting to IssueCountThreshold (30).
 // Invalid values (non-numeric, zero, negative) are silently ignored.
 func fileThresholdFromEnv() int {
-	if val := os.Getenv("GOLANGCI_LINT_FILE_THRESHOLD"); val != "" {
-		if n, err := strconv.Atoi(val); err == nil && n > 0 {
+	val := os.Getenv("GOLANGCI_LINT_FILE_THRESHOLD")
+	if val != "" {
+		n, err := strconv.Atoi(val)
+		if err == nil && n > 0 {
 			return n
 		}
 	}
@@ -203,7 +240,7 @@ func fileThresholdFromEnv() int {
 //
 // Per D-01: uses total raw issue count (len(rawIssues)) for RecommendStrategy, not unique count.
 func AnalyzeStrategy(rawIssues []LintIssue) StrategyResult {
-	unique := DeduplicateIssues(rawIssues)
+	unique := linttypes.DeduplicateIssues(rawIssues)
 	packages := ExtractPackagesFromIssues(unique)
 	totalRaw := len(rawIssues)
 
@@ -252,104 +289,129 @@ func AnalyzeStrategy(rawIssues []LintIssue) StrategyResult {
 func buildStrategyInstructions(result StrategyResult) string {
 	switch result.StrategyName {
 	case strategySubagentPerPackage:
-		var pkgList strings.Builder
-		dirRefs := extractGuideRefsByDir(result.UniqueIssues)
-		fileRefs := extractGuideRefsByFile(result.UniqueIssues)
-
-		for _, pkg := range result.Packages {
-			if pkg.Count == 0 {
-				continue
-			}
-
-			if result.EscalatedPkgs[pkg.Path] {
-				// D-07: Escalated package — list individual files
-				fmt.Fprintf(&pkgList, "\n   [PER-FILE] %s (%d issues, escalated — exceeds %d threshold)",
-					pkg.Path, result.RawCounts[pkg.Path], result.FileThreshold)
-				// List files within this package
-				filenames := sortedKeysContainingPath(fileRefs, pkg.Path)
-				for _, filename := range filenames {
-					refs := fileRefs[filename]
-					calls := make([]string, 0, len(refs))
-					for _, ref := range refs {
-						calls = append(calls, formatGuideCall(ref))
-					}
-					fmt.Fprintf(&pkgList, "\n     - %s — call %s, verify with golangci_lint_run after fixing.",
-						filepath.Base(filename), strings.Join(calls, ", "))
-				}
-			} else {
-				// Standard per-package entry
-				fmt.Fprintf(&pkgList, "\n   [PER-PACKAGE] %s (%d issues)", pkg.Path, pkg.Count)
-				if refs, ok := dirRefs[pkg.Path]; ok && len(refs) > 0 {
-					calls := make([]string, 0, len(refs))
-					for _, ref := range refs {
-						calls = append(calls, formatGuideCall(ref))
-					}
-					fmt.Fprintf(&pkgList, "\n     Guide calls: %s", strings.Join(calls, ", "))
-				}
-			}
-		}
-
-		promptTmpl := "Use golangci_lint_run to find and fix all lint issues in " +
-			pkgList.String() + ". Verify with golangci_lint_run after fixing."
-
-		return "\n\n<strategy_instructions>\n" +
-			"IMPORTANT: You MUST use subagents. " +
-			"Do NOT attempt to fix all issues yourself in a single pass.\n" +
-			"Single-agent mode will exceed context limits at this scale.\n\n" +
-			"REQUIRED steps:\n" +
-			"1. For EACH unit listed below, spawn a separate subagent:\n" +
-			"   task(description=\"Fix golangci-lint in {unit}\", " +
-			"prompt=\"" + promptTmpl + "\")\n" +
-			"   - [PER-PACKAGE] units: one subagent per package, fix all issues in that package\n" +
-			"   - [PER-FILE] units: one subagent per file listed under the package\n" +
-			"2. After ALL subagents complete, run " +
-			"golangci_lint_run(path=\"./...\") to verify zero issues.\n\n" +
-			"Units requiring subagents:" + pkgList.String() + "\n" +
-			"</strategy_instructions>"
-
+		return buildSubagentPerPackageInstructions(result)
 	case strategySubagentPerFile:
-		header := fmt.Sprintf(
-			"IMPORTANT: You MUST use subagents. "+
-				"Do NOT attempt to fix all %d issues yourself in a single pass.\n",
-			result.TotalRawIssues)
-
-		fileRefs := extractGuideRefsByFile(result.UniqueIssues)
-		var fileList strings.Builder
-		if len(fileRefs) > 0 {
-			filenames := make([]string, 0, len(fileRefs))
-			for filename := range fileRefs {
-				filenames = append(filenames, filename)
-			}
-			sort.Strings(filenames)
-
-			for _, filename := range filenames {
-				refs := fileRefs[filename]
-				calls := make([]string, 0, len(refs))
-				for _, ref := range refs {
-					calls = append(calls, formatGuideCall(ref))
-				}
-				fmt.Fprintf(&fileList, "\n   %s — call %s before fixing, then verify with golangci_lint_run.",
-					filename, strings.Join(calls, ", "))
-			}
-		}
-
-		return "\n\n<strategy_instructions>\n" +
-			header +
-			"Single-agent mode will exceed context limits at this scale.\n\n" +
-			"REQUIRED steps:\n" +
-			"1. Use glob(\"**/*.go\") to identify all Go files.\n" +
-			"2. For EACH file listed below, spawn a separate subagent with ONLY that file's guide calls:\n" +
-			"   task(description=\"Fix golangci-lint in {filename}\", " +
-			"prompt=\"Fix lint issues. REQUIRED: {that file's guide calls from list below}. " +
-			"Verify with golangci_lint_run after fixing.\")\n" +
-			"3. After ALL subagents complete, run " +
-			"golangci_lint_run(path=\"./...\") to verify zero issues.\n" +
-			fileList.String() + "\n" +
-			"</strategy_instructions>"
-
+		return buildSubagentPerFileInstructions(result)
 	default:
 		return ""
 	}
+}
+
+// formatTaskBlock produces a concrete task(description=..., prompt=...) block.
+// Uses %q for description (simple text) and "%s" for prompt (preserves guide call formatting).
+// Inner double quotes in prompt are escaped so the prompt="..." wrapper remains parseable.
+func formatTaskBlock(description, prompt string) string {
+	escaped := strings.ReplaceAll(prompt, `"`, `\"`)
+	return fmt.Sprintf(`task(description=%q, prompt="%s")`, description, escaped)
+}
+
+// buildSubagentPerPackageInstructions generates concrete task() blocks for the
+// subagent-per-package strategy, including per-package escalation to per-file
+// for high-issue packages (D-05, D-06, D-07).
+func buildSubagentPerPackageInstructions(result StrategyResult) string {
+	var taskList strings.Builder
+	dirRefs := extractGuideRefsByDir(result.UniqueIssues)
+	fileRefs := extractGuideRefsByFile(result.UniqueIssues)
+
+	for _, pkg := range result.Packages {
+		if pkg.Count == 0 {
+			continue
+		}
+
+		if result.EscalatedPkgs[pkg.Path] {
+			buildEscalatedPackageEntry(result, pkg, fileRefs, &taskList)
+		} else {
+			buildStandardPackageEntry(result, pkg, dirRefs, &taskList)
+		}
+	}
+
+	return "\n\n<strategy_instructions>\n" +
+		"IMPORTANT: You MUST use subagents. " +
+		"Do NOT attempt to fix all issues yourself in a single pass.\n" +
+		"Each task() block below is ready to use — " +
+		"spawn each as a separate subagent.\n\n" +
+		taskList.String() + "\n\n" +
+		"After ALL subagents complete, run " +
+		"golangci_lint_run(path=\"./...\") to verify zero issues.\n" +
+		"</strategy_instructions>"
+}
+
+// buildEscalatedPackageEntry produces one task() block per file in an escalated package (D-06).
+// Escalated packages exceed the file threshold and get per-file task blocks.
+func buildEscalatedPackageEntry(
+	result StrategyResult,
+	pkg PackageEntry,
+	fileRefs map[string][]GuideRef,
+	pkgList *strings.Builder,
+) {
+	filenames := sortedKeysContainingPath(fileRefs, pkg.Path)
+	for _, filename := range filenames {
+		refs := fileRefs[filename]
+		desc := fmt.Sprintf("Fix golangci-lint in %s", filename)
+		prompt := fmt.Sprintf("Fix all golangci-lint issues in %s. "+
+			"REQUIRED: call %s to understand how to fix each issue type. "+
+			"Verify with golangci_lint_run after fixing.",
+			filename, formatBatchCall(refs))
+		fmt.Fprintf(pkgList, "\n%s", formatTaskBlock(desc, prompt))
+	}
+}
+
+// buildStandardPackageEntry produces one task() block per package (D-07).
+func buildStandardPackageEntry(
+	_ StrategyResult,
+	pkg PackageEntry,
+	dirRefs map[string][]GuideRef,
+	pkgList *strings.Builder,
+) {
+	desc := fmt.Sprintf("Fix golangci-lint in %s", pkg.Path)
+	promptCore := ""
+	if refs, ok := dirRefs[pkg.Path]; ok && len(refs) > 0 {
+		promptCore = fmt.Sprintf(
+			" REQUIRED: call %s to understand how to fix each issue type.",
+			formatBatchCall(refs))
+	}
+	prompt := fmt.Sprintf("Fix all golangci-lint issues in %s files.%s "+
+		"Verify with golangci_lint_run after fixing.",
+		pkg.Path, promptCore)
+	fmt.Fprintf(pkgList, "\n%s", formatTaskBlock(desc, prompt))
+}
+
+// buildSubagentPerFileInstructions generates concrete task() blocks for the
+// subagent-per-file strategy, one per file.
+func buildSubagentPerFileInstructions(result StrategyResult) string {
+	header := fmt.Sprintf(
+		"IMPORTANT: You MUST use subagents. "+
+			"Do NOT attempt to fix all %d issues yourself in a single pass.\n",
+		result.TotalRawIssues)
+
+	fileRefs := extractGuideRefsByFile(result.UniqueIssues)
+	var taskList strings.Builder
+	if len(fileRefs) > 0 {
+		filenames := make([]string, 0, len(fileRefs))
+		for filename := range fileRefs {
+			filenames = append(filenames, filename)
+		}
+		sort.Strings(filenames)
+
+		for _, filename := range filenames {
+			refs := fileRefs[filename]
+			desc := fmt.Sprintf("Fix golangci-lint in %s", filename)
+			prompt := fmt.Sprintf("Fix all golangci-lint issues in %s. "+
+				"REQUIRED: call %s to understand how to fix each issue type. "+
+				"Verify with golangci_lint_run after fixing.",
+				filename, formatBatchCall(refs))
+			fmt.Fprintf(&taskList, "\n%s", formatTaskBlock(desc, prompt))
+		}
+	}
+
+	return "\n\n<strategy_instructions>\n" +
+		header +
+		"Each task() block below is ready to use — " +
+		"spawn each as a separate subagent.\n\n" +
+		taskList.String() + "\n\n" +
+		"After ALL subagents complete, run " +
+		"golangci_lint_run(path=\"./...\") to verify zero issues.\n" +
+		"</strategy_instructions>"
 }
 
 // sortedKeysContainingPath returns sorted filenames from fileRefs where

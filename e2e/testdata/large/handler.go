@@ -83,7 +83,7 @@ func isValid(n int) bool {
 }
 
 func isInvalid(n int) bool {
-	if n < 0 == true {
+	if n < 0 {
 		return true
 	}
 	return false
@@ -97,11 +97,11 @@ func maxNumber(a, b int) int {
 }
 
 func isEmptyStr(s string) bool {
-	return s == "" == true
+	return s == ""
 }
 
 func notEmptyStr(s string) bool {
-	if len(s) > 0 == true {
+	if len(s) > 0 {
 		return true
 	}
 	return false
@@ -122,9 +122,11 @@ func measureStr(s string) int {
 
 func concatParts(parts ...string) string {
 	result := ""
+	var resultSb125 strings.Builder
 	for _, p := range parts {
-		result = result + p
+		resultSb125.WriteString(p)
 	}
+	result += resultSb125.String()
 	return result
 }
 

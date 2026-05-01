@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
+	"github.com/wavilen/golangci-lint-mcp/internal/linttypes"
 
 	"github.com/mark3labs/mcp-go/mcp"
 )
@@ -39,6 +41,25 @@ func ValidateRunPath(path string) (string, error) {
 	return cleaned, nil
 }
 
+// isExternalModule detects whether the lint target is a subdirectory with its
+// own go.mod (an external Go module separate from the project root).
+// Per D-02: activates ONLY for external modules; root-level runs are unaffected.
+func isExternalModule(path string) bool {
+	dir := path
+	// Strip trailing /... (recursive package pattern)
+	if before, ok := strings.CutSuffix(dir, "/..."); ok {
+		dir = before
+	}
+	// Normalize trailing slashes
+	dir = strings.TrimRight(dir, "/")
+	// Root directory or empty path is never an external module
+	if dir == "" || dir == "." {
+		return false
+	}
+	info, err := os.Stat(filepath.Join(dir, "go.mod"))
+	return err == nil && !info.IsDir()
+}
+
 // ParsePartialOutput attempts to extract lint issues from partial stdout
 // collected before a timeout. Tries full JSON parse first, then NDJSON fallback.
 func ParsePartialOutput(stdout string) []LintIssue {
@@ -48,7 +69,7 @@ func ParsePartialOutput(stdout string) []LintIssue {
 		return result.Issues
 	}
 	// Try NDJSON fallback
-	ndjsonResult := parseNDJSON(stdout)
+	ndjsonResult := linttypes.ParseNDJSON(stdout)
 	return ndjsonResult.Issues
 }
 
@@ -71,7 +92,7 @@ type LintRunResult struct {
 	HadIssues bool           // HadIssues is true if golangci-lint exited non-zero (issues found).
 	NotPath   bool           // NotPath is true if golangci-lint binary not found in PATH.
 	TimedOut  bool           // TimedOut is true if context deadline exceeded.
-	JsonErr   error          // JsonErr is non-nil if JSON parsing of stdout failed.
+	JSONErr   error          // JSONErr is non-nil if JSON parsing of stdout failed.
 	Parsed    LintJSONResult // Parsed holds the decoded issues from golangci-lint JSON output.
 }
 
@@ -82,14 +103,28 @@ func ExecuteLint(ctx context.Context, cleaned string, timeout time.Duration) Lin
 		return LintRunResult{
 			Stdout: "", Stderr: "", HadIssues: false,
 			TimedOut: false,
-			JsonErr:  nil, Parsed: LintJSONResult{Issues: []LintIssue{}}, NotPath: true,
+			JSONErr:  nil, Parsed: LintJSONResult{Issues: []LintIssue{}}, NotPath: true,
 		}
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	cmd := exec.CommandContext(ctx, binaryPath, "run", "--fix", "--output.json.path", "stdout", cleaned)
+	// D-01: Detect external module (subdirectory with own go.mod) and chdir to it.
+	// Per D-02: Only activates for external modules, not normal relative paths.
+	lintPath := cleaned
+	var cmdDir string
+	if isExternalModule(cleaned) {
+		// Resolve directory: strip /... and trailing /
+		targetDir := strings.TrimRight(strings.TrimSuffix(cleaned, "/..."), "/")
+		cmdDir = targetDir
+		lintPath = "./..."
+	}
+
+	cmd := exec.CommandContext(ctx, binaryPath, "run", "--fix", "--output.json.path", "stdout", lintPath)
+	if cmdDir != "" {
+		cmd.Dir = cmdDir
+	}
 	var outBuf strings.Builder
 	var stderrBuf strings.Builder
 	cmd.Stdout = &outBuf
@@ -115,7 +150,7 @@ func ExecuteLint(ctx context.Context, cleaned string, timeout time.Duration) Lin
 		Stderr:    stderr,
 		HadIssues: hadIssues,
 		TimedOut:  timedOut,
-		JsonErr:   jsonErr,
+		JSONErr:   jsonErr,
 		Parsed:    parsed,
 		NotPath:   false,
 	}
@@ -227,34 +262,32 @@ func extractFirstStackLine(stderr string) string {
 	return ""
 }
 
+// ResponseConfig holds all parameters for BuildResponse besides the strategy result.
+// Reduces BuildResponse parameter count from 6 to 2.
+type ResponseConfig struct {
+	Path            string
+	Store           *guides.Store
+	Opts            Options
+	IncludeGuidance bool
+	AutoFixApplied  bool
+}
+
 // BuildResponse is the unified response builder that handles all strategy routing.
 // Per D-08: replaces BuildFullProjectResponse and BuildPerPackageResponse.
 // Per D-09: produces the appropriate response based on StrategyResult:
 //   - SummaryOnly (high-volume): summary + strategy instructions, no guidance
 //   - Subagent strategy: summary + strategy instructions, no guidance
 //   - Single-agent: summary + guidance + related context
-//
-// Parameters:
-//   - result: StrategyResult from AnalyzeStrategy
-//   - path: lint target path ("./...", "./pkg/auth/...", etc.) — included in summary for run/intercept, "" for parse/summarize
-//   - store: guides store for guidance generation — nil for summarize handler
-//   - opts: server options (GosecAI, etc.) — zero value for intercept
-//   - includeGuidance: false for summarize (never shows guidance), true for all others
-//   - autoFixApplied: true when golangci-lint was run with --fix (run/intercept), false for parse/summarize
 func BuildResponse(
 	result StrategyResult,
-	path string,
-	store *guides.Store,
-	opts Options,
-	includeGuidance bool,
-	autoFixApplied bool,
+	cfg ResponseConfig,
 ) string {
 	var builder strings.Builder
 
 	// Summary section
 	fmt.Fprintf(&builder, "<summary>\n\n")
-	if path != "" {
-		fmt.Fprintf(&builder, "golangci-lint results for %s\n\n", path)
+	if cfg.Path != "" {
+		fmt.Fprintf(&builder, "golangci-lint results for %s\n\n", cfg.Path)
 	}
 	fmt.Fprintf(&builder, "- Total issues: %d\n", result.TotalRawIssues)
 	fmt.Fprintf(&builder, "- Unique diagnostics: %d\n", len(result.UniqueIssues))
@@ -262,7 +295,7 @@ func BuildResponse(
 	fmt.Fprintf(&builder, "- Strategy: %s (%s)\n", result.StrategyName, result.StrategyReason)
 
 	// Auto-fix status (per D-05, D-06, D-07) — only for run/intercept where --fix was used
-	if autoFixApplied {
+	if cfg.AutoFixApplied {
 		if len(result.UniqueIssues) == 0 {
 			fmt.Fprintf(&builder, "\nAuto-fix applied. No issues remain.\n")
 		} else {
@@ -278,7 +311,7 @@ func BuildResponse(
 	fmt.Fprintf(&builder, "\n%s\n", buildLinterBreakdown(result.UniqueIssues))
 
 	// Summary-only suggestion for full-project scans
-	if result.SummaryOnly && path != "" {
+	if result.SummaryOnly && cfg.Path != "" {
 		builder.WriteString(
 			"\nCall golangci_lint_run with a specific package path " +
 				"(e.g., \"./pkg/auth/...\") for detailed fix guidance.\n")
@@ -287,7 +320,7 @@ func BuildResponse(
 	fmt.Fprintf(&builder, "\n</summary>")
 
 	// Route by strategy
-	if result.SummaryOnly || !includeGuidance || isSubagentStrategy(result.StrategyName) {
+	if result.SummaryOnly || !cfg.IncludeGuidance || isSubagentStrategy(result.StrategyName) {
 		// Summary-only or subagent: strategy instructions, no guidance
 		builder.WriteString(buildStrategyInstructions(result))
 		return builder.String()
@@ -296,18 +329,18 @@ func BuildResponse(
 	// Single-agent with guidance
 	fmt.Fprintf(&builder, "\n\n<guidance>\n\n")
 
-	if store != nil {
+	if cfg.Store != nil {
 		for idx, issue := range result.UniqueIssues {
 			if idx > 0 {
 				builder.WriteString("\n---\n\n")
 			}
-			writeGuideForIssue(&builder, store, opts, issue)
+			writeGuideForIssue(&builder, cfg.Store, cfg.Opts, issue)
 		}
 	}
 
 	builder.WriteString("\n</guidance>")
 
-	relatedSection := buildRelatedContext(result.UniqueIssues, store)
+	relatedSection := buildRelatedContext(result.UniqueIssues, cfg.Store)
 	if relatedSection != "" {
 		builder.WriteString("\n\n" + relatedSection)
 	}
@@ -357,7 +390,7 @@ func makeRunHandler(
 		}
 
 		// JSON parse error with non-zero exit: return raw output
-		jsonFailed := result.JsonErr != nil
+		jsonFailed := result.JSONErr != nil
 		if jsonFailed && result.HadIssues {
 			return mcp.NewToolResultError(
 				"golangci-lint exited with error and output was not valid JSON.\n" +
@@ -369,7 +402,7 @@ func makeRunHandler(
 		if jsonFailed {
 			return mcp.NewToolResultError(
 				fmt.Sprintf("failed to parse golangci-lint JSON output: %v",
-					result.JsonErr)), nil
+					result.JSONErr)), nil
 		}
 
 		// No issues found
@@ -380,6 +413,9 @@ func makeRunHandler(
 		// Unified pipeline: analyze → build response (D-03)
 		strategyResult := AnalyzeStrategy(result.Parsed.Issues)
 		return mcp.NewToolResultText(
-			BuildResponse(strategyResult, path, store, opts, true, true)), nil
+			BuildResponse(strategyResult, ResponseConfig{
+				Path: path, Store: store, Opts: opts,
+				IncludeGuidance: true, AutoFixApplied: true,
+			})), nil
 	}
 }

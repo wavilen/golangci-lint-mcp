@@ -8,8 +8,11 @@ When AI coding agents encounter golangci-lint diagnostics, they don't just fail 
 
 ## Quick Start
 
-1. **Install:** `go install github.com/wavilen/golangci-lint-mcp@latest`
-2. **Configure** — add to your project's `opencode.json`:
+**For opencode users (recommended):**
+
+1. **Install the skill:** `npx @wavilen/golangci-lint-guide` — installs the opencode skill, hooks, plugin, and shared modules
+2. **Install the MCP binary:** `go install github.com/wavilen/golangci-lint-mcp@latest`
+3. **Configure** — add to your project's `opencode.json`:
 
 ```json
 {
@@ -23,15 +26,49 @@ When AI coding agents encounter golangci-lint diagnostics, they don't just fail 
 }
 ```
 
-3. **Run:** Call `golangci_lint_run(path="./...")` — get fix guidance in one response.
+4. **Run:** Call `golangci_lint_run(path="./...")` — get fix guidance in one response.
 
-For other clients (Claude Desktop, Cursor) see [Configuration](docs/configuration.md). For build-from-source see [Installation](docs/installation.md).
+**For other MCP clients (Claude Desktop, Cursor):**
 
-## Features
+1. **Install:** `go install github.com/wavilen/golangci-lint-mcp@latest`
+2. **Configure** — see [Configuration](docs/configuration.md) for client-specific setup.
+
+## Install
+
+### npm package — opencode skill integration
+
+```bash
+npx @wavilen/golangci-lint-guide
+```
+
+This installs the opencode skill, commands, hooks, rules, shared modules, and plugin. When an agent activates the skill, it follows a structured workflow:
+
+1. Call `golangci_lint_run` with a package path to run golangci-lint and get fix guidance in one step
+2. Apply fixes per package, using the provided instructions, patterns, and examples
+3. Fix related issues highlighted in Related Context — they're in the same package
+4. Verify by calling `golangci_lint_run` again — expect "No issues found"
+5. For >30 issues: use subagent-per-package strategy (each package gets its own full-context agent)
+
+Or from source: `make install-skill`. For advanced options see [Installation](docs/installation.md).
+
+### Go binary — MCP server
+
+```bash
+go install github.com/wavilen/golangci-lint-mcp@latest
+```
+
+For build-from-source instructions see [Installation](docs/installation.md).
+
+### Configuration
+
+- **opencode:** See the Quick Start config snippet above
+- **Claude Desktop, Cursor:** See [Configuration](docs/configuration.md)
+
+## MCP Tools
 
 - **`golangci_lint_run`** — Run golangci-lint and get fix guidance in one call. Primary entry point.
 - **`golangci_lint_parse`** — Parse existing golangci-lint JSON output into fix guidance.
-- **`golangci_lint_guide`** — Per-diagnostic lookup by linter and optional rule ID.
+- **`golangci_lint_guide`** — Per-diagnostic lookup by linter and optional rule ID. Accepts an array of `{linter, rule}` queries for batch mode — get guidance for multiple diagnostics in a single call.
 - **`golangci_lint_list`** — Discover all supported linters with classification and rule counts.
 - **`golangci_lint_summarize`** — Strategy summary of raw JSON output.
 
@@ -39,7 +76,7 @@ For other clients (Claude Desktop, Cursor) see [Configuration](docs/configuratio
 
 Uses **stdio transport** — compatible with opencode, Claude Desktop, and Cursor.
 
-## gosec AI Autofix (optional)
+### gosec AI Autofix (optional)
 
 The `gosec_ai_autofix` tool runs gosec with AI-powered autofix. Enable it with the `--gosec-ai` flag and set environment variables:
 
@@ -69,8 +106,6 @@ The `gosec_ai_autofix` tool runs gosec with AI-powered autofix. Enable it with t
 
 The API key is passed directly to the gosec subprocess — never exposed in tool responses. For Claude Desktop/Cursor config examples, see [Configuration](docs/configuration.md).
 
-## Usage Examples
-
 ### Run and get guidance
 
 Call `golangci_lint_run(path="./pkg/auth/...")` → runs golangci-lint on the package, returns per-package fix guidance with instructions, examples, patterns, and Related Context for related issues.
@@ -95,23 +130,29 @@ Query `golangci_lint_guide(linter="errcheck")` → get guidance on handling unch
 
 Query `errchek` → server suggests "Did you mean \"errcheck\"?" using fuzzy matching.
 
-## OpenCode Skill
+## CLI
 
-The `/golangci-lint-guide` skill teaches agents the `golangci_lint_run`-first workflow. Install it with:
+The `intercept` subcommand runs golangci-lint directly from the terminal — no MCP client needed.
 
 ```bash
-npx @wavilen/golangci-lint-guide
+golangci-lint-mcp intercept <path>
 ```
 
-Or from source: `make install-skill`
+**Examples:**
 
-When an agent activates the skill, it follows the structured workflow:
+```bash
+# Single package
+golangci-lint-mcp intercept ./pkg/auth/...
 
-1. Call `golangci_lint_run` with a package path to run golangci-lint and get fix guidance in one step
-2. Apply fixes per package, using the provided instructions, patterns, and examples
-3. Fix related issues highlighted in Related Context — they're in the same package
-4. Verify by calling `golangci_lint_run` again — expect "No issues found"
-5. For >30 issues: use subagent-per-package strategy (each package gets its own full-context agent)
+# Full project
+golangci-lint-mcp intercept ./...
+```
+
+Runs golangci-lint, enriches diagnostics with embedded guide content, and outputs structured fix guidance to stdout. Uses the same unified pipeline as MCP tools.
+
+If golangci-lint is configured with `--fix`, issues resolved automatically are reported as: `Auto-fix applied. No issues remain.`
+
+Reports binary-not-found, timeout, panic, and JSON parse errors to stderr.
 
 ## Architecture
 
@@ -128,6 +169,8 @@ When an agent activates the skill, it follows the structured workflow:
 **Compound linters:** Subdirectories under `guides/` contain per-rule markdown files (e.g., `guides/gocritic/appendAssign.md`, `guides/gosec/G101.md`, `guides/staticcheck/SA1000.md`).
 
 ## Linter Relationship Graph
+
+Linters are interconnected — fixing an errcheck issue often exposes related staticcheck findings, and security diagnostics cluster in predictable patterns. The relationship graph helps agents prioritize fixes by revealing these cascading dependencies, understand which diagnostics commonly co-occur, and discover related issues that share root causes.
 
 Graphify analyzed relationships across all 629 guide files, discovering 10 labeled communities and 2232 edges connecting related diagnostics. The communities map to Error Handling, Security, Complexity, Testing, Style, Concurrency, Performance, and Static Analysis clusters.
 

@@ -39,7 +39,7 @@ func combineData(a, b string) string {
 }
 
 func checkStatus(active bool) bool {
-	if active == true {
+	if active {
 		return true
 	}
 	return false
@@ -47,7 +47,7 @@ func checkStatus(active bool) bool {
 
 func logValue(msg string) {
 	flag := true
-	if flag == true {
+	if flag {
 		fmt.Println(msg)
 	}
 }

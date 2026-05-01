@@ -183,7 +183,7 @@ func TestIntercept_JSONParseError(t *testing.T) {
 
 	lintRunFunc = func(_ context.Context, _ string, _ time.Duration) server.LintRunResult {
 		return server.LintRunResult{
-			JsonErr:   errors.New("invalid character"),
+			JSONErr:   errors.New("invalid character"),
 			HadIssues: false,
 			Stdout:    "not json",
 		}
@@ -245,6 +245,61 @@ func TestIntercept_StderrNoiseFiltered(t *testing.T) {
 	assert.NotContains(t, stderr.String(), "runner/exclusion_paths")
 	assert.NotContains(t, stderr.String(), "runner/exclusion_rules")
 	assert.Contains(t, stdout.String(), "Auto-fix applied")
+}
+
+func TestIntercept_RawMode_OutputsRawJSON(t *testing.T) {
+	original := lintRunFunc
+	defer func() { lintRunFunc = original }()
+
+	rawJSON := `{"Issues":[{"FromLinter":"errcheck","Text":"unchecked error","Pos":{"Filename":"main.go","Line":10}}]}`
+	lintRunFunc = func(_ context.Context, _ string, _ time.Duration) server.LintRunResult {
+		return server.LintRunResult{
+			Stdout: rawJSON,
+			Parsed: server.LintJSONResult{Issues: []server.LintIssue{
+				{FromLinter: "errcheck", Text: "unchecked error"},
+			}},
+		}
+	}
+
+	var stdout, stderr bytes.Buffer
+	err := RunIntercept(testInterceptFS(), []string{"--raw", "./..."}, &stdout, &stderr)
+	require.NoError(t, err)
+	assert.Equal(t, rawJSON, stdout.String())
+	assert.NotContains(t, stdout.String(), "<summary>")
+	assert.NotContains(t, stdout.String(), "<guidance>")
+}
+
+func TestIntercept_RawMode_BinaryNotFound(t *testing.T) {
+	original := lintRunFunc
+	defer func() { lintRunFunc = original }()
+
+	lintRunFunc = func(_ context.Context, _ string, _ time.Duration) server.LintRunResult {
+		return server.LintRunResult{NotPath: true}
+	}
+
+	var stdout, stderr bytes.Buffer
+	err := RunIntercept(testInterceptFS(), []string{"--raw", "./..."}, &stdout, &stderr)
+	require.Error(t, err)
+	assert.Contains(t, stderr.String(), "binary not found")
+	assert.Empty(t, stdout.String())
+}
+
+func TestIntercept_RawFlag_AfterPath(t *testing.T) {
+	original := lintRunFunc
+	defer func() { lintRunFunc = original }()
+
+	rawJSON := `{"Issues":[]}`
+	lintRunFunc = func(_ context.Context, _ string, _ time.Duration) server.LintRunResult {
+		return server.LintRunResult{
+			Stdout: rawJSON,
+			Parsed: server.LintJSONResult{Issues: []server.LintIssue{}},
+		}
+	}
+
+	var stdout, stderr bytes.Buffer
+	err := RunIntercept(testInterceptFS(), []string{"./...", "--raw"}, &stdout, &stderr)
+	require.NoError(t, err)
+	assert.Equal(t, rawJSON, stdout.String())
 }
 
 func TestIntercept_StderrPassthrough(t *testing.T) {

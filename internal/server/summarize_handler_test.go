@@ -120,7 +120,7 @@ func TestSummarizeHandler_StrategySubagent(t *testing.T) {
 	assert.Contains(t, text, "Strategy: subagent-per-package")
 	// Strategy instructions should contain guide call references
 	assert.Contains(t, text, "<strategy_instructions>")
-	assert.Contains(t, text, `golangci_lint_guide(linter=`, "subagent strategy should include guide call references")
+	assert.Contains(t, text, `golangci_lint_guide(queries=`, "subagent strategy should include guide call references")
 }
 
 // Test 4: Empty issues array → "No issues found".

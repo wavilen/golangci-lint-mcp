@@ -15,6 +15,8 @@ import (
 	"slices"
 	"sort"
 	"strings"
+
+	"github.com/wavilen/golangci-lint-mcp/internal/linttypes"
 )
 
 type extraction struct {
@@ -39,18 +41,9 @@ type report struct {
 	Violations      []violation `json:"violations"`
 }
 
-type golangciLintIssue struct {
-	Pos struct {
-		Filename string `json:"Filename"`
-		Line     int    `json:"Line"`
-		Column   int    `json:"Column"`
-	} `json:"Pos"`
-	Text       string `json:"Text"`
-	FromLinter string `json:"FromLinter"`
-}
-
-type golangciLintOutput struct {
-	Issues []golangciLintIssue `json:"Issues"`
+// lintOutput wraps linttypes.LintIssue for JSON parsing of golangci-lint output.
+type lintOutput struct {
+	Issues []linttypes.LintIssue `json:"Issues"`
 }
 
 type excludeConfig struct {
@@ -82,8 +75,6 @@ var declarationKeywords = []string{
 }
 
 const linterGovet = "govet"
-
-const minPathParts = 2
 
 func main() {
 	excludeConfigPath := flag.String(
@@ -372,10 +363,10 @@ func runGolangciLint(
 	projectRoot, tmpDir string,
 	extractions []extraction,
 	perGuideExcludes map[string][]string,
-) []golangciLintIssue {
+) []linttypes.LintIssue {
 	configPath := filepath.Join(projectRoot, "golden-config", ".golangci.yml")
 
-	var allIssues []golangciLintIssue
+	var allIssues []linttypes.LintIssue
 
 	for _, ext := range extractions {
 		issues := lintSinglePackage(configPath, tmpDir, ext)
@@ -389,7 +380,7 @@ func runGolangciLint(
 	return filtered
 }
 
-func lintSinglePackage(configPath, tmpDir string, ext extraction) []golangciLintIssue {
+func lintSinglePackage(configPath, tmpDir string, ext extraction) []linttypes.LintIssue {
 	pkgDir := filepath.Join(tmpDir, ext.relativePath)
 	args := []string{
 		"run",
@@ -412,8 +403,8 @@ func lintSinglePackage(configPath, tmpDir string, ext extraction) []golangciLint
 	return output.Issues
 }
 
-func parseLintJSON(out []byte) golangciLintOutput {
-	var output golangciLintOutput
+func parseLintJSON(out []byte) lintOutput {
+	var output lintOutput
 	unmarshalErr := json.Unmarshal(out, &output)
 	if unmarshalErr != nil {
 		for _, line := range bytes.Split(out, []byte("\n")) {
@@ -421,7 +412,7 @@ func parseLintJSON(out []byte) golangciLintOutput {
 			if len(line) == 0 {
 				continue
 			}
-			var obj golangciLintOutput
+			var obj lintOutput
 			lineErr := json.Unmarshal(line, &obj)
 			if lineErr == nil && len(obj.Issues) > 0 {
 				output.Issues = append(output.Issues, obj.Issues...)
@@ -431,9 +422,9 @@ func parseLintJSON(out []byte) golangciLintOutput {
 	return output
 }
 
-func filterIssues(allIssues []golangciLintIssue, perGuideExcludes map[string][]string) []golangciLintIssue {
+func filterIssues(allIssues []linttypes.LintIssue, perGuideExcludes map[string][]string) []linttypes.LintIssue {
 	excludedLinters := getExcludedLinters()
-	var filtered []golangciLintIssue
+	var filtered []linttypes.LintIssue
 	for _, issue := range allIssues {
 		if excludedLinters[issue.FromLinter] {
 			continue
@@ -449,7 +440,7 @@ func filterIssues(allIssues []golangciLintIssue, perGuideExcludes map[string][]s
 	return filtered
 }
 
-func buildReport(extractions []extraction, issues []golangciLintIssue) report {
+func buildReport(extractions []extraction, issues []linttypes.LintIssue) report {
 	fileToGuide := make(map[string]string)
 	for _, ext := range extractions {
 		guide := "guides/" + ext.relativePath + ".md"
@@ -691,13 +682,13 @@ func writeFixReport(path string, fr fixReport) error {
 	return nil
 }
 
+// targetLinterFromPath extracts the target linter name from a guide's
+// relative path. For subdirectory guides the first path segment is the
+// linter (e.g., "gosec/G502" → "gosec"); for root-level guides the
+// entire path is the linter (e.g., "errcheck" → "errcheck").
+// In both cases [strings.Split] produces parts[0] as the linter name.
 func targetLinterFromPath(relativePath string) string {
 	parts := strings.Split(relativePath, "/")
-	if len(parts) >= minPathParts {
-		// Subdirectory guide: e.g., "gosec/G502" → "gosec", "staticcheck/SA1006" → "staticcheck"
-		return parts[0]
-	}
-	// Root-level guide: e.g., "errcheck" → "errcheck"
 	return parts[0]
 }
 

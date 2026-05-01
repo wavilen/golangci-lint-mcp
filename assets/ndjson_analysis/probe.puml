@@ -1,0 +1,23 @@
+@startuml probe
+autonumber
+skinparam monochrome true
+skinparam Padding 4
+skinparam ParticipantPadding 10
+
+participant "Agent" as A
+participant "MCP Server" as S
+
+A -> S : Start MCP server
+S -> S : Initialize
+S --> A : Server ready
+
+A -> S : list_tools
+note right: Validates server startup\nand linter enumeration
+S --> A : [golangci_lint_guide,\n golangci_lint_run,\n golangci_lint_list,\n golangci_lint_parse,\n golangci_lint_summarize]
+
+A -> S : golangci_lint_run(".")
+S --> A : 113 supported linters
+
+A -> A : Verify connectivity confirmed
+
+@enduml

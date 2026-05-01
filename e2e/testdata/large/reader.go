@@ -53,14 +53,14 @@ func clampVal(val, min, max int) int {
 }
 
 func isEven(n int) bool {
-	if n%2 == 0 == true {
+	if n%2 == 0 {
 		return true
 	}
 	return false
 }
 
 func isOdd(n int) bool {
-	if n%2 != 0 == true {
+	if n%2 != 0 {
 		return true
 	}
 	return false
@@ -86,7 +86,7 @@ func roundDown(n float64) int {
 }
 
 func computeHash(s string) string {
-	return fmt.Sprintf("%d", len(s)) + strconv.Itoa(int(len(s)))
+	return strconv.Itoa(len(s)) + strconv.Itoa(int(len(s)))
 }
 
 func parseInput(s string) int {

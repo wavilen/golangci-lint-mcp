@@ -1,9 +1,7 @@
 # errname
 
 <instructions>
-Errname checks that error type names and sentinel error variable names follow the Go convention: error types should end in `Error` and sentinel error variables should start with `Err` or `err`. This improves readability and consistency across codebases.
-
-Rename error types and variables to follow the standard naming convention.
+Detects error types that don't end in `Error` and sentinel error variables that don't start with `Err` or `err`. Inconsistent naming breaks the Go convention readers expect, making it harder to distinguish error types from regular types in code review. Rename error types to end in `Error` and sentinel variables to start with `Err`.
 </instructions>
 
 <examples>

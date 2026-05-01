@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+	"time"
 
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
 
@@ -51,7 +52,7 @@ func setupRunTestServer(t *testing.T) (*mcptest.Server, context.Context) {
 	)
 
 	mcpServer := mcptest.NewUnstartedServer(t)
-	mcpServer.AddTool(runTool, makeRunHandler(store, Options{}))
+	mcpServer.AddTool(runTool, makeRunHandler(store, Options{Timeout: 30 * time.Second}))
 	ctx := context.Background()
 	require.NoError(t, mcpServer.Start(ctx))
 	t.Cleanup(mcpServer.Close)
@@ -121,7 +122,7 @@ func TestRunHandler_BinaryNotInstalled(t *testing.T) {
 	store, err := guides.NewStore(testFS)
 	require.NoError(t, err)
 
-	handler := makeRunHandler(store, Options{})
+	handler := makeRunHandler(store, Options{Timeout: 30 * time.Second})
 	ctx := context.Background()
 
 	// If binary is installed, the test proceeds but may hit a different code path.
@@ -152,7 +153,7 @@ func TestRunHandler_Integration_NoIssues(t *testing.T) {
 	store, err := guides.NewStore(testFS)
 	require.NoError(t, err)
 
-	handler := makeRunHandler(store, Options{})
+	handler := makeRunHandler(store, Options{Timeout: 30 * time.Second})
 	ctx := context.Background()
 
 	// Use a path that exists in the project's working directory
@@ -164,13 +165,12 @@ func TestRunHandler_Integration_NoIssues(t *testing.T) {
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.True(t,
 		strings.Contains(text, "No issues found") ||
-			strings.Contains(text, "## Summary") ||
-			strings.Contains(text, "## golangci-lint Results"),
+			strings.Contains(text, "<summary>"),
 		"expected structured response, got: %s", text)
 }
 
-// Test 7: Full-project path "./..." produces summary-only response.
-func TestRunHandler_FullProjectSummary(t *testing.T) {
+// Test 7: Full-project path "./..." produces structured response (routing is issue-count-based).
+func TestRunHandler_FullProjectPath(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
@@ -185,7 +185,7 @@ func TestRunHandler_FullProjectSummary(t *testing.T) {
 	store, err := guides.NewStore(testFS)
 	require.NoError(t, err)
 
-	handler := makeRunHandler(store, Options{})
+	handler := makeRunHandler(store, Options{Timeout: 30 * time.Second})
 	ctx := context.Background()
 
 	result, err := handler(ctx, testGuideCall("golangci_lint_run",
@@ -194,10 +194,124 @@ func TestRunHandler_FullProjectSummary(t *testing.T) {
 	require.NotNil(t, result)
 
 	text := result.Content[0].(mcp.TextContent).Text
-	if strings.Contains(text, "## golangci-lint Results") {
+	if strings.Contains(text, "<summary>") {
 		assert.Contains(t, text, "Total issues:")
 		assert.Contains(t, text, "Unique diagnostics:")
 		assert.Contains(t, text, "Strategy:")
 		assert.NotContains(t, text, "## errcheck:")
 	}
+}
+
+// Test 8: Panic detection validates the panic string check pattern.
+func TestPanicDetection(t *testing.T) {
+	stderr := "runtime error: invalid memory address\npanic: runtime error: invalid memory address"
+	assert.Contains(t, stderr, "panic:")
+
+	noPanic := "some normal stderr output"
+	assert.NotContains(t, noPanic, "panic:")
+}
+
+func TestBuildPanicResponse_WithLinter(t *testing.T) {
+	stderr := "panic: runtime error: index out of range\n\ngoroutine 1 [running]:\ngithub.com/golangci/golangci-lint/pkg/golinters/exhaustruct.analyze(0x0)\n\t/build/pkg/golinters/exhaustruct/exhaustruct.go:42 +0x123"
+	resp := buildPanicResponse(stderr)
+	assert.Contains(t, resp, "<summary>")
+	assert.Contains(t, resp, "golangci-lint crashed")
+	assert.Contains(t, resp, "runtime error: index out of range")
+	assert.Contains(t, resp, "exhaustruct")
+	assert.Contains(t, resp, "disable:\n       - exhaustruct")
+	assert.Contains(t, resp, "golangci_lint_run with path:")
+}
+
+func TestBuildPanicResponse_WithoutLinter(t *testing.T) {
+	stderr := "panic: something broke\nno useful stack trace"
+	resp := buildPanicResponse(stderr)
+	assert.Contains(t, resp, "something broke")
+	assert.NotContains(t, resp, "disable:")
+	assert.Contains(t, resp, "Update golangci-lint")
+}
+
+func TestBuildPanicResponse_NoPanicMessage(t *testing.T) {
+	stderr := "panic:\ngoroutine 1 [running]:\nsome/path.go:1"
+	resp := buildPanicResponse(stderr)
+	assert.Contains(t, resp, "<summary>")
+	assert.Contains(t, resp, "golangci-lint crashed")
+}
+
+func TestExtractPanicLinter(t *testing.T) {
+	tests := []struct {
+		name     string
+		stderr   string
+		expected string
+	}{
+		{
+			"gocritic in golinters path",
+			"panic: foo\n\tgithub.com/golangci/golangci-lint/pkg/golinters/gocritic.Wrap(0x)",
+			"gocritic",
+		},
+		{
+			"revive in golinters path",
+			"panic: foo\n\tgithub.com/golangci/golangci-lint/pkg/golinters/revive.New(0x)",
+			"revive",
+		},
+		{
+			"no known linter",
+			"panic: foo\n\tsome/random/package.Func()",
+			"",
+		},
+		{
+			"forbidigo",
+			"panic: foo\n\tgithub.com/golangci/golangci-lint/pkg/golinters/forbidigo.run(0x)",
+			"forbidigo",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, extractPanicLinter(tt.stderr))
+		})
+	}
+}
+
+// parsePartialOutput tests
+
+// Test: Full wrapped JSON returns issues from partial output.
+func TestParsePartialOutput_ValidJSON(t *testing.T) {
+	stdout := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value not checked","Pos":{"Filename":"main.go","Line":1,"Column":1}},{"FromLinter":"govet","Text":"Printf issue","Pos":{"Filename":"main.go","Line":2,"Column":1}}],"Report":{}}`
+	issues := parsePartialOutput(stdout)
+	assert.Len(t, issues, 2)
+	assert.Equal(t, "errcheck", issues[0].FromLinter)
+	assert.Equal(t, "govet", issues[1].FromLinter)
+}
+
+// Test: NDJSON lines parse into issues from partial output.
+func TestParsePartialOutput_NDJSONFallback(t *testing.T) {
+	stdout := `{"FromLinter":"errcheck","Text":"Error return value not checked","Pos":{"Filename":"main.go","Line":1,"Column":1}}
+{"FromLinter":"gosec","Text":"G101: hardcoded credentials","Pos":{"Filename":"main.go","Line":2,"Column":1}}`
+	issues := parsePartialOutput(stdout)
+	assert.Len(t, issues, 2)
+	assert.Equal(t, "errcheck", issues[0].FromLinter)
+	assert.Equal(t, "gosec", issues[1].FromLinter)
+}
+
+// Test: Garbage input returns empty slice.
+func TestParsePartialOutput_Unparseable(t *testing.T) {
+	stdout := "some random garbage output\nnot json at all"
+	issues := parsePartialOutput(stdout)
+	assert.Empty(t, issues)
+}
+
+// Test: Timeout message includes partial issue count.
+func TestBuildTimeoutMessage_WithPartialIssues(t *testing.T) {
+	stdout := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value not checked","Pos":{"Filename":"main.go","Line":1,"Column":1}}],"Report":{}}`
+	issues := parsePartialOutput(stdout)
+	msg := buildTimeoutMessage(30*time.Second, issues)
+	assert.Contains(t, msg, "timed out")
+	assert.Contains(t, msg, "1 issues collected before timeout")
+	assert.Contains(t, msg, "specific package path")
+}
+
+// Test: Timeout message with 0 issues.
+func TestBuildTimeoutMessage_NoPartialIssues(t *testing.T) {
+	msg := buildTimeoutMessage(30*time.Second, nil)
+	assert.Contains(t, msg, "timed out")
+	assert.Contains(t, msg, "0 issues collected before timeout")
 }

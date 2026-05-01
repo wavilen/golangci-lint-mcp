@@ -248,6 +248,103 @@ if (platforms && platforms.indexOf('claude') !== -1) {
   }
 }
 
+// --- Cursor hook + config installation ---
+// Only runs when 'cursor' is in the platforms list
+if (platforms && platforms.indexOf('cursor') !== -1) {
+  const projectDir = process.cwd();
+
+  // 1. Copy hook scripts to .cursor/hooks/
+  const cursorHookFiles = [
+    'golangci-lint-cursor-pre.js',
+    'golangci-lint-cursor-post.js'
+  ];
+  for (const hookFile of cursorHookFiles) {
+    try {
+      const hookSrc = path.join(__dirname, '..', 'hooks', hookFile);
+      if (fs.existsSync(hookSrc)) {
+        const hookDestDir = path.join(projectDir, '.cursor', 'hooks');
+        fs.mkdirSync(hookDestDir, { recursive: true });
+        fs.copyFileSync(hookSrc, path.join(hookDestDir, hookFile));
+        console.log('\u2713 Cursor hook installed to .cursor/hooks/' + hookFile);
+      }
+    } catch (err) {
+      console.warn('Warning: could not install Cursor hook ' + hookFile + ' (' + err.message + ')');
+    }
+  }
+
+  // 2. Copy shared nudge module to .cursor/shared/
+  try {
+    const sharedSrc = path.join(__dirname, '..', 'shared', 'nudge.js');
+    if (fs.existsSync(sharedSrc)) {
+      const sharedDestDir = path.join(projectDir, '.cursor', 'shared');
+      fs.mkdirSync(sharedDestDir, { recursive: true });
+      fs.copyFileSync(sharedSrc, path.join(sharedDestDir, 'nudge.js'));
+      console.log('\u2713 Shared nudge module installed to .cursor/shared/nudge.js');
+    }
+  } catch (err) {
+    console.warn('Warning: could not install shared nudge module for Cursor (' + err.message + ')');
+  }
+
+  // 3. Create/update .cursor/hooks.json
+  try {
+    const cursorDir = path.join(projectDir, '.cursor');
+    fs.mkdirSync(cursorDir, { recursive: true });
+    const hooksJsonPath = path.join(cursorDir, 'hooks.json');
+
+    let hooksConfig = {};
+    if (fs.existsSync(hooksJsonPath)) {
+      hooksConfig = JSON.parse(fs.readFileSync(hooksJsonPath, 'utf8'));
+    }
+    if (!hooksConfig.version) { hooksConfig.version = 1; }
+    if (!hooksConfig.hooks) { hooksConfig.hooks = {}; }
+
+    // Add preToolUse hook
+    const preToolUseEntry = {
+      command: 'node .cursor/hooks/golangci-lint-cursor-pre.js',
+      matcher: 'Shell',
+      timeout: 10
+    };
+    if (!hooksConfig.hooks.preToolUse) {
+      hooksConfig.hooks.preToolUse = [preToolUseEntry];
+    } else {
+      // Check for existing golangci-lint entry
+      let found = false;
+      for (let i = 0; i < hooksConfig.hooks.preToolUse.length; i++) {
+        if (hooksConfig.hooks.preToolUse[i].command && hooksConfig.hooks.preToolUse[i].command.indexOf('golangci-lint-cursor-pre') !== -1) {
+          hooksConfig.hooks.preToolUse[i] = preToolUseEntry;
+          found = true;
+          break;
+        }
+      }
+      if (!found) { hooksConfig.hooks.preToolUse.push(preToolUseEntry); }
+    }
+
+    // Add postToolUse hook
+    const postToolUseEntry = {
+      command: 'node .cursor/hooks/golangci-lint-cursor-post.js',
+      matcher: 'Shell'
+    };
+    if (!hooksConfig.hooks.postToolUse) {
+      hooksConfig.hooks.postToolUse = [postToolUseEntry];
+    } else {
+      let found = false;
+      for (let i = 0; i < hooksConfig.hooks.postToolUse.length; i++) {
+        if (hooksConfig.hooks.postToolUse[i].command && hooksConfig.hooks.postToolUse[i].command.indexOf('golangci-lint-cursor-post') !== -1) {
+          hooksConfig.hooks.postToolUse[i] = postToolUseEntry;
+          found = true;
+          break;
+        }
+      }
+      if (!found) { hooksConfig.hooks.postToolUse.push(postToolUseEntry); }
+    }
+
+    fs.writeFileSync(hooksJsonPath, JSON.stringify(hooksConfig, null, 2) + '\n');
+    console.log('\u2713 Cursor hooks configured in .cursor/hooks.json');
+  } catch (err) {
+    console.warn('Warning: could not configure Cursor hooks (' + err.message + ')');
+  }
+}
+
 // --- OpenCode plugin + MCP config installation ---
 // Only runs when 'opencode' is in the platforms list
 if (platforms && platforms.indexOf('opencode') !== -1) {

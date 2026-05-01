@@ -217,7 +217,7 @@ func TestSmoke_Summarize_Valid(t *testing.T) {
 	require.NoError(t, err)
 	require.False(t, result.IsError, "expected non-error result")
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "Summary")
+	assert.Contains(t, text, "<summary>")
 	assert.Contains(t, text, "Total issues")
 }
 
@@ -261,8 +261,7 @@ func TestSmoke_Run_Valid(t *testing.T) {
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.True(t,
 		strings.Contains(text, "No issues found") ||
-			strings.Contains(text, "## Summary") ||
-			strings.Contains(text, "## golangci-lint Results"),
+			strings.Contains(text, "<summary>"),
 		"expected structured response, got: %s", text)
 }
 

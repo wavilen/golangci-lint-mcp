@@ -31,8 +31,18 @@ func makeSummarizeHandler(
 
 		var result lintJSONResult
 		unmarshalErr := json.Unmarshal([]byte(firstLine), &result)
-		if unmarshalErr != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("invalid JSON: %v", unmarshalErr)), nil
+		if unmarshalErr != nil || len(result.Issues) == 0 {
+			ndjsonResult := parseNDJSON(output)
+			if len(ndjsonResult.Issues) > 0 {
+				result = ndjsonResult
+			} else if unmarshalErr != nil {
+				return mcp.NewToolResultError(
+					fmt.Sprintf(
+						"invalid JSON: %v. Try golangci_lint_parse for full guidance, "+
+							"or golangci_lint_run to re-run and parse automatically.",
+						unmarshalErr,
+					)), nil
+			}
 		}
 
 		if len(result.Issues) == 0 {
@@ -41,22 +51,25 @@ func makeSummarizeHandler(
 
 		unique := deduplicateIssues(result.Issues)
 		packages := extractPackagesFromIssues(unique)
-		strategyName, strategyReason := recommendStrategy(len(unique), len(packages))
+		strategyName, strategyReason := recommendStrategy(len(result.Issues), len(packages))
 		linterBreakdown := buildLinterBreakdown(unique)
 		packageBreakdown := buildPackageBreakdown(packages)
 
 		var builder strings.Builder
-		fmt.Fprintf(&builder, "## Summary\n\n")
+		fmt.Fprintf(&builder, "<summary>\n\n")
 		fmt.Fprintf(&builder, "- Total issues: %d\n", len(result.Issues))
 		fmt.Fprintf(&builder, "- Unique diagnostics: %d\n", len(unique))
 		fmt.Fprintf(&builder, "- Packages affected: %d\n", len(packages))
 		fmt.Fprintf(&builder, "- Strategy: %s (%s)\n", strategyName, strategyReason)
 
 		if packageBreakdown != "" {
-			fmt.Fprintf(&builder, "\n## Package Breakdown\n\n%s\n", packageBreakdown)
+			fmt.Fprintf(&builder, "\n%s\n", packageBreakdown)
 		}
 
-		fmt.Fprintf(&builder, "\n## Linter Breakdown\n\n%s\n", linterBreakdown)
+		fmt.Fprintf(&builder, "\n%s\n", linterBreakdown)
+		fmt.Fprintf(&builder, "\n</summary>")
+
+		builder.WriteString(buildStrategyInstructions(strategyName, packages, len(result.Issues)))
 
 		return mcp.NewToolResultText(builder.String()), nil
 	}

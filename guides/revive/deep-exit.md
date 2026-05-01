@@ -1,9 +1,7 @@
 # revive: deep-exit
 
 <instructions>
-Detects calls to `os.Exit`, `log.Fatal`, and similar functions deep in the call stack. These bypass deferred functions, skip cleanup, and make the program impossible to test or reuse as a library. Only `main` should decide to terminate the process.
-
-Return errors up the call stack instead. Let `main` or the top-level handler decide how to exit.
+Detects `os.Exit` and `log.Fatal` calls outside `main` or top-level handlers. These bypass deferred cleanup functions, skip `runtime` finalizers, and make the code untestable as a library. Return errors up the call stack and let `main` decide how to terminate.
 </instructions>
 
 <examples>

@@ -1,9 +1,7 @@
 # gocritic: weakCond
 
 <instructions>
-Detects weak or insufficient conditional checks that may not fully guard against the intended issue. Common examples include checking only one field of a struct when multiple fields should be validated, or using `!= nil` checks that don't prevent all error paths.
-
-Strengthen the condition to cover all necessary cases, or add separate validation for each field.
+Detects conditional checks that don't fully guard against the intended issue — validating only one struct field, checking error without checking status, or using conditions with logical gaps. Incomplete guards let invalid data propagate to downstream code, causing failures far from the root cause. Strengthen the condition to cover all necessary cases, or add separate validation for each field.
 </instructions>
 
 <examples>
@@ -21,7 +19,7 @@ if resp.StatusCode != http.StatusOK {
 <patterns>
 - Validate response status after checking `err != nil` — both must be verified
 - Validate the pointed-to data after checking for non-nil pointer — not just the pointer
-- Validate all struct fields in the conditional — avoid partial validation
+- Check all relevant struct fields in guard conditions — e.g., validate both `resp.StatusCode` and `err` from `http.Do`, not just one
 - Guard nil map access with proper nil check — not just `len(s) > 0`
 </patterns>
 

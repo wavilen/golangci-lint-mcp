@@ -1,9 +1,7 @@
 # gocritic: uncheckedInlineErr
 
 <instructions>
-Detects inline error returns that are not checked before continuing. When a function returns multiple values including an error, assigning the error inline (e.g., in a multi-assignment) without immediately checking it is error-prone. The code may proceed with invalid data from the failed call.
-
-Check the error immediately after the call. Do not defer error handling when the subsequent code depends on the success of the call.
+Detects error return values assigned inline that are not checked before subsequent code runs. Proceeding without checking lets invalid data from the failed call flow into downstream logic, producing wrong results or panics. Check the error immediately after the call — do not defer error handling when subsequent code depends on the call's success.
 </instructions>
 
 <examples>

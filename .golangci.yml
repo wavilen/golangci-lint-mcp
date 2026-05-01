@@ -509,6 +509,15 @@ linters:
           - gochecknoinits
           - mnd
 
+      # e2e/ uses Ginkgo v2 patterns (dot imports, package-level vars, short table params) — standard test framework conventions
+      - path: e2e/
+        linters:
+          - gochecknoglobals
+          - goimports
+          - golines
+          - revive
+          - varnamelen
+
       # tmp/ contains crosscheck pipeline test artifacts — skip entirely
       - path: tmp/
         linters:

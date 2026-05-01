@@ -1,9 +1,7 @@
 # govet: lostcancel
 
 <instructions>
-Reports cancellation functions returned by `context.WithCancel`, `context.WithTimeout`, or `context.WithDeadline` that are never called. The cancel function releases resources and signals goroutines to stop. Losing it prevents cleanup and leaks goroutines.
-
-Always `defer cancel()` immediately after creating a cancellable context.
+Reports cancellation functions from `context.WithCancel`, `context.WithTimeout`, or `context.WithDeadline` that are never called. Without calling `cancel()`, context resources are never released and child goroutines have no stop signal — they leak indefinitely. Always `defer cancel()` immediately after creating a cancellable context.
 </instructions>
 
 <examples>

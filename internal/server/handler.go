@@ -73,11 +73,11 @@ func expandRelatedInBody(body string, guide *guides.Guide, store *guides.Store) 
 		return stripped
 	}
 
-	section := "### Related Context\n" + strings.Join(entries, "\n")
+	section := "<related_context>\n" + strings.Join(entries, "\n") + "\n</related_context>"
 	// Enforce byte budget: trim entries from bottom if too long
 	for len(section) > maxRelatedBytes && len(entries) > 0 {
 		entries = entries[:len(entries)-1]
-		section = "### Related Context\n" + strings.Join(entries, "\n")
+		section = "<related_context>\n" + strings.Join(entries, "\n") + "\n</related_context>"
 	}
 
 	if len(entries) == 0 {
@@ -122,9 +122,16 @@ func parseRelatedRef(ref string) (string, string) {
 
 func unknownLinterMessage(linter string, store *guides.Store) string {
 	suggestion := store.Suggest(linter)
-	msg := fmt.Sprintf("Unknown linter %q.", linter)
+	msg := fmt.Sprintf(
+		"Unknown linter %q. This may be from a newer/older golangci-lint version.",
+		linter,
+	)
 	if suggestion != "" {
-		msg = fmt.Sprintf("Unknown linter %q. Did you mean %q?", linter, suggestion)
+		msg = fmt.Sprintf(
+			"Unknown linter %q. Did you mean %q? This may be from a newer/older golangci-lint version.",
+			linter,
+			suggestion,
+		)
 	}
 	return msg
 }
@@ -175,7 +182,13 @@ func makeHandler(
 	return func(_ context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		linter, err := req.RequireString("linter")
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("missing required parameter 'linter': %v", err)), nil
+			return mcp.NewToolResultError(
+				fmt.Sprintf(
+					"missing required parameter 'linter'. "+
+						"Use golangci_lint_guide(linter=\"<name>\") to get fix guidance, "+
+						"or golangci_lint_list to discover available linters: %v",
+					err,
+				)), nil
 		}
 		rule := req.GetString("rule", "")
 

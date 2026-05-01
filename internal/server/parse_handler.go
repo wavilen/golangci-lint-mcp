@@ -81,6 +81,7 @@ func buildLinterBreakdown(unique []lintIssue) string {
 	return strings.Join(parts, ", ")
 }
 
+//nolint:gocognit // Parse dispatch: validate→wrapped JSON→NDJSON fallback→build response. Splitting would add indirection without reducing actual complexity.
 func makeParseHandler(
 	store *guides.Store,
 	opts Options,
@@ -101,8 +102,20 @@ func makeParseHandler(
 		}
 		var result lintJSONResult
 		err = json.Unmarshal([]byte(firstLine), &result)
-		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("invalid JSON: %v", err)), nil
+		if err != nil || len(result.Issues) == 0 {
+			// If there are more lines, try NDJSON fallback
+			ndjsonResult := parseNDJSON(output)
+			if len(ndjsonResult.Issues) > 0 {
+				result = ndjsonResult
+			} else if err != nil {
+				return mcp.NewToolResultError(
+					fmt.Sprintf(
+						"invalid JSON: %v. Try golangci_lint_run(path=\"./pkg/...\") "+
+							"for pre-parsed results, or golangci_lint_guide(linter=\"<name>\") "+
+							"for individual diagnostics.",
+						err,
+					)), nil
+			}
 		}
 
 		if len(result.Issues) == 0 {
@@ -111,43 +124,53 @@ func makeParseHandler(
 
 		unique := deduplicateIssues(result.Issues)
 		packages := extractPackagesFromIssues(unique)
-		strategyName, strategyReason := recommendStrategy(len(unique), len(packages))
+		strategyName, strategyReason := recommendStrategy(len(result.Issues), len(packages))
 
 		var builder strings.Builder
-		fmt.Fprintf(&builder, "## Summary\n\n- Unique diagnostics: %d\n- Strategy: %s (%s)\n",
+		fmt.Fprintf(&builder, "<summary>\n\n- Unique diagnostics: %d\n- Strategy: %s (%s)\n",
 			len(unique), strategyName, strategyReason)
 
 		if len(packages) > 1 {
-			fmt.Fprintf(&builder, "\n## Package Breakdown\n\n%s\n", buildPackageBreakdown(packages))
+			fmt.Fprintf(&builder, "\n%s\n", buildPackageBreakdown(packages))
 		}
 
-		fmt.Fprintf(&builder, "\n- Breakdown: %s\n\n---\n\n", buildLinterBreakdown(unique))
+		fmt.Fprintf(&builder, "\n- Breakdown: %s\n\n</summary>\n\n", buildLinterBreakdown(unique))
 
+		builder.WriteString("<guidance>\n\n")
 		for idx, issue := range unique {
 			if idx > 0 {
 				builder.WriteString("\n---\n\n")
 			}
 			writeGuideForIssue(&builder, store, opts, issue)
 		}
+		builder.WriteString("\n</guidance>")
 
 		relatedSection := buildRelatedContext(unique, store)
 		if relatedSection != "" {
 			builder.WriteString("\n\n" + relatedSection)
 		}
 
+		builder.WriteString(buildStrategyInstructions(strategyName, packages, len(unique)))
+
 		return mcp.NewToolResultText(builder.String()), nil
 	}
 }
 
-// resolveRelatedRef splits a related reference into linter and rule parts.
-func resolveRelatedRef(ref string) (string, string) {
-	const pathParts = 2
-
-	parts := strings.SplitN(ref, "/", pathParts)
-	if len(parts) == pathParts {
-		return parts[0], parts[1]
+// parseNDJSON attempts to parse newline-delimited individual lintIssue objects.
+// Non-JSON lines are skipped. Returns collected issues in a lintJSONResult.
+func parseNDJSON(input string) lintJSONResult {
+	var issues []lintIssue
+	for line := range strings.SplitSeq(input, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		var issue lintIssue
+		if json.Unmarshal([]byte(line), &issue) == nil && issue.FromLinter != "" {
+			issues = append(issues, issue)
+		}
 	}
-	return parts[0], ""
+	return lintJSONResult{Issues: issues}
 }
 
 // relatedEntry tracks a candidate related linter with its best fix hint and score.
@@ -201,7 +224,7 @@ func buildRelatedContext(unique []lintIssue, store *guides.Store) string {
 			if primarySet[ref] {
 				continue
 			}
-			refLinter, refRule := resolveRelatedRef(ref)
+			refLinter, refRule := parseRelatedRef(ref)
 			relatedGuide, found := store.Lookup(refLinter, refRule)
 			if !found && refRule != "" {
 				relatedGuide, found = store.Lookup(refLinter, "")
@@ -251,12 +274,12 @@ func buildRelatedContext(unique []lintIssue, store *guides.Store) string {
 	for _, entry := range sorted {
 		lines = append(lines, fmt.Sprintf("- %s: %s", entry.ref, entry.hint))
 	}
-	section := "### Related Context\n" + strings.Join(lines, "\n")
+	section := "<related_context>\n" + strings.Join(lines, "\n") + "\n</related_context>"
 
 	// Enforce byte budget
 	for len(section) > maxRelatedBytes && len(lines) > 0 {
 		lines = lines[:len(lines)-1]
-		section = "### Related Context\n" + strings.Join(lines, "\n")
+		section = "<related_context>\n" + strings.Join(lines, "\n") + "\n</related_context>"
 	}
 
 	if len(lines) == 0 {

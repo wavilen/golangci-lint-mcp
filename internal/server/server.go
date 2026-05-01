@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
@@ -13,6 +15,7 @@ type Options struct {
 	GosecAIKey      string
 	GosecAIBaseURL  string
 	GosecAISkipSSL  bool
+	Timeout         time.Duration
 }
 
 func (o Options) GosecAIConfigured() bool {

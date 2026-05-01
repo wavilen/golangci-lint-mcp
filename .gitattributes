@@ -1,0 +1,18 @@
+# Go source
+*.go text eol=lf
+
+# JavaScript
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+
+# Text files
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.gif binary

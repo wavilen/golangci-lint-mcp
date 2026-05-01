@@ -76,7 +76,7 @@ func TestListHandler_ReturnsAllLinters(t *testing.T) {
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "## Supported Linters")
+	assert.Contains(t, text, "<summary>")
 	assert.Contains(t, text, "errcheck")
 	assert.Contains(t, text, "govet")
 	assert.Contains(t, text, "gocritic")

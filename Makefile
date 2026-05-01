@@ -1,4 +1,4 @@
-.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js
+.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js deploy-pages integration-test
 
 BINARY := golangci-lint-mcp
 VERSION := $(shell git describe --tags --always 2>/dev/null | sed 's/^v//')
@@ -90,10 +90,11 @@ install-claude-shared: ## Install shared nudge module for Claude Code hook
 	@cp shared/nudge.js .claude/shared/nudge.js
 	@echo "✓ Shared nudge module installed to .claude/shared/"
 
-install-agent: ## Deploy pre-publish agent to .opencode/agents/
+install-agent: ## Deploy agent workflows to .opencode/agents/
 	@mkdir -p .opencode/agents
 	cp agents/pre-publish.md .opencode/agents/pre-publish.md
-	@echo "✓ Agent installed to .opencode/agents/"
+	cp agents/ndjson-analysis.md .opencode/agents/ndjson-analysis.md
+	@echo "✓ Agents installed to .opencode/agents/"
 
 install-all: ## Install all opencode resources (commands, rules, hook, shared, agents)
 	@$(MAKE) install-commands
@@ -128,3 +129,21 @@ sync-version: ## Update package.json version from git tag
 
 lint-js: ## Run ESLint on JavaScript source files
 	npx eslint plugins/ shared/ hooks/ bin/install.js
+
+deploy-pages: ## Deploy documentation site to GitHub Pages
+	@bash scripts/deploy-pages.sh
+
+integration-test: build ## Run e2e integration tests (requires Docker, parallel 3 procs)
+	@echo "Preparing Docker build context..."
+	@mkdir -p e2e/build/skills/golangci-lint-guide e2e/build/rules
+	@cp $(BINARY) e2e/build/golangci-lint-mcp
+	@cp ~/.opencode/bin/opencode e2e/build/opencode
+	@cp skills/golangci-lint-guide/SKILL.md e2e/build/skills/golangci-lint-guide/SKILL.md
+	@cp ~/.config/opencode/rules/golang.md e2e/build/rules/golang.md
+	@cp rules/opencode.md e2e/build/rules/golangci-lint.md
+	@echo "Building Docker image..."
+	docker build -t golangci-lint-mcp-e2e ./e2e/
+	@$(RM) -r e2e/build
+	@echo "Running integration tests (parallel, 3 procs, 30m timeout)..."
+	go install github.com/onsi/ginkgo/v2/ginkgo@latest
+	ginkgo -vv -procs=3 ./e2e/ -- -test.timeout=90m

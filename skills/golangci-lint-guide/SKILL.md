@@ -1,6 +1,6 @@
 ---
 name: golangci-lint-guide
-description: Fix golangci-lint issues using MCP tool guidance — run golangci-lint, look up each diagnostic, apply fixes per package
+description: Validate and fix Go code using golangci-lint. Use this skill whenever working on Go projects — run golangci-lint, diagnose issues, and apply fixes per package.
 ---
 
 <objective>
@@ -10,6 +10,10 @@ Fix golangci-lint issues using MCP tools that run golangci-lint, parse results, 
 <execution_context>
 - **MCP tools:** `golangci_lint_run` (run + parse), `golangci_lint_parse` (bulk JSON), `golangci_lint_guide` (per-diagnostic), `golangci_lint_list` (discover linters), `golangci_lint_summarize` (strategy only), `gosec_ai_autofix` (conditional)
 - **CLI tool:** `golangci-lint` (must be installed for golangci_lint_run)
+- **Claude Code hooks:** PreToolUse (command modification) + PostToolUse (MCP nudge injection) auto-configure golangci-lint for JSON output
+- **Cursor hooks:** Same PreToolUse + PostToolUse automation via `.cursor/hooks.json` — auto-installed by `npx golangci-lint-guide` when Cursor is detected
+- **Response format:** Tools return XML-tagged sections: `<summary>` (stats + breakdowns), `<guidance>` (per-issue fix directions), `<related_context>` (related linters with fix hints). Tools omit sections they don't have.
+- **CLI version:** golangci-lint v2 — v1 flags like `--out-format` and `--output` do not work; use `--output.json.path stdout` for JSON output
 </execution_context>
 
 <process>
@@ -22,7 +26,7 @@ Call `golangci_lint_run` with a specific package path:
 golangci_lint_run(path="./pkg/auth/...")
 ```
 
-Returns: fix guidance for all unique (linter, rule) pairs, Related Context for related issues, and strategy recommendation.
+Returns: `<summary>` with stats, `<guidance>` with fix directions for all unique (linter, rule) pairs, `<related_context>` for related issues, and strategy recommendation.
 
 ## 2. Fix All Issues
 
@@ -35,25 +39,16 @@ For each diagnostic in the response:
 
 Call `golangci_lint_run` again with the same path. If "No issues found", package is clean.
 
-## 4. Large Output (>30 Issues): Subagent Per Package
+## 4. Strategy Instructions (Auto-Provided by MCP)
 
-When `golangci_lint_run` returns strategy "subagent-per-package":
+When `golangci_lint_run` returns a `<strategy_instructions>` block, you **MUST follow it exactly**.
 
-**Step A:** Call `golangci_lint_run(path="./...")` for full-project summary with package breakdown.
+The MCP tool automatically determines the correct strategy based on issue count and package count:
+- **single-agent** — fix issues yourself (≤30 issues)
+- **subagent-per-file** — spawn one subagent per file (>30 issues, few packages)
+- **subagent-per-package** — spawn one subagent per package (>3 packages)
 
-**Step B:** For EACH package with issues, spawn a subagent scoped to that single package:
-
-```
-task(
-  description="Fix golangci-lint issues in {package_path}",
-  prompt="Use golangci_lint_run to fix all issues in {package_path}.",
-  mode="subagent"
-)
-```
-
-**Step C:** Final verification: `golangci_lint_run(path="./...")` → expect "No issues found".
-
-**Why subagents?** Single agent at 30+ issues hits 70%+ context, producing incomplete fixes. Subagents give each package full context.
+The `<strategy_instructions>` block contains step-by-step commands with the exact package/file paths to use. Do NOT override or ignore these instructions — they prevent context-limit exhaustion.
 
 ## 5. Gosec AI Autofix (Optional)
 
@@ -78,9 +73,11 @@ Call `golangci_lint_run(path="./...")`. Report any remaining issues.
 | Error | Action |
 |-------|--------|
 | MCP tools unavailable | STOP — verify MCP server is running and configured |
-| golangci_lint_run: "binary not found" | STOP — install golangci-lint (`brew install golangci-lint` or `curl install.sh`) |
-| golangci_lint_run: timeout | Scan per-package instead of full-project |
-| golangci_lint_parse: JSON parse error | Fall back to `golangci_lint_guide` per unique (linter, rule) pair |
+| golangci_lint_run: "binary not found" | Use `golangci_lint_guide(linter="...", rule="...")` for per-diagnostic guidance as fallback |
+| golangci_lint_run: timeout with partial results | Note partial issue count, scan per-package paths (e.g., `./pkg/auth/...`) |
+| golangci_lint_parse: "invalid JSON" | Try `golangci_lint_run` on a specific package, or use `golangci_lint_guide` per diagnostic |
+| golangci_lint_guide: "Unknown linter" | Check for typos; may be from newer/older golangci-lint version — use `golangci_lint_list` to verify |
+| golangci-lint CLI: "unknown flag: --out-format" | You are using v1 flags with golangci-lint v2. Use `golangci_lint_run` MCP tool instead. If CLI is needed: `--output.json.path stdout` is the v2 equivalent |
 
 </error_recovery>
 
@@ -96,8 +93,10 @@ Call `golangci_lint_run(path="./...")`. Report any remaining issues.
 | `golangci_lint_list` | Discover linters | (none) |
 | `golangci_lint_summarize` | Strategy only | `output` (raw JSON) |
 
-**Strategy threshold:** >30 issues or >3 packages → subagent-per-package (returned automatically by tools).
+**Strategy:** MCP tools auto-detect strategy and include `<strategy_instructions>` block in their response. Always follow the instructions in that block. Do NOT attempt to fix >30 issues without subagents.
 
 **Compound linters** (require `rule` param in `golangci_lint_guide`): staticcheck, gocritic, gosec, revive, govet, testifylint, modernize, errorlint, ginkgolinter, grouper. Call `golangci_lint_list` for full list.
+
+**Response format:** All tools use XML tags — `<summary>`, `<guidance>`, `<related_context>`. Markdown content (tables, lists, code blocks) appears inside these tags.
 
 </quick_reference>

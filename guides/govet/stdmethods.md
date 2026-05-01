@@ -1,9 +1,7 @@
 # govet: stdmethods
 
 <instructions>
-Reports methods that look like standard interface methods but have incorrect signatures. For example, a `String()` method that returns `int` instead of `string`, or an `Error()` method that takes parameters. These methods will never satisfy the intended interface.
-
-Fix the method signature to match the standard interface exactly.
+Reports methods with names matching standard Go interfaces (`String`, `Error`, `Read`, `Write`, `MarshalJSON`) but with incorrect signatures. A wrong signature means the method silently fails to satisfy the interface — `fmt.Stringer`, `error`, `io.Reader` — without any compiler error. Fix the method signature to match the standard interface exactly.
 </instructions>
 
 <examples>

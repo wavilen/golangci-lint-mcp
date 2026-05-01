@@ -57,8 +57,7 @@ func TestCrossReferenceValidity(t *testing.T) {
 				return
 			}
 
-			refs := strings.Split(related, ",")
-			for _, ref := range refs {
+			for ref := range strings.SplitSeq(related, ",") {
 				assertRefValid(t, name, ref, nameSet, store)
 			}
 		})
@@ -265,8 +264,7 @@ func TestCompoundCrossReferenceValidity(t *testing.T) {
 						return
 					}
 
-					refs := strings.Split(related, ",")
-					for _, ref := range refs {
+					for ref := range strings.SplitSeq(related, ",") {
 						assertCompoundRefValid(t, linter, rule, ref, nameSet, store)
 					}
 				})

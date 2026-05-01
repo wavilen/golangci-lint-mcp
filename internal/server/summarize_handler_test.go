@@ -70,10 +70,9 @@ func TestSummarizeHandler_MultiplePackages(t *testing.T) {
 	require.False(t, result.IsError)
 	text := result.Content[0].(mcp.TextContent).Text
 
-	assert.Contains(t, text, "## Summary")
+	assert.Contains(t, text, "<summary>")
 	assert.Contains(t, text, "Total issues: 4")
 	assert.Contains(t, text, "Unique diagnostics: 4")
-	assert.Contains(t, text, "## Package Breakdown")
 	assert.Contains(t, text, "pkg/auth: 2 issues")
 	assert.Contains(t, text, "pkg/db: 1 issues")
 	assert.Contains(t, text, "TOTAL: 4 issues across 3 packages")
@@ -143,6 +142,9 @@ func TestSummarizeHandler_InvalidJSON(t *testing.T) {
 	require.True(t, result.IsError)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, strings.ToLower(text), "invalid json")
+	// Should suggest golangci_lint_parse and golangci_lint_run (D-02)
+	assert.Contains(t, text, "golangci_lint_parse")
+	assert.Contains(t, text, "golangci_lint_run")
 }
 
 // Test 6: Linter breakdown section is present.
@@ -158,7 +160,6 @@ func TestSummarizeHandler_LinterBreakdown(t *testing.T) {
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
 
-	assert.Contains(t, text, "## Linter Breakdown")
 	assert.Contains(t, text, "errcheck")
 	assert.Contains(t, text, "gosec")
 }

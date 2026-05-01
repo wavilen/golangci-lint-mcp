@@ -1,9 +1,7 @@
 # lll
 
 <instructions>
-LLL (Line Length Linter) checks that lines don't exceed a maximum length (default 120 characters). Long lines reduce readability, especially in side-by-side diffs and split-screen editors.
-
-Break long lines at natural boundaries: after operators, before function arguments, or by extracting long strings into constants or variables.
+Flags lines exceeding a configurable length limit (default 120 characters). Long lines break side-by-side diffs, get truncated by code review tools, and force horizontal scrolling that disrupts reading flow. Break lines at natural boundaries — after operators, before function arguments, or by extracting long strings into constants.
 </instructions>
 
 <examples>
@@ -22,8 +20,8 @@ func main() {
 </examples>
 
 <patterns>
-- Split long string literals across multiple lines or extract them into constants
-- Break chained method calls with line breaks between each call
+- Break long string literals with `+` concatenation at natural boundaries, or extract into `const` declarations
+- Break chained `Builder` method calls (e.g., `strings.Builder`, `bytes.Buffer`) with a newline after each `.Method()` call
 - Format function signatures with many parameters across multiple lines
 </patterns>
 

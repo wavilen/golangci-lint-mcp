@@ -1,9 +1,7 @@
 # goheader
 
 <instructions>
-Goheader checks that source files contain a required header comment, typically a copyright or license notice. Projects enforce this to ensure legal compliance and consistent file attribution.
-
-Add the required header comment at the top of the file. Configure the expected header template in `.golangci.yml` under `linters.settings.goheader.values` and `template`.
+Checks that source files contain a required header comment, typically a copyright or license notice. Files missing headers cause license audit tools (FOSSA, Snyk) to flag them as unlicensed, blocking compliance approvals and third-party adoption. Add the required header comment at the top of each file, configured via `.golangci.yml` under `linters.settings.goheader`.
 </instructions>
 
 <examples>

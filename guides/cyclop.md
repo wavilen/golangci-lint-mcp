@@ -1,7 +1,7 @@
 # cyclop
 
 <instructions>
-Cyclop measures cyclomatic complexity — the number of branching paths through code. High complexity means too many test cases and harder reasoning. The primary fix is SRP decomposition: extract each branch into its own focused function, reducing the main function to a simple dispatch.
+Measures cyclomatic complexity — the count of independent branching paths through a function. Each additional branch multiplies the test matrix (N+1 test cases per path), making behavior hard to reason about and changes risky to validate. Flatten branching by extracting paths into standalone functions or replacing conditionals with table-driven dispatch.
 </instructions>
 
 <examples>
@@ -24,11 +24,11 @@ func Process(status string, o Order) error {
 </examples>
 
 <patterns>
-- Extract branches into separate functions to reduce cyclomatic complexity
-- Replace conditional chains with map or function dispatch
-- Decompose functions combining lookup, transform, and store
-- Replace switch with interface dispatch (OCP)
-- Prefer small focused interfaces over one fat interface (ISP)
+- Extract each branching path into its own function to reduce the caller to a flat dispatch
+- Replace conditional chains with `map[string]func` lookup tables for O(1) dispatch
+- Decompose functions combining lookup, transform, and store into three separate functions
+- Replace `switch` statements on type with interface method dispatch — one method per case, no branches
+- Replace nested `if/else` guards with early returns to eliminate indent-based paths
 </patterns>
 
 <related>

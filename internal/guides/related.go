@@ -46,7 +46,7 @@ func extractPatternBullets(patterns string) []string {
 		return nil
 	}
 	var bullets []string
-	for _, line := range strings.Split(patterns, "\n") {
+	for line := range strings.SplitSeq(patterns, "\n") {
 		trimmed := strings.TrimSpace(line)
 		if after, ok := strings.CutPrefix(trimmed, "- "); ok {
 			bullets = append(bullets, after)

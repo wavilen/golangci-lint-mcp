@@ -1,7 +1,7 @@
 # errorlint: errorf
 
 <instructions>
-Detects `fmt.Errorf("message: %s", err)` without the `%w` wrapping verb. Without `%w`, the original error is lost — `errors.Is` and `errors.As` cannot walk the chain. Use `errors.Wrap(err, "message")` from `github.com/pkg/errors` to wrap errors. Prefer `Wrap` over `Wrapf` — dynamic format strings cause Sentry cardinality explosion. Use `Wrapf` only when values come from a small bounded set (e.g., iota constants). When `fmt.Errorf` must be used, ensure `%w` is present.
+Detects `fmt.Errorf` calls that format errors with `%s` or `%v` instead of wrapping with `%w`. Without `%w`, the error chain is lost — `errors.Is` and `errors.As` cannot match the original cause. Use `errors.Wrap(err, "message")` to preserve the chain; prefer `Wrap` over `Wrapf` to avoid Sentry cardinality explosion.
 </instructions>
 
 <examples>

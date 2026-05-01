@@ -1,9 +1,7 @@
 # noinlineerr
 
 <instructions>
-Noinlineerr detects functions that inline error creation and return in a single expression, making it harder to add context or debug. It flags patterns like `return fmt.Errorf(...)` when the error should be assigned to a named return variable for inspection.
-
-Assign errors to a named return variable before returning.
+Detects functions that create and return errors in a single expression like `return fmt.Errorf(...)`. Inline returns prevent debuggers from inspecting the error, `defer` from modifying it, and logs from capturing the failure point. Assign errors to a named return variable before returning.
 </instructions>
 
 <examples>

@@ -1,9 +1,7 @@
 # errcheck
 
 <instructions>
-Errcheck detects unchecked error returns in Go code. When a function returns an error and you don't handle it, failures can go silently unnoticed, leading to bugs that are hard to trace.
-
-Always check error return values. If intentionally ignoring, use `_ =` with a comment explaining why.
+Detects error return values that are discarded or assigned but never checked. Unchecked errors cause silent data corruption and security vulnerabilities that are extremely difficult to trace in production. Check every error return with `if err != nil`; when intentionally ignoring, use `_ =` with a comment explaining why.
 </instructions>
 
 <examples>

@@ -1,9 +1,7 @@
 # gocritic: exitAfterDefer
 
 <instructions>
-Detects calls to `os.Exit` or `log.Fatal` inside functions that contain deferred statements. `os.Exit` terminates the program immediately without running deferred functions, so any cleanup in `defer` statements is silently skipped.
-
-Return an error instead of calling `os.Exit`, and let the caller decide how to handle the failure. If immediate exit is truly needed, move cleanup before the exit call.
+Detects `os.Exit` or `log.Fatal` calls in functions that contain deferred statements. `os.Exit` terminates immediately without running deferred cleanup — file handles leak, transactions remain open, and temporary files persist. Return an error instead and let the caller handle cleanup and exit.
 </instructions>
 
 <examples>

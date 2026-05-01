@@ -1,9 +1,7 @@
 # revive: unhandled-error
 
 <instructions>
-Detects function return values (specifically errors) that are discarded without checking. Ignoring errors hides failures, leads to silent data corruption, and makes debugging extremely difficult. Every function that returns an error should have its return value checked.
-
-Assign the error to a variable and check it. Use `if err != nil` to handle the error, or explicitly document why ignoring it is safe with `//nolint` and a reason.
+Detects error return values discarded without checking. Unchecked errors produce silent failures that corrupt data and make root-cause debugging extremely difficult. Assign the error to a variable and handle it with `if err != nil`, or document intentional ignores with `//nolint` and a reason.
 </instructions>
 
 <examples>

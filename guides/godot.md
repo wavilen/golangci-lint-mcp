@@ -1,9 +1,7 @@
 # godot
 
 <instructions>
-Godot checks that comments end with a period. Go doc conventions require sentences to be properly punctuated for godoc rendering and readability.
-
-Add a period at the end of each comment sentence. For multi-sentence comments, ensure every sentence ends with punctuation.
+Checks that doc comments end with a period as required by Go documentation conventions. godoc renders comments as documentation pages on pkg.go.dev and IDE tooltips — missing punctuation produces fragmented, hard-to-read sentences. Add a period at the end of each comment sentence; for multi-sentence comments, ensure every sentence is punctuated.
 </instructions>
 
 <examples>
@@ -15,9 +13,9 @@ func Parse(input string) (*Result, error) {
 </examples>
 
 <patterns>
-- Add trailing periods to single-line doc comments
-- Check multi-sentence comments for missing punctuation on the final sentence
-- End package-level comments with proper sentence punctuation
+- Add a period to the end of `//` doc comments on exported functions, types, and constants — required for `godoc` sentence parsing
+- Ensure every sentence in multi-line doc comments ends with `.` — `godoc` treats periods as sentence boundaries for formatting
+- End package-level `// Package foo ...` comments with proper sentence punctuation
 - Annotate TODO/FIXME with trailing periods unless excluded by configuration
 </patterns>
 

@@ -1,9 +1,7 @@
 # gocritic: importShadow
 
 <instructions>
-Detects identifiers in local scope (variables, type parameters, function parameters) that shadow an imported package name. This makes the package inaccessible within that scope and can lead to confusing "undefined" errors.
-
-Rename the local identifier to avoid colliding with the imported package name.
+Detects variables, parameters, or type parameters whose names shadow an imported package name. Shadowing makes the package inaccessible within that scope, causing confusing "undefined" compile errors or silent use of the wrong value. Rename the local identifier to avoid colliding with the imported package name.
 </instructions>
 
 <examples>

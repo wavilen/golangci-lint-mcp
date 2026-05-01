@@ -1,9 +1,7 @@
 # nilnil
 
 <instructions>
-Nilnil detects functions that return both a nil pointer and a nil error, which is ambiguous — the caller cannot distinguish "success with nil result" from "no result available." This pattern violates Go's convention that `(nil, nil)` should mean success with no value.
-
-Return a meaningful zero-value, a sentinel error, or a wrapper type instead.
+Detects functions that return `(nil, nil)` — a nil pointer alongside a nil error. This is ambiguous: the caller cannot distinguish "success with no result" from "not found" or "uninitialized." Return a meaningful sentinel error, a zero-value wrapper, or an explicit not-found error instead.
 </instructions>
 
 <examples>

@@ -49,6 +49,7 @@ func makeListHandler(store *guides.Store) func(_ context.Context, _ mcp.CallTool
 		}
 
 		var builder strings.Builder
+		fmt.Fprintf(&builder, "<summary>\n\n")
 		fmt.Fprintf(&builder, "## Supported Linters (%d)\n\n", len(entries))
 
 		if len(compoundEntries) > 0 {
@@ -70,6 +71,8 @@ func makeListHandler(store *guides.Store) func(_ context.Context, _ mcp.CallTool
 			builder.WriteString(strings.Join(simpleNames, ", "))
 			builder.WriteString("\n")
 		}
+
+		fmt.Fprintf(&builder, "\n</summary>\n")
 
 		return mcp.NewToolResultText(builder.String()), nil
 	}

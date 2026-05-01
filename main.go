@@ -6,6 +6,8 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/wavilen/golangci-lint-mcp/internal/guides"
 	"github.com/wavilen/golangci-lint-mcp/internal/server"
@@ -48,6 +50,7 @@ func run(fsys fs.FS, gosecAI bool, getenv envGetter, serve serveFunc) error {
 		GosecAIKey:      getenv("GOSEC_AI_API_KEY"),
 		GosecAIBaseURL:  getenv("GOSEC_AI_BASE_URL"),
 		GosecAISkipSSL:  getenv("GOSEC_AI_SKIP_SSL") == "true",
+		Timeout:         parseTimeout(getenv("GOLANGCI_LINT_TIMEOUT")),
 	}
 	if opts.GosecAI && opts.GosecAIKey == "" {
 		log.Printf(
@@ -61,4 +64,21 @@ func run(fsys fs.FS, gosecAI bool, getenv envGetter, serve serveFunc) error {
 		return fmt.Errorf("server error: %w", serveErr)
 	}
 	return nil
+}
+
+const defaultTimeout = 300 * time.Second
+
+func parseTimeout(raw string) time.Duration {
+	if raw == "" {
+		return defaultTimeout
+	}
+	d, err := time.ParseDuration(raw)
+	if err == nil {
+		return d
+	}
+	secs, err := strconv.Atoi(raw)
+	if err == nil && secs > 0 {
+		return time.Duration(secs) * time.Second
+	}
+	return defaultTimeout
 }

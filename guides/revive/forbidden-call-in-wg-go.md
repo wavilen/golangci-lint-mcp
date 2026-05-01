@@ -1,9 +1,7 @@
 # revive: forbidden-call-in-wg-go
 
 <instructions>
-Detects disallowed function calls inside `sync.WaitGroup` goroutine handlers. Certain calls — like `runtime.Goexit()` — can prevent `wg.Done()` from being reached, causing deadlocks because the WaitGroup counter never returns to zero.
-
-Ensure `wg.Done()` is deferred as the first statement in the goroutine so it always runs, even if the function panics or exits early.
+Detects `runtime.Goexit` and other disallowed calls inside `sync.WaitGroup` goroutine handlers. These calls prevent `wg.Done()` from being reached, leaving the WaitGroup counter above zero and causing `wg.Wait()` to deadlock. Defer `wg.Done()` as the first statement in the goroutine so it always runs, even on panic.
 </instructions>
 
 <examples>

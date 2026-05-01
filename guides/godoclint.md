@@ -1,9 +1,7 @@
 # godoclint
 
 <instructions>
-Godoclint checks that exported functions, types, and variables have properly formatted doc comments. Missing or malformed comments hurt API documentation and IDE tooltips.
-
-Add a doc comment starting with the declared name immediately before each exported declaration.
+Checks that exported functions, types, variables, and packages have doc comments. Missing doc comments produce empty API reference pages on pkg.go.dev and blank hover cards in IDEs. Add a doc comment starting with the declared name immediately before each exported declaration.
 </instructions>
 
 <examples>

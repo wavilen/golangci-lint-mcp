@@ -1,0 +1,15 @@
+{
+  "TestCase": "Simple",
+  "Model": "GLM-5.1",
+  "BeforeIssues": 8,
+  "AfterIssues": 0,
+  "BuildsClean": true,
+  "LintClean": true,
+  "NolintCount": 0,
+  "IssueReduction": 100,
+  "ToolCalls": 26,
+  "Retries": 0,
+  "Pass": true,
+  "Error": "",
+  "ConfigModified": false
+}

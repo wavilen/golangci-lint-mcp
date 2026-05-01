@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>golangci-lint-mcp — AI Agent Fix Guidance for golangci-lint</title>
+    <meta name="description" content="MCP server providing AI agents with concise, actionable guidance for fixing golangci-lint issues. 629 guides, 5 tools, zero config.">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f8fafc; color: #1e293b; line-height: 1.6; }
+        h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        h2 { color: #0f172a; margin: 32px 0 16px; font-size: 1.5em; }
+        h3 { color: #0f172a; margin: 0 0 8px; }
+
+        /* Navigation */
+        nav { position: sticky; top: 0; z-index: 100; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; margin: -20px -20px 24px; border-radius: 0; }
+        nav .brand { font-weight: 700; font-size: 1.1em; color: white; text-decoration: none; }
+        nav .links { display: flex; gap: 20px; }
+        nav .links a { color: #94a3b8; text-decoration: none; font-size: 0.9em; transition: color 0.2s; }
+        nav .links a:hover { color: white; }
+
+        /* Cards */
+        .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0; }
+
+        /* Hero */
+        .hero { text-align: center; padding: 48px 16px 32px; }
+        .hero h1 { border: none; font-size: 2.2em; padding: 0; margin-bottom: 16px; }
+        .hero p { color: #64748b; font-size: 1.15em; max-width: 720px; margin: 0 auto 24px; }
+        .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-amber { background: #fef3c7; color: #92400e; }
+        .badge-purple { background: #f3e8ff; color: #6b21a8; }
+
+        /* Tool cards */
+        .tool-card h3 { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; color: #2563eb; font-size: 1.05em; }
+        .tool-card .desc { color: #475569; margin: 8px 0; }
+        .tool-card .example { background: #1e293b; color: #e2e8f0; padding: 10px 14px; border-radius: 6px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 0.85em; overflow-x: auto; }
+
+        /* Coverage */
+        .coverage-item { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+        .coverage-item .name { min-width: 120px; font-weight: 600; font-size: 0.95em; }
+        .coverage-item .bar { flex: 1; height: 10px; border-radius: 5px; background: #e5e7eb; overflow: hidden; }
+        .coverage-item .bar-fill { height: 100%; border-radius: 5px; background: #16a34a; }
+        .coverage-item .count { font-size: 0.85em; color: #64748b; min-width: 80px; text-align: right; }
+
+        /* Architecture */
+        .arch-card { text-align: center; padding: 24px 16px; }
+        .arch-card .icon { font-size: 2em; margin-bottom: 8px; }
+        .arch-card h3 { color: #0f172a; }
+        .arch-card p { color: #64748b; font-size: 0.9em; margin-top: 8px; }
+
+        /* Code blocks */
+        .code-block { background: #1e293b; color: #e2e8f0; padding: 16px 20px; border-radius: 8px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 0.88em; overflow-x: auto; margin: 12px 0; }
+        .code-label { color: #64748b; font-size: 0.85em; font-weight: 600; margin-bottom: 4px; }
+
+        /* Graph section */
+        .graph-section { margin: 24px 0; }
+        .graph-section img { width: 100%; border-radius: 8px; margin: 16px 0; }
+        .graph-caption { color: #64748b; font-size: 0.9em; }
+        .graph-caption a { color: #2563eb; text-decoration: none; }
+
+        /* Footer */
+        footer { border-top: 2px solid #e2e8f0; margin-top: 48px; padding: 24px 0; text-align: center; color: #64748b; font-size: 0.85em; }
+        footer a { color: #2563eb; text-decoration: none; }
+        footer .links { display: flex; gap: 24px; justify-content: center; margin-bottom: 12px; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            nav { flex-direction: column; gap: 8px; padding: 12px 16px; }
+            nav .links { gap: 12px; }
+            .hero h1 { font-size: 1.6em; }
+            .hero p { font-size: 1em; }
+            body { padding: 12px; }
+            nav { margin: -12px -12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+    <a href="index.html" class="brand">golangci-lint-mcp</a>
+    <div class="links">
+        <a href="graph.html">Linter Graph</a>
+        <a href="e2e-report.html">E2E Report</a>
+        <a href="diagrams.html">Diagrams</a>
+        <a href="https://github.com/wavilen/golangci-lint-mcp">GitHub Repo</a>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <h1>Fix golangci-lint issues instantly with AI agents</h1>
+    <p>When an agent encounters a golangci-lint diagnostic, it calls a single tool and immediately understands what the issue means and how to fix it.</p>
+    <div class="badges">
+        <span class="badge badge-green">629 Guides</span>
+        <span class="badge badge-blue">5 MCP Tools</span>
+        <span class="badge badge-amber">Zero Config</span>
+        <span class="badge badge-purple">Single Binary</span>
+    </div>
+</section>
+
+<!-- Tools Section -->
+<h2>MCP Tools</h2>
+<div class="grid">
+
+    <div class="card tool-card">
+        <h3>golangci_lint_run</h3>
+        <p class="desc">Primary entry point. Runs golangci-lint, parses results, and returns fix guidance with package breakdown and strategy recommendation.</p>
+        <div class="example">golangci_lint_run(path="./pkg/auth/...")</div>
+    </div>
+
+    <div class="card tool-card">
+        <h3>golangci_lint_parse</h3>
+        <p class="desc">Parse existing golangci-lint JSON output. Returns fix guidance for all unique (linter, rule) pairs with Related Context.</p>
+        <div class="example">golangci_lint_parse(output="&lt;json&gt;")</div>
+    </div>
+
+    <div class="card tool-card">
+        <h3>golangci_lint_guide</h3>
+        <p class="desc">Per-diagnostic lookup by linter name and optional rule ID. Returns XML-tagged guidance with instructions, examples, patterns, and related sections.</p>
+        <div class="example">golangci_lint_guide(linter="errcheck")</div>
+    </div>
+
+    <div class="card tool-card">
+        <h3>golangci_lint_list</h3>
+        <p class="desc">Discover all supported linters with compound/simple classification and rule counts.</p>
+        <div class="example">golangci_lint_list()</div>
+    </div>
+
+    <div class="card tool-card">
+        <h3>golangci_lint_summarize</h3>
+        <p class="desc">Strategy summary of raw JSON: unique issue count, package breakdown, and recommended approach.</p>
+        <div class="example">golangci_lint_summarize(output="&lt;json&gt;")</div>
+    </div>
+
+</div>
+
+<!-- Coverage Section -->
+<h2>Guide Coverage</h2>
+<div class="card" style="padding: 24px;">
+    <div class="coverage-item">
+        <span class="name">staticcheck</span>
+        <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+        <span class="count">172 rules</span>
+    </div>
+    <div class="coverage-item">
+        <span class="name">gocritic</span>
+        <div class="bar"><div class="bar-fill" style="width:63%"></div></div>
+        <span class="count">108 checkers</span>
+    </div>
+    <div class="coverage-item">
+        <span class="name">revive</span>
+        <div class="bar"><div class="bar-fill" style="width:59%"></div></div>
+        <span class="count">101 rules</span>
+    </div>
+    <div class="coverage-item">
+        <span class="name">gosec</span>
+        <div class="bar"><div class="bar-fill" style="width:35%"></div></div>
+        <span class="count">61 rules</span>
+    </div>
+    <div class="coverage-item">
+        <span class="name">govet</span>
+        <div class="bar"><div class="bar-fill" style="width:20%"></div></div>
+        <span class="count">35 analyzers</span>
+    </div>
+    <div class="coverage-item">
+        <span class="name" style="color:#64748b">30+ more linters</span>
+        <div class="bar"><div class="bar-fill" style="width:10%; background:#94a3b8"></div></div>
+        <span class="count">testifylint, modernize, ginkgolinter, errorlint...</span>
+    </div>
+</div>
+
+<!-- Architecture Section -->
+<h2>Architecture</h2>
+<div class="grid-3">
+    <div class="card arch-card">
+        <div class="icon">📦</div>
+        <h3>Single Binary</h3>
+        <p>All 629 guides embedded via go:embed. No external files, no database, no network calls.</p>
+    </div>
+    <div class="card arch-card">
+        <div class="icon">🔌</div>
+        <h3>MCP Server</h3>
+        <p>Built with mcp-go, stdio transport. Five tools exposed for lint diagnosis and fix guidance.</p>
+    </div>
+    <div class="card arch-card">
+        <div class="icon">🤖</div>
+        <h3>Agent Integration</h3>
+        <p>Plugin hooks, platform rules, and skill files for opencode, Claude Code, and Cursor.</p>
+    </div>
+</div>
+
+<div class="graph-section">
+    <img src="assets/graphify.png" alt="Linter Relationship Graph">
+    <p class="graph-caption">Linter relationship graph: 629 nodes, 2,232 edges, 10 communities. <a href="graph.html">Explore the interactive graph &rarr;</a></p>
+</div>
+
+<!-- Installation Section -->
+<h2>Installation</h2>
+
+<p class="code-label">Install the MCP server binary:</p>
+<div class="code-block">go install github.com/wavilen/golangci-lint-mcp@latest</div>
+
+<p class="code-label">Install the OpenCode skill:</p>
+<div class="code-block">npx @wavilen/golangci-lint-guide</div>
+
+<p class="code-label">Configure in opencode.json:</p>
+<div class="code-block">{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "golangci-lint": {
+      "type": "local",
+      "command": ["golangci-lint-mcp"]
+    }
+  }
+}</div>
+
+<!-- Footer -->
+<footer>
+    <div class="links">
+        <a href="https://github.com/wavilen/golangci-lint-mcp">GitHub</a>
+        <a href="LICENSE">MIT License</a>
+        <a href="graph.html">Linter Graph</a>
+        <a href="e2e-report.html">E2E Report</a>
+        <a href="diagrams.html">Diagrams</a>
+    </div>
+    <p>Built with Go 1.23 + mcp-go v0.48.0</p>
+</footer>
+
+</body>
+</html>

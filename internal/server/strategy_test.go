@@ -86,19 +86,26 @@ func TestRecommendStrategy_SingleAgent_EdgeCase(t *testing.T) {
 	assert.Equal(t, "single-agent", name)
 }
 
-func TestRecommendStrategy_Subagent(t *testing.T) {
+func TestRecommendStrategy_SubagentPerFile(t *testing.T) {
 	name, reason := recommendStrategy(45, 2)
-	assert.Equal(t, "subagent-per-package", name)
+	assert.Equal(t, "subagent-per-file", name)
 	assert.Contains(t, reason, ">45")
 	assert.Contains(t, reason, "2 packages")
-	assert.Contains(t, reason, "subagent-per-package strategy")
+	assert.Contains(t, reason, "subagent-per-file strategy")
 }
 
-func TestRecommendStrategy_SubagentByPackages(t *testing.T) {
+func TestRecommendStrategy_SubagentPerPackage(t *testing.T) {
 	name, reason := recommendStrategy(5, 5)
 	assert.Equal(t, "subagent-per-package", name)
-	assert.Contains(t, reason, ">5")
+	assert.Contains(t, reason, "5 issues")
 	assert.Contains(t, reason, "5 packages")
+}
+
+func TestRecommendStrategy_SubagentPerPackageManyIssues(t *testing.T) {
+	name, reason := recommendStrategy(100, 6)
+	assert.Equal(t, "subagent-per-package", name)
+	assert.Contains(t, reason, "100 issues")
+	assert.Contains(t, reason, "6 packages")
 }
 
 func TestIsLargeOutput_TrueByIssues(t *testing.T) {

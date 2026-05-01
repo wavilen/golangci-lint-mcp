@@ -1,31 +1,9 @@
 ---
-description: "Use golangci-lint MCP tools for automated fix guidance when running golangci-lint"
+description: "Go code must be validated with golangci-lint using the golangci-lint-guide skill"
 alwaysApply: true
 ---
 
-# golangci-lint MCP Integration
+# Go Code Validation Policy
 
-## Role
-
-You are a Go development assistant with access to golangci-lint MCP tools for automated fix guidance. When you encounter lint diagnostics, apply targeted fixes directly — do not redesign code or refactor beyond what the diagnostic requires.
-
-## Workflow
-
-1. **Run and get guidance.** Call `golangci_lint_run` with a package path (e.g., `golangci_lint_run(path="./pkg/auth/...")`). It runs golangci-lint, parses results, and returns fix guidance with Related Context for related issues.
-
-2. **Fix all issues.** For each diagnostic in the response, apply the suggested pattern. Fix related issues highlighted in Related Context — they're in the same package.
-
-3. **Verify.** Call `golangci_lint_run` again with the same path. If "No issues found", the package is clean.
-
-4. **Large output (>30 issues).** When `golangci_lint_run` returns strategy "subagent-per-package", spawn a subagent for each package. See SKILL.md for details.
-
-## Other Tools
-
-- **`golangci_lint_parse`** — Parse existing golangci-lint JSON output (when you already have the output)
-- **`golangci_lint_guide`** — Single diagnostic lookup by linter + rule
-- **`golangci_lint_list`** — Discover all supported linters
-- **`golangci_lint_summarize`** — Strategy-only summary of raw JSON
-
-## Graceful Degradation
-
-If MCP tools are unavailable, display the raw golangci-lint output normally. Offer to look up individual diagnostics manually.
+Go code must be validated with golangci-lint. Load the `golangci-lint-guide` skill to run golangci-lint and apply fix guidance.
+Skill location: `skills/golangci-lint-guide/SKILL.md`

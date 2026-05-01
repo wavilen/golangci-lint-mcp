@@ -151,6 +151,8 @@ func TestHandler_UnknownLinter(t *testing.T) {
 	assert.Contains(t, text, "errchek")
 	// Should suggest errcheck as close match via Levenshtein
 	assert.Contains(t, text, "errcheck")
+	// Should mention version mismatch (D-03)
+	assert.Contains(t, text, "newer/older")
 }
 
 // Test 4: Compound linter without rule lists rules.
@@ -181,6 +183,9 @@ func TestHandler_MissingLinter(t *testing.T) {
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, strings.ToLower(text), "missing")
 	assert.Contains(t, strings.ToLower(text), "linter")
+	// Should suggest golangci_lint_guide and golangci_lint_list tools (D-01, D-04)
+	assert.Contains(t, text, "golangci_lint_guide")
+	assert.Contains(t, text, "golangci_lint_list")
 }
 
 // Test 6: Simple linter with rule returns error about no sub-rules.
@@ -269,7 +274,7 @@ func TestHandler_RelatedContext_SimpleLinter(t *testing.T) {
 
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, text, "Errcheck detects unchecked errors")
-	assert.Contains(t, text, "### Related Context")
+	assert.Contains(t, text, "<related_context>")
 	assert.NotContains(t, text, "<related>")
 	assert.NotContains(t, text, "</related>")
 }
@@ -284,7 +289,7 @@ func TestHandler_RelatedContext_NoRelated(t *testing.T) {
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.NotContains(t, text, "### Related Context")
+	assert.NotContains(t, text, "<related_context>")
 }
 
 // Test 13: Guide referencing non-existent linter skips silently.
@@ -300,7 +305,7 @@ func TestHandler_RelatedContext_OrphanRef(t *testing.T) {
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "### Related Context")
+	assert.Contains(t, text, "<related_context>")
 	assert.Contains(t, text, "gosec/G304")
 }
 
@@ -319,7 +324,7 @@ func TestHandler_RelatedContext_FixHintFromPatterns(t *testing.T) {
 	require.Len(t, result.Content, 1)
 
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "### Related Context")
+	assert.Contains(t, text, "<related_context>")
 	// govet should have a fix hint from its patterns, selected by keyword overlap
 	// with errcheck's instructions ("unchecked errors")
 	assert.Contains(t, text, "govet:")

@@ -129,6 +129,9 @@ func TestParseHandler_InvalidJSON(t *testing.T) {
 	require.True(t, result.IsError)
 	text := result.Content[0].(mcp.TextContent).Text
 	assert.Contains(t, strings.ToLower(text), "invalid json")
+	// Should suggest golangci_lint_run as primary and golangci_lint_guide as secondary (D-02)
+	assert.Contains(t, text, "golangci_lint_run")
+	assert.Contains(t, text, "golangci_lint_guide")
 }
 
 func TestParseHandler_EmptyOutput(t *testing.T) {
@@ -194,7 +197,7 @@ func TestParseHandler_SummaryBlock_SingleDiagnostic(t *testing.T) {
 	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "## Summary")
+	assert.Contains(t, text, "<summary>")
 	assert.Contains(t, text, "Unique diagnostics: 1")
 	assert.Contains(t, text, "Strategy: single-agent")
 	assert.Contains(t, text, "errcheck (1)")
@@ -239,10 +242,9 @@ func TestParseHandler_SummaryBlock_StrategyB(t *testing.T) {
 	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "## Summary")
 	assert.Contains(t, text, "Unique diagnostics: 31")
-	assert.Contains(t, text, "Strategy: subagent-per-package")
-	assert.Contains(t, text, "subagent-per-package strategy")
+	assert.Contains(t, text, "Strategy: subagent-per-file")
+	assert.Contains(t, text, "subagent-per-file strategy")
 }
 
 func TestParseHandler_ExistingGuideToolUnchanged(t *testing.T) {
@@ -262,7 +264,7 @@ func TestParseHandler_RelatedContext_MultipleLinters(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, result.Content, 1)
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "### Related Context")
+	assert.Contains(t, text, "<related_context>")
 	// errcheck's related: govet, rowserrcheck
 	// gocritic/dupSubExpr's related: gocritic/badCall
 	// Should see at least govet and rowserrcheck as related entries
@@ -279,7 +281,7 @@ func TestParseHandler_RelatedContext_DeduplicationAgainstPrimary(t *testing.T) {
 	text := result.Content[0].(mcp.TextContent).Text
 	// errcheck is in the primary set, it should not be listed in Related Context
 	// The section should contain govet and rowserrcheck but NOT errcheck
-	if strings.Contains(text, "### Related Context") {
+	if strings.Contains(text, "<related_context>") {
 		assert.NotContains(t, text, "- errcheck:", "primary linter should not appear in Related Context")
 	}
 }
@@ -293,7 +295,7 @@ func TestParseHandler_RelatedContext_DeduplicationWithinRelated(t *testing.T) {
 	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "### Related Context")
+	assert.Contains(t, text, "<related_context>")
 }
 
 // Test: Max 5 entries in Related Context.
@@ -307,9 +309,9 @@ func TestParseHandler_RelatedContext_MaxEntries(t *testing.T) {
 	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "### Related Context")
+	assert.Contains(t, text, "<related_context>")
 	// Count lines starting with "- " in the Related Context section
-	section, found := cutAfter(text, "### Related Context")
+	section, found := cutAfter(text, "<related_context>")
 	assert.True(t, found, "should find Related Context section")
 	lines := strings.Split(section, "\n")
 	var entryLines []string
@@ -329,7 +331,7 @@ func TestParseHandler_RelatedContext_NoRelated(t *testing.T) {
 	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.NotContains(t, text, "### Related Context")
+	assert.NotContains(t, text, "<related_context>")
 }
 
 // Test: Fix hint comes from pattern bullets.
@@ -339,7 +341,7 @@ func TestParseHandler_RelatedContext_FixHintFromPatterns(t *testing.T) {
 	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
 	require.NoError(t, err)
 	text := result.Content[0].(mcp.TextContent).Text
-	assert.Contains(t, text, "### Related Context")
+	assert.Contains(t, text, "<related_context>")
 	// govet should appear as related with a pattern-based hint
 	assert.Contains(t, text, "govet:")
 	// rowserrcheck should appear with a hint about rows.Err
@@ -353,4 +355,59 @@ func cutAfter(s, marker string) (string, bool) {
 		return "", false
 	}
 	return after, true
+}
+
+// NDJSON Tests
+
+// Test: Newline-delimited individual issue objects parse correctly.
+func TestParseHandler_NDJSONInput(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	ndjson := `{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"main.go","Line":10,"Column":5}}
+{"FromLinter":"gocritic","Text":"dupSubExpr: suspicious identical LHS and RHS","Pos":{"Filename":"main.go","Line":15,"Column":8}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": ndjson}))
+	require.NoError(t, err)
+	require.False(t, result.IsError, "NDJSON input should parse successfully")
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "Errcheck detects unchecked errors")
+	assert.Contains(t, text, "duplicate sub-expressions")
+	assert.Contains(t, text, "Unique diagnostics: 2")
+}
+
+// Test: Existing wrapped JSON still works (backward compatible).
+func TestParseHandler_WrappedJSONStillWorks(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	json := `{"Issues":[{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"main.go","Line":10,"Column":5}}],"Report":{}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": json}))
+	require.NoError(t, err)
+	require.False(t, result.IsError)
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "Errcheck detects unchecked errors")
+	assert.Contains(t, text, "Unique diagnostics: 1")
+}
+
+// Test: Non-JSON lines in NDJSON input are skipped silently.
+func TestParseHandler_MixedInvalidLinesSkipped(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	ndjson := `some garbage line
+{"FromLinter":"errcheck","Text":"Error return value is not checked","Pos":{"Filename":"main.go","Line":10,"Column":5}}
+another garbage line
+{"FromLinter":"gosec","Text":"G101: Potential hardcoded credentials","Pos":{"Filename":"main.go","Line":5,"Column":1}}`
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": ndjson}))
+	require.NoError(t, err)
+	require.False(t, result.IsError, "NDJSON with garbage lines should parse valid lines only")
+	text := result.Content[0].(mcp.TextContent).Text
+	assert.Contains(t, text, "Unique diagnostics: 2")
+	assert.Contains(t, text, "Errcheck detects unchecked errors")
+}
+
+// Test: Empty lines only input returns error.
+func TestParseHandler_NDJSONEmptyInput(t *testing.T) {
+	srv, ctx := setupParseTestServer(t)
+	ndjson := "\n\n  \n\n"
+	result, err := srv.Client().CallTool(ctx, testGuideCall("golangci_lint_parse", map[string]any{"output": ndjson}))
+	require.NoError(t, err)
+	require.True(t, result.IsError, "empty lines only should return error")
+	text := result.Content[0].(mcp.TextContent).Text
+	// After TrimSpace, whitespace-only input triggers "must not be empty" check
+	assert.Contains(t, strings.ToLower(text), "empty")
 }

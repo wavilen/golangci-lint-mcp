@@ -1,0 +1,15 @@
+{
+  "TestCase": "Large",
+  "Model": "GLM-5.1",
+  "BeforeIssues": 116,
+  "AfterIssues": 0,
+  "BuildsClean": true,
+  "LintClean": true,
+  "NolintCount": 0,
+  "IssueReduction": 100,
+  "ToolCalls": 49,
+  "Retries": 0,
+  "Pass": true,
+  "Error": "",
+  "ConfigModified": false
+}

@@ -1,9 +1,7 @@
 # revive: unchecked-type-assertion
 
 <instructions>
-Detects type assertions without the comma-ok safety check. Writing `v.(string)` panics at runtime if the underlying type doesn't match. Always use the two-value form `v, ok := x.(string)` to handle the mismatch gracefully.
-
-Add the comma-ok check and handle the `false` case with an error return, default value, or log message. For type switches, ensure a `default` case.
+Detects single-value type assertions `v.(T)` that panic at runtime when the underlying type doesn't match. A failed assertion crashes the goroutine with an unrecoverable `panic`, bypassing any error handling. Use the two-value form `v, ok := x.(T)` and handle the `false` case with an error return or default value.
 </instructions>
 
 <examples>

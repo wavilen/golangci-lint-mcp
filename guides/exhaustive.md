@@ -1,9 +1,7 @@
 # exhaustive
 
 <instructions>
-Exhaustive checks that switch statements on enum types cover all possible cases. Missing cases mean unhandled enum values silently fall through to the default, potentially causing runtime errors.
-
-Add a case for every enum member, or use a `default` case explicitly if that is the intended behavior.
+Checks that switch statements on enum types cover every defined member. Unhandled enum values silently fall through to `default`, causing runtime errors or undefined behavior that won't surface until production. Add a case for every enum member, or use an explicit `default` with a panic for truly unexpected values.
 </instructions>
 
 <examples>
@@ -25,9 +23,9 @@ func handle(s Status) {
 </examples>
 
 <patterns>
-- Add cases for newly added enum members in switch statements
-- Include all interface implementations in type switch statements
-- Audit all enum switch sites when adding new enum values
+- Audit all `switch` statements on `iota`-based enum types when adding a new constant — add a case for each new value
+- Include all interface implementations in `switch t.(type)` statements
+- Run `exhaustive` after modifying `const` blocks to catch missing switch cases
 </patterns>
 
 <related>

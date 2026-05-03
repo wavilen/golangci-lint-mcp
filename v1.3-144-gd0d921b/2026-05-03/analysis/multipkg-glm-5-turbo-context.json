@@ -1,0 +1,38 @@
+{
+  "model": "GLM-5-Turbo",
+  "test_case": "Multipkg",
+  "duration_ms": 153061,
+  "event_counts": {
+    "step_start": 14,
+    "tool_use": 18,
+    "text": 6,
+    "step_finish": 14
+  },
+  "tool_breakdown": {
+    "golangci_lint_run": 6,
+    "skill": 1,
+    "task": 4,
+    "glob": 1,
+    "read": 2,
+    "edit": 3,
+    "bash": 1
+  },
+  "token_totals": {
+    "input": 7257,
+    "output": 1274,
+    "reasoning": 406,
+    "cache_read": 230049
+  },
+  "issue_counts": {
+    "before": 29,
+    "after": 0,
+    "reduction_pct": 100
+  },
+  "timestamps": {
+    "start": 1777758169193,
+    "end": 1777758322254
+  },
+  "subagent_count": 4,
+  "strategy": "subagent-per-package (29 issues across 4 packages — use subagent-per-package strategy)",
+  "pass": true
+}

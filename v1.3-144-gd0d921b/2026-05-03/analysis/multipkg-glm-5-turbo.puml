@@ -1,0 +1,115 @@
+@startuml
+title multipkg-glm-5-turbo
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 150
+
+participant "Agent" as A #LightBlue
+participant "MCP Tools" as MCP #LightYellow
+participant "FileSystem" as FS #LightGreen
+
+box "Subagents" #LightCoral
+  participant "Sub: store" as SUB_1
+  participant "Sub: service" as SUB_2
+  participant "Sub: api" as SUB_3
+  participant "Sub: root" as SUB_4
+end box
+
+note over A, FS
+  **multipkg-glm-5-turbo**
+  Model: GLM-5-Turbo
+  Test: Multipkg / Issues: 29 to 0 (100% reduction)
+  Tool Calls: 18 / Duration: 2m33s
+  Subagents: 4
+  Result: <color:green><b>PASS</b></color>
+end note
+
+A -> MCP : **golangci_lint_run(./...)**
+note right of MCP
+  - Unique diagnostics: 12
+  - Strategy: subagent-per-package (29 issues across 4 packages — use subagent-per-package strategy)
+  TOTAL: 12 issues across 4 pac
+end note
+A -> MCP : **skill(golangci-lint-guide)**
+note right of MCP : Skill loaded
+A -> SUB_1 : **Fix golangci-lint in store**
+note right of SUB_1
+  Zero issues remain. Here's a summary of all fixes applied:
+end note
+SUB_1 --> A : Done
+
+A -> SUB_2 : **Fix golangci-lint in service**
+note right of SUB_2
+  Zero issues remaining. Here's the summary:
+end note
+SUB_2 --> A : Done
+
+A -> SUB_3 : **Fix golangci-lint in api**
+note right of SUB_3
+  All issues resolved. Here's a summary of the fixes applied:
+end note
+SUB_3 --> A : Done
+
+A -> SUB_4 : **Fix golangci-lint in root**
+note right of SUB_4
+  All issues resolved. Here's a summary of the fixes applied to `main.go`:
+end note
+SUB_4 --> A : Done
+
+note over A : Found 29 issues across 4 packages. Spawning 4 subagents to fix each package in parallel.
+
+A -> MCP : **golangci_lint_run(./...)**
+note right of MCP
+  - Unique diagnostics: 3
+  - Strategy: single-agent (≤3 issues across 1 packages — single-agent flow)
+  TOTAL: 3 issues across 1 packages
+end note
+note over A : All 4 packages fixed. Running final verification across the entire project.
+
+A -> FS : **glob(model/**/*.go)**
+note right of FS : 1 files
+A -> MCP : **golangci_lint_run(./model)**
+note right of MCP
+  - Unique diagnostics: 3
+  - Strategy: single-agent (≤3 issues across 1 packages — single-agent flow)
+  TOTAL: 3 issues across 1 packages
+end note
+note over A : 3 remaining issues in `model` package. Fixing directly.
+
+A -> FS : **read(types.go)**
+A -> FS : **edit(types.go)**
+note right of FS : Edit applied
+A -> FS : **edit(types.go)**
+note right of FS : Edit applied
+A -> FS : **edit(types.go)**
+note right of FS : Edit applied
+A -> FS : **read(types.go)**
+note over A : Now remove unused imports since `unusedModel` was removed and if any imports became unused:
+
+A -> MCP : **golangci_lint_run(./model)**
+note right of MCP
+  - Unique diagnostics: 1
+  - Strategy: single-agent (≤1 issues across 1 packages — single-agent flow)
+  TOTAL: 1 issues across 1 packages
+end note
+A -> FS : **bash: Format model/types.go with gofmt/goimports**
+note right of FS : done
+A -> MCP : **golangci_lint_run(./model)**
+note right of MCP : No issues found
+A -> MCP : **golangci_lint_run(./...)**
+note right of MCP : No issues found
+note over A : `model` is clean. Running final project-wide verification:
+
+note over A
+  All clean. Fixed all 29 issues across 5 packages:
+  ...
+end note
+
+
+note over A, FS
+  **Final:** 29 to 0 issues / <color:green><b>PASS</b></color>
+  Duration: 2m33s
+end note
+
+@enduml

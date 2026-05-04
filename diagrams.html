@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E2E Test Sequence Diagrams — golangci-lint-mcp</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f8fafc; color: #1e293b; line-height: 1.6; }
+        h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        h2 { color: #0f172a; margin: 32px 0 16px; font-size: 1.5em; }
+        h3 { color: #0f172a; margin: 0 0 8px; }
+
+        /* Navigation */
+        nav { position: sticky; top: 0; z-index: 100; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; margin: -20px -20px 24px; }
+        nav .brand { font-weight: 700; font-size: 1.1em; color: white; text-decoration: none; }
+        nav .links { display: flex; gap: 20px; }
+        nav .links a { color: #94a3b8; text-decoration: none; font-size: 0.9em; transition: color 0.2s; }
+        nav .links a:hover { color: white; }
+
+        /* Cards */
+        .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 24px; margin: 24px 0; }
+
+        /* Page header */
+        .page-header { margin-bottom: 24px; }
+        .page-header h1 { border-bottom: none; margin-bottom: 8px; }
+        .page-header p { color: #64748b; font-size: 1.05em; }
+
+        /* Diagram card */
+        .diagram-card { padding: 20px; }
+        .diagram-card h3 { font-size: 1.15em; margin-bottom: 4px; }
+        .diagram-card .description { color: #64748b; font-size: 0.9em; margin-bottom: 12px; }
+        .diagram-card .badges { margin-bottom: 12px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; color: white; margin-right: 4px; }
+        .badge-simple { background: #16a34a; }
+        .badge-medium { background: #d97706; }
+        .badge-large { background: #dc2626; }
+        .badge-model { background: #2563eb; }
+
+        /* Clickable images */
+        .diagram-card label { cursor: pointer; display: block; }
+        .diagram-card label img { width: 100%; border-radius: 8px; transition: opacity 0.2s; }
+        .diagram-card label:hover img { opacity: 0.9; }
+
+        /* Lightbox */
+        .lightbox-toggle { display: none; }
+        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; cursor: pointer; }
+        .lightbox img { max-width: 95vw; max-height: 95vh; border-radius: 8px; }
+        .lightbox-toggle:checked + label + .lightbox { display: flex; }
+
+        /* Footer */
+        footer { border-top: 2px solid #e2e8f0; margin-top: 48px; padding: 24px 0; text-align: center; color: #64748b; font-size: 0.85em; }
+        footer a { color: #2563eb; text-decoration: none; }
+        footer .links { display: flex; gap: 24px; justify-content: center; margin-bottom: 12px; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            nav { flex-direction: column; gap: 8px; padding: 12px 16px; }
+            nav .links { gap: 12px; }
+            .grid { grid-template-columns: 1fr; }
+            body { padding: 12px; }
+            nav { margin: -12px -12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+    <a href="index.html" class="brand">golangci-lint-mcp</a>
+    <div class="links">
+        <a href="index.html">Home</a>
+        <a href="graph.html">Linter Graph</a>
+        <a href="e2e-report.html">E2E Report</a>
+        <a href="https://github.com/wavilen/golangcilint-mcp">GitHub</a>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<section class="page-header">
+    <h1>E2E Test Sequence Diagrams</h1>
+    <p>PlantUML sequence diagrams showing MCP tool interactions during integration test runs across models and fixture sizes</p>
+</section>
+
+<!-- Diagram Grid -->
+
+<!-- 1. Comparison Overview -->
+<div class="grid">
+<div class="card diagram-card">
+    <h3>Model Comparison Overview</h3>
+    <p class="description">High-level comparison of agent behavior across all model and fixture combinations, showing issue reduction, tool call counts, and durations.</p>
+    <input type="checkbox" id="dia-1" class="lightbox-toggle">
+    <label for="dia-1"><img src="diagrams/comparison-overview.png" alt="Model Comparison Overview"></label>
+    <div class="lightbox"><label for="dia-1"><img src="diagrams/comparison-overview.png" alt="Model Comparison Overview"></label></div>
+</div>
+
+<!-- 2. Probe -->
+<div class="card diagram-card">
+    <h3>Probe Test Sequence</h3>
+    <p class="description">Basic MCP server connectivity probe and tool discovery. Validates server startup and linter enumeration (113 supported linters).</p>
+    <input type="checkbox" id="dia-2" class="lightbox-toggle">
+    <label for="dia-2"><img src="diagrams/probe.png" alt="Probe Test Sequence"></label>
+    <div class="lightbox"><label for="dia-2"><img src="diagrams/probe.png" alt="Probe Test Sequence"></label></div>
+</div>
+
+<!-- 3. Simple — GLM-5.1 -->
+<div class="card diagram-card">
+    <h3>Simple Fixture — GLM-5.1</h3>
+    <div class="badges">
+        <span class="badge badge-simple">Simple</span>
+        <span class="badge badge-model">GLM-5.1</span>
+    </div>
+    <p class="description">8 issues reduced to 0 in 5m17s with 19 tool calls. Agent calls skill, runs golangci-lint, applies fixes, and verifies clean build.</p>
+    <input type="checkbox" id="dia-3" class="lightbox-toggle">
+    <label for="dia-3"><img src="diagrams/simple-glm-5-1.png" alt="Simple Fixture GLM-5.1"></label>
+    <div class="lightbox"><label for="dia-3"><img src="diagrams/simple-glm-5-1.png" alt="Simple Fixture GLM-5.1"></label></div>
+</div>
+
+<!-- 4. Simple — GLM-5-Turbo -->
+<div class="card diagram-card">
+    <h3>Simple Fixture — GLM-5-Turbo</h3>
+    <div class="badges">
+        <span class="badge badge-simple">Simple</span>
+        <span class="badge badge-model">GLM-5-Turbo</span>
+    </div>
+    <p class="description">8 issues reduced to 0 in 1m56s with 23 tool calls. Fastest completion among simple fixture tests.</p>
+    <input type="checkbox" id="dia-4" class="lightbox-toggle">
+    <label for="dia-4"><img src="diagrams/simple-glm-5-turbo.png" alt="Simple Fixture GLM-5-Turbo"></label>
+    <div class="lightbox"><label for="dia-4"><img src="diagrams/simple-glm-5-turbo.png" alt="Simple Fixture GLM-5-Turbo"></label></div>
+</div>
+
+<!-- 5. Medium — GLM-5.1 -->
+<div class="card diagram-card">
+    <h3>Medium Fixture — GLM-5.1</h3>
+    <div class="badges">
+        <span class="badge badge-medium">Medium</span>
+        <span class="badge badge-model">GLM-5.1</span>
+    </div>
+    <p class="description">30 issues reduced to 0 in 14m44s with 35 tool calls. Demonstrates sustained multi-pass fixing strategy.</p>
+    <input type="checkbox" id="dia-5" class="lightbox-toggle">
+    <label for="dia-5"><img src="diagrams/medium-glm-5-1.png" alt="Medium Fixture GLM-5.1"></label>
+    <div class="lightbox"><label for="dia-5"><img src="diagrams/medium-glm-5-1.png" alt="Medium Fixture GLM-5.1"></label></div>
+</div>
+
+<!-- 6. Medium — GLM-5-Turbo -->
+<div class="card diagram-card">
+    <h3>Medium Fixture — GLM-5-Turbo</h3>
+    <div class="badges">
+        <span class="badge badge-medium">Medium</span>
+        <span class="badge badge-model">GLM-5-Turbo</span>
+    </div>
+    <p class="description">30 issues reduced to 0 in 8m51s with 36 tool calls. Nearly identical tool call count to GLM-5.1 but significantly faster.</p>
+    <input type="checkbox" id="dia-6" class="lightbox-toggle">
+    <label for="dia-6"><img src="diagrams/medium-glm-5-turbo.png" alt="Medium Fixture GLM-5-Turbo"></label>
+    <div class="lightbox"><label for="dia-6"><img src="diagrams/medium-glm-5-turbo.png" alt="Medium Fixture GLM-5-Turbo"></label></div>
+</div>
+
+<!-- 7. Large — GLM-5.1 -->
+<div class="card diagram-card">
+    <h3>Large Fixture — GLM-5.1</h3>
+    <div class="badges">
+        <span class="badge badge-large">Large</span>
+        <span class="badge badge-model">GLM-5.1</span>
+    </div>
+    <p class="description">116 issues reduced to 0 in 27m15s with 27 tool calls. Most efficient tool usage across all large fixture tests.</p>
+    <input type="checkbox" id="dia-7" class="lightbox-toggle">
+    <label for="dia-7"><img src="diagrams/large-glm-5-1.png" alt="Large Fixture GLM-5.1"></label>
+    <div class="lightbox"><label for="dia-7"><img src="diagrams/large-glm-5-1.png" alt="Large Fixture GLM-5.1"></label></div>
+</div>
+
+<!-- 8. Large — GLM-5-Turbo -->
+<div class="card diagram-card">
+    <h3>Large Fixture — GLM-5-Turbo</h3>
+    <div class="badges">
+        <span class="badge badge-large">Large</span>
+        <span class="badge badge-model">GLM-5-Turbo</span>
+    </div>
+    <p class="description">116 issues reduced to 0 in 20m49s with 46 tool calls. Most tool calls but fastest large fixture completion.</p>
+    <input type="checkbox" id="dia-8" class="lightbox-toggle">
+    <label for="dia-8"><img src="diagrams/large-glm-5-turbo.png" alt="Large Fixture GLM-5-Turbo"></label>
+    <div class="lightbox"><label for="dia-8"><img src="diagrams/large-glm-5-turbo.png" alt="Large Fixture GLM-5-Turbo"></label></div>
+</div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="links">
+        <a href="index.html">Home</a>
+        <a href="graph.html">Linter Graph</a>
+        <a href="e2e-report.html">E2E Report</a>
+        <a href="https://github.com/wavilen/golangcilint-mcp">GitHub</a>
+    </div>
+    <p>Built with Go 1.23 + mcp-go v0.48.0</p>
+    <p style="margin-top:8px">Generated from PlantUML sources in <a href="https://github.com/wavilen/golangcilint-mcp/tree/main/assets/ndjson_analysis">assets/ndjson_analysis/</a></p>
+</footer>
+
+</body>
+</html>

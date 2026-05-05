@@ -1,0 +1,72 @@
+@startuml
+title multipkg-glm-5-1
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 150
+
+participant "Agent" as A #LightBlue
+participant "MCP Tools" as MCP #LightYellow
+participant "FileSystem" as FS #LightGreen
+
+box "Subagents" #LightCoral
+  participant "Sub: api" as SUB_1
+  participant "Sub: service" as SUB_2
+  participant "Sub: pkg" as SUB_3
+  participant "Sub: store" as SUB_4
+end box
+
+note over A, FS
+  **multipkg-glm-5-1**
+  Model: GLM-5.1
+  Test: Multipkg / Issues: 29 to 0 (100% reduction)
+  Tool Calls: 7 / Duration: 5m25s
+  Subagents: 4
+  Result: <color:green><b>PASS</b></color>
+end note
+
+A -> MCP : **skill(golangci-lint-guide)**
+note right of MCP : Skill loaded
+A -> MCP : **golangci_lint_run(./...)**
+note right of MCP
+  - Unique diagnostics: 10
+  - Strategy: subagent-per-package (26 issues across 4 packages — use subagent-per-package strategy)
+end note
+A -> SUB_1 : **Fix golangci-lint in api**
+note right of SUB_1
+  All 6 issues fixed. Here's a summary:
+end note
+SUB_1 --> A : Done
+
+A -> SUB_2 : **Fix golangci-lint in service**
+note right of SUB_2
+  All issues resolved. Here's a summary of the 7 fixes applied to `service/logic.go`:
+end note
+SUB_2 --> A : Done
+
+A -> SUB_3 : **Fix golangci-lint in root pkg**
+note right of SUB_3
+  All golangci-lint issues in the root package are now fixed. Here's a summary:
+end note
+SUB_3 --> A : Done
+
+A -> SUB_4 : **Fix golangci-lint in store**
+note right of SUB_4
+  Here's a summary of the 6 fixes applied to `store/db.go`:
+end note
+SUB_4 --> A : Done
+
+note over A : Starting with 26 issues across 4 packages. Auto-fix reduced it to 10. Spawning subagents per package to fix the remainin
+
+A -> MCP : **golangci_lint_run(./...)**
+note over A : All subagents completed. Running final verification:
+
+note over A : All 26 issues fixed. Zero issues remain across all 4 packages (api, service, store, root).
+
+
+note over A, FS
+  **Final:** 29 to 0 issues / <color:green><b>PASS</b></color>
+  Duration: 5m25s
+end note
+
+@enduml

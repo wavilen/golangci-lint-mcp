@@ -1,0 +1,25 @@
+{
+  "TestCase": "Large",
+  "Model": "GLM-4.7",
+  "BeforeIssues": 116,
+  "AfterIssues": 0,
+  "BuildsClean": true,
+  "LintClean": true,
+  "NolintCount": 0,
+  "IssueReduction": 100,
+  "ToolCalls": 112,
+  "Retries": 0,
+  "Pass": true,
+  "Error": "",
+  "ConfigModified": false,
+  "SubagentToolCalls": 0,
+  "SubagentCount": 0,
+  "TokenUsage": {
+    "Input": 17524,
+    "Output": 9469,
+    "Reasoning": 2803,
+    "CacheRead": 885569,
+    "CacheWrite": 0
+  },
+  "TotalCost": 0
+}

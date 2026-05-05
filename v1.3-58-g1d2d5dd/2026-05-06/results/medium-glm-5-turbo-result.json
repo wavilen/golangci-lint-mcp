@@ -1,0 +1,25 @@
+{
+  "TestCase": "Medium",
+  "Model": "GLM-5-Turbo",
+  "BeforeIssues": 30,
+  "AfterIssues": 0,
+  "BuildsClean": true,
+  "LintClean": true,
+  "NolintCount": 0,
+  "IssueReduction": 100,
+  "ToolCalls": 30,
+  "Retries": 0,
+  "Pass": true,
+  "Error": "",
+  "ConfigModified": false,
+  "SubagentToolCalls": 0,
+  "SubagentCount": 0,
+  "TokenUsage": {
+    "Input": 51344,
+    "Output": 2930,
+    "Reasoning": 27267,
+    "CacheRead": 925120,
+    "CacheWrite": 0
+  },
+  "TotalCost": 0
+}

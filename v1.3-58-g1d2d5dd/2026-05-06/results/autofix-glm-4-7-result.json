@@ -1,0 +1,25 @@
+{
+  "TestCase": "Autofix",
+  "Model": "GLM-4.7",
+  "BeforeIssues": 4,
+  "AfterIssues": 0,
+  "BuildsClean": true,
+  "LintClean": true,
+  "NolintCount": 0,
+  "IssueReduction": 100,
+  "ToolCalls": 3,
+  "Retries": 0,
+  "Pass": true,
+  "Error": "",
+  "ConfigModified": false,
+  "SubagentToolCalls": 0,
+  "SubagentCount": 0,
+  "TokenUsage": {
+    "Input": 1761,
+    "Output": 110,
+    "Reasoning": 361,
+    "CacheRead": 35622,
+    "CacheWrite": 0
+  },
+  "TotalCost": 0
+}

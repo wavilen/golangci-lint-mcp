@@ -1,0 +1,25 @@
+{
+  "TestCase": "Medium",
+  "Model": "GLM-5.1",
+  "BeforeIssues": 30,
+  "AfterIssues": 0,
+  "BuildsClean": true,
+  "LintClean": true,
+  "NolintCount": 0,
+  "IssueReduction": 100,
+  "ToolCalls": 29,
+  "Retries": 0,
+  "Pass": true,
+  "Error": "",
+  "ConfigModified": false,
+  "SubagentToolCalls": 0,
+  "SubagentCount": 0,
+  "TokenUsage": {
+    "Input": 47270,
+    "Output": 2668,
+    "Reasoning": 28591,
+    "CacheRead": 639040,
+    "CacheWrite": 0
+  },
+  "TotalCost": 0
+}

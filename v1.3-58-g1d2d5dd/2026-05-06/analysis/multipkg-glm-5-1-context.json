@@ -1,0 +1,34 @@
+{
+  "model": "GLM-5.1",
+  "test_case": "Multipkg",
+  "duration_ms": 324850,
+  "event_counts": {
+    "step_start": 4,
+    "tool_use": 7,
+    "text": 3,
+    "step_finish": 4
+  },
+  "tool_breakdown": {
+    "skill": 1,
+    "golangci_lint_run": 2,
+    "task": 4
+  },
+  "token_totals": {
+    "input": 6990,
+    "output": 958,
+    "reasoning": 70,
+    "cache_read": 48256
+  },
+  "issue_counts": {
+    "before": 29,
+    "after": 0,
+    "reduction_pct": 100
+  },
+  "timestamps": {
+    "start": 1778014542465,
+    "end": 1778014867315
+  },
+  "subagent_count": 4,
+  "strategy": "** MCP tools auto-detect strategy and include `<strategy_instructions>` block in their response. Always follow the instructions in that block. Do NOT attempt to fix >30 issues without subagents.",
+  "pass": true
+}

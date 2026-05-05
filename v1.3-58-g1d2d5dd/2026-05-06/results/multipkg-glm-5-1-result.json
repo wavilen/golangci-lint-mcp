@@ -1,0 +1,25 @@
+{
+  "TestCase": "Multipkg",
+  "Model": "GLM-5.1",
+  "BeforeIssues": 29,
+  "AfterIssues": 0,
+  "BuildsClean": true,
+  "LintClean": true,
+  "NolintCount": 0,
+  "IssueReduction": 100,
+  "ToolCalls": 7,
+  "Retries": 0,
+  "Pass": true,
+  "Error": "",
+  "ConfigModified": false,
+  "SubagentToolCalls": 69,
+  "SubagentCount": 4,
+  "TokenUsage": {
+    "Input": 71095,
+    "Output": 5803,
+    "Reasoning": 14704,
+    "CacheRead": 907584,
+    "CacheWrite": 0
+  },
+  "TotalCost": 0
+}

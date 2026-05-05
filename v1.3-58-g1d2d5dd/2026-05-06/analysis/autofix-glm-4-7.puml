@@ -1,0 +1,34 @@
+@startuml
+title autofix-glm-4-7
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 150
+
+participant "Agent" as A #LightBlue
+participant "MCP Tools" as MCP #LightYellow
+participant "FileSystem" as FS #LightGreen
+
+note over A, FS
+  **autofix-glm-4-7**
+  Model: GLM-4.7
+  Test: Autofix / Issues: 4 to 0 (100% reduction)
+  Tool Calls: 3 / Duration: 15.5s
+  Result: <color:green><b>PASS</b></color>
+end note
+
+A -> MCP : **skill(golangci-lint-guide)**
+note right of MCP : Skill loaded
+A -> MCP : **golangci_lint_run(./...)**
+note over A : I'll load the golangci-lint-guide skill and fix all golangci-lint issues in the current directory.
+
+A -> MCP : **golangci_lint_run(./...)**
+note over A : All golangci-lint issues in the current directory have been fixed. The linter now reports 'No issues remain.'
+
+
+note over A, FS
+  **Final:** 4 to 0 issues / <color:green><b>PASS</b></color>
+  Duration: 15.5s
+end note
+
+@enduml

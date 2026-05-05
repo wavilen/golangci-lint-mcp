@@ -1,0 +1,26 @@
+@startuml
+title Agent Session Comparison Overview
+
+skinparam backgroundColor #FEFEFE
+
+rectangle "Comparison" {
+  note as N
+  **autofix-glm-4-7**: GLM-4.7 - Autofix - 4 to 0 (100%) - 3 calls - 15.5s - <color:green><b>PASS</b></color>
+  **autofix-glm-5-1**: GLM-5.1 - Autofix - 4 to 0 (100%) - 3 calls - 12.9s - <color:green><b>PASS</b></color>
+  **autofix-glm-5-turbo**: GLM-5-Turbo - Autofix - 4 to 0 (100%) - 2 calls - 2.6s - <color:green><b>PASS</b></color>
+  **large-glm-4-7**: GLM-4.7 - Large - 116 to 0 (100%) - 112 calls - 3m56s - <color:green><b>PASS</b></color>
+  **large-glm-5-1**: GLM-5.1 - Large - 116 to 0 (100%) - 54 calls - 25m51s - <color:green><b>PASS</b></color>
+  **large-glm-5-turbo**: GLM-5-Turbo - Large - 116 to 0 (100%) - 46 calls - 9m28s - 6 subagents - <color:green><b>PASS</b></color>
+  **medium-glm-4-7**: GLM-4.7 - Medium - 30 to 0 (100%) - 82 calls - 6m54s - <color:green><b>PASS</b></color>
+  **medium-glm-5-1**: GLM-5.1 - Medium - 30 to 0 (100%) - 29 calls - 14m15s - <color:green><b>PASS</b></color>
+  **medium-glm-5-turbo**: GLM-5-Turbo - Medium - 30 to 0 (100%) - 30 calls - 6m53s - <color:green><b>PASS</b></color>
+  **multipkg-glm-4-7**: GLM-4.7 - Multipkg - 29 to 0 (100%) - 18 calls - 4m59s - 4 subagents - <color:green><b>PASS</b></color>
+  **multipkg-glm-5-1**: GLM-5.1 - Multipkg - 29 to 0 (100%) - 7 calls - 5m25s - 4 subagents - <color:green><b>PASS</b></color>
+  **multipkg-glm-5-turbo**: GLM-5-Turbo - Multipkg - 29 to 0 (100%) - 15 calls - 2m49s - 4 subagents - <color:green><b>PASS</b></color>
+  **simple-glm-4-7**: GLM-4.7 - Simple - 8 to 0 (100%) - 33 calls - 2m31s - <color:green><b>PASS</b></color>
+  **simple-glm-5-1**: GLM-5.1 - Simple - 8 to 0 (100%) - 25 calls - 6m7s - <color:green><b>PASS</b></color>
+  **simple-glm-5-turbo**: GLM-5-Turbo - Simple - 8 to 0 (100%) - 32 calls - 1m60s - <color:green><b>PASS</b></color>
+  end note
+}
+
+@enduml

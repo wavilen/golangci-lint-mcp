@@ -1,0 +1,31 @@
+@startuml
+title autofix-glm-5-turbo
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 150
+
+participant "Agent" as A #LightBlue
+participant "MCP Tools" as MCP #LightYellow
+participant "FileSystem" as FS #LightGreen
+
+note over A, FS
+  **autofix-glm-5-turbo**
+  Model: GLM-5-Turbo
+  Test: Autofix / Issues: 4 to 0 (100% reduction)
+  Tool Calls: 2 / Duration: 2.6s
+  Result: <color:green><b>PASS</b></color>
+end note
+
+A -> MCP : **skill(golangci-lint-guide)**
+note right of MCP : Skill loaded
+A -> MCP : **golangci_lint_run(./...)**
+note over A : The project is clean — golangci-lint found no issues. There's nothing to fix.
+
+
+note over A, FS
+  **Final:** 4 to 0 issues / <color:green><b>PASS</b></color>
+  Duration: 2.6s
+end note
+
+@enduml

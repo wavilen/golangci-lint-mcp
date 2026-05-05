@@ -1,0 +1,38 @@
+{
+  "model": "GLM-5-Turbo",
+  "test_case": "Simple",
+  "duration_ms": 119768,
+  "event_counts": {
+    "step_start": 32,
+    "tool_use": 32,
+    "text": 7,
+    "step_finish": 32
+  },
+  "tool_breakdown": {
+    "skill": 1,
+    "golangci_lint_run": 5,
+    "glob": 3,
+    "read": 6,
+    "todowrite": 3,
+    "edit": 13,
+    "bash": 1
+  },
+  "token_totals": {
+    "input": 20240,
+    "output": 2184,
+    "reasoning": 1576,
+    "cache_read": 618240
+  },
+  "issue_counts": {
+    "before": 8,
+    "after": 0,
+    "reduction_pct": 100
+  },
+  "timestamps": {
+    "start": 1778013075542,
+    "end": 1778013195310
+  },
+  "subagent_count": 0,
+  "strategy": "** MCP tools auto-detect strategy and include `<strategy_instructions>` block in their response. Always follow the instructions in that block. Do NOT attempt to fix >30 issues without subagents.",
+  "pass": true
+}

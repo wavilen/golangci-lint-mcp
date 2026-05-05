@@ -1,0 +1,34 @@
+@startuml
+title autofix-glm-5-1
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 150
+
+participant "Agent" as A #LightBlue
+participant "MCP Tools" as MCP #LightYellow
+participant "FileSystem" as FS #LightGreen
+
+note over A, FS
+  **autofix-glm-5-1**
+  Model: GLM-5.1
+  Test: Autofix / Issues: 4 to 0 (100% reduction)
+  Tool Calls: 3 / Duration: 12.9s
+  Result: <color:green><b>PASS</b></color>
+end note
+
+A -> MCP : **skill(golangci-lint-guide)**
+note right of MCP : Skill loaded
+A -> MCP : **golangci_lint_run(./...)**
+A -> MCP : **golangci_lint_run(./...)**
+note over A : The initial scan found no issues — the project is already clean. Let me verify once more to confirm.
+
+note over A : All clear — `golangci-lint` reports no issues in the project. No fixes needed.
+
+
+note over A, FS
+  **Final:** 4 to 0 issues / <color:green><b>PASS</b></color>
+  Duration: 12.9s
+end note
+
+@enduml

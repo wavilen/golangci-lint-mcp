@@ -1,127 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>E2E Test Report — GLM-4.7 vs GLM-5.1 vs GLM-5-Turbo</title>
-<style>
-:root {
-  --bg: #0d1117; --surface: #161b22; --border: #30363d;
-  --text: #c9d1d9; --text-dim: #8b949e; --accent: #58a6ff;
-  --green: #3fb950; --red: #f85149; --yellow: #d29922;
-  --purple: #bc8cff; --orange: #f0883e;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-.container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-h1 { font-size: 2em; margin-bottom: 8px; color: #fff; }
-h2 { font-size: 1.5em; margin: 30px 0 16px; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-h3 { font-size: 1.2em; margin: 20px 0 10px; color: var(--accent); }
-.subtitle { color: var(--text-dim); margin-bottom: 24px; font-size: 1.1em; }
-
-/* Summary cards */
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-.card-title { font-size: 0.85em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-.card-value { font-size: 2em; font-weight: 700; color: #fff; margin: 4px 0; }
-.card-detail { font-size: 0.85em; color: var(--text-dim); }
-
-/* Tables */
-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
-th { background: var(--surface); text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border); color: var(--accent); font-weight: 600; }
-td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
-tr:hover { background: rgba(88,166,255,0.05); }
-.pass { color: var(--green); font-weight: 700; }
-.fail { color: var(--red); font-weight: 700; }
-.model-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 600; }
-.model-4-7 { background: rgba(248,81,73,0.15); color: var(--red); }
-.model-5-1 { background: rgba(188,140,255,0.15); color: var(--purple); }
-.model-5-turbo { background: rgba(240,136,62,0.15); color: var(--orange); }
-
-/* Charts */
-.chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 16px 0; }
-.chart-row { display: flex; align-items: flex-end; gap: 8px; margin: 4px 0; min-height: 30px; }
-.chart-label { width: 120px; text-align: right; padding-right: 12px; font-size: 0.85em; color: var(--text-dim); flex-shrink: 0; }
-.chart-bar-container { flex: 1; display: flex; align-items: center; gap: 4px; }
-.bar { border-radius: 4px 4px 0 0; min-height: 4px; transition: width 0.3s; position: relative; }
-.bar-value { font-size: 0.8em; color: var(--text-dim); white-space: nowrap; margin-left: 8px; }
-
-/* Analysis panels */
-.analysis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 16px; margin: 16px 0; }
-.analysis-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.analysis-header { padding: 12px 16px; background: rgba(88,166,255,0.08); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.analysis-header h4 { margin: 0; }
-.analysis-body { padding: 16px; font-size: 0.9em; }
-.analysis-body h3 { font-size: 1em; color: var(--accent); margin: 12px 0 6px; }
-.analysis-body p, .analysis-body li { color: var(--text-dim); }
-.analysis-body ul { padding-left: 20px; }
-
-/* Tool breakdown bars */
-.tool-bar-group { margin: 4px 0; }
-.tool-bar-row { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
-.tool-name { width: 140px; text-align: right; font-size: 0.8em; color: var(--text-dim); }
-.tool-bar { height: 16px; border-radius: 3px; background: var(--accent); opacity: 0.7; }
-.tool-count { font-size: 0.8em; color: var(--text-dim); }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .cards { grid-template-columns: repeat(2, 1fr); }
-  .analysis-grid { grid-template-columns: 1fr; }
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Integration Test Report — Phase 77</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f8fafc; }
+        h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        .pass { color: #16a34a; font-weight: bold; }
+        .fail { color: #dc2626; font-weight: bold; }
+        .skip { color: #d97706; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
+        .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card h3 { margin: 0 0 8px 0; color: #64748b; font-size: 0.85em; text-transform: uppercase; }
+        .card .value { font-size: 2em; font-weight: bold; color: #0f172a; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        th { background: #f1f5f9; color: #475569; text-align: left; padding: 10px 12px; font-size: 0.85em; text-transform: uppercase; }
+        td { border-top: 1px solid #e5e7eb; padding: 10px 12px; }
+        tr:hover td { background: #f8fafc; }
+        .bar { height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; background: #16a34a; }
+    </style>
 </head>
 <body>
-<div class="container">
-<h1>E2E Test Report</h1>
-<p class="subtitle">GLM-4.7 vs GLM-5.1 vs GLM-5-Turbo — golangci-lint agent performance comparison</p>
-<div class="cards"><div class="card"><div class="card-title">Pass Rate</div><div class="card-value" style="color: var(--green)">10/12</div><div class="card-detail">83% overall</div></div><div class="card"><div class="card-title">Models Tested</div><div class="card-value">3</div><div class="card-detail">GLM-4.7, GLM-5.1, GLM-5-Turbo</div></div><div class="card"><div class="card-title">Test Sizes</div><div class="card-value">4</div><div class="card-detail">Simple (8), Medium (30), Large (116), Multipkg (29)</div></div><div class="card"><div class="card-title">Total Issues Fixed</div><div class="card-value" style="color: var(--green)">404</div><div class="card-detail">across 10 passing runs</div></div></div><h2>Results Overview</h2><table><tr><th>Trace</th><th>Model</th><th>Test</th><th>Issues</th><th>Reduction</th><th>Calls</th><th>Subs</th><th>Duration</th><th>Tokens</th><th>Tok/Issue</th><th>Result</th></tr><tr><td><code>simple-glm-4-7</code></td><td><span class="model-tag model-4-7">GLM-4.7</span></td><td>Simple</td><td>8→0</td><td>100%</td><td>26</td><td>0</td><td>140.4s</td><td>29,569</td><td>3696</td><td class="pass">PASS</td></tr><tr><td><code>simple-glm-5-1</code></td><td><span class="model-tag model-5-1">GLM-5.1</span></td><td>Simple</td><td>8→0</td><td>100%</td><td>26</td><td>0</td><td>226.3s</td><td>25,204</td><td>3150</td><td class="pass">PASS</td></tr><tr><td><code>simple-glm-5-turbo</code></td><td><span class="model-tag model-5-turbo">GLM-5-Turbo</span></td><td>Simple</td><td>8→0</td><td>100%</td><td>28</td><td>0</td><td>118.4s</td><td>16,800</td><td>2100</td><td class="pass">PASS</td></tr><tr><td><code>medium-glm-4-7</code></td><td><span class="model-tag model-4-7">GLM-4.7</span></td><td>Medium</td><td>30→0</td><td>100%</td><td>73</td><td>0</td><td>262.8s</td><td>28,046</td><td>935</td><td class="pass">PASS</td></tr><tr><td><code>medium-glm-5-1</code></td><td><span class="model-tag model-5-1">GLM-5.1</span></td><td>Medium</td><td>30→0</td><td>100%</td><td>38</td><td>0</td><td>850.8s</td><td>73,669</td><td>2456</td><td class="pass">PASS</td></tr><tr><td><code>medium-glm-5-turbo</code></td><td><span class="model-tag model-5-turbo">GLM-5-Turbo</span></td><td>Medium</td><td>30→0</td><td>100%</td><td>31</td><td>0</td><td>356.5s</td><td>62,958</td><td>2099</td><td class="pass">PASS</td></tr><tr><td><code>large-glm-5-1</code></td><td><span class="model-tag model-5-1">GLM-5.1</span></td><td>Large</td><td>116→0</td><td>100%</td><td>167</td><td>8</td><td>1144.0s</td><td>247,175</td><td>2131</td><td class="pass">PASS</td></tr><tr><td><code>large-glm-5-turbo</code></td><td><span class="model-tag model-5-turbo">GLM-5-Turbo</span></td><td>Large</td><td>116→0</td><td>100%</td><td>64</td><td>0</td><td>534.1s</td><td>133,043</td><td>1147</td><td class="pass">PASS</td></tr><tr><td><code>multipkg-glm-5-1</code></td><td><span class="model-tag model-5-1">GLM-5.1</span></td><td>Multipkg</td><td>29→0</td><td>100%</td><td>86</td><td>4</td><td>322.7s</td><td>107,183</td><td>3696</td><td class="pass">PASS</td></tr><tr><td><code>multipkg-glm-5-turbo</code></td><td><span class="model-tag model-5-turbo">GLM-5-Turbo</span></td><td>Multipkg</td><td>29→0</td><td>100%</td><td>93</td><td>4</td><td>153.1s</td><td>77,810</td><td>2683</td><td class="pass">PASS</td></tr><tr><td><code>large-glm-4-7</code></td><td><span class="model-tag model-4-7">GLM-4.7</span></td><td>Large</td><td>116→0</td><td>0%</td><td>0</td><td>0</td><td>-</td><td>-</td><td>-</td><td class="fail">FAIL</td></tr><tr><td><code>multipkg-glm-4-7</code></td><td><span class="model-tag model-4-7">GLM-4.7</span></td><td>Multipkg</td><td>29→0</td><td>0%</td><td>0</td><td>0</td><td>-</td><td>-</td><td>-</td><td class="fail">FAIL</td></tr></table><h2>Duration Comparison (seconds)</h2><div class="chart-container"><h3>Simple</h3><div class="chart-row"><div class="chart-label">GLM-4.7</div><div class="chart-bar-container"><div class="bar" style="width: 12.271456255348383%; background: var(--red); height: 20px;"></div><span class="bar-value">140.4s</span></div></div><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 19.783538469472578%; background: var(--purple); height: 20px;"></div><span class="bar-value">226.3s</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 10.352287557133204%; background: var(--orange); height: 20px;"></div><span class="bar-value">118.4s</span></div></div><h3>Medium</h3><div class="chart-row"><div class="chart-label">GLM-4.7</div><div class="chart-bar-container"><div class="bar" style="width: 22.97067315130542%; background: var(--red); height: 20px;"></div><span class="bar-value">262.8s</span></div></div><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 74.37145826577287%; background: var(--purple); height: 20px;"></div><span class="bar-value">850.8s</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 31.16376480830602%; background: var(--orange); height: 20px;"></div><span class="bar-value">356.5s</span></div></div><h3>Large</h3><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 100.0%; background: var(--purple); height: 20px;"></div><span class="bar-value">1144.0s</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 46.686252280302114%; background: var(--orange); height: 20px;"></div><span class="bar-value">534.1s</span></div></div><h3>Multipkg</h3><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 28.20293399601586%; background: var(--purple); height: 20px;"></div><span class="bar-value">322.7s</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 13.379025328726257%; background: var(--orange); height: 20px;"></div><span class="bar-value">153.1s</span></div></div></div><h2>Token Consumption</h2><div class="chart-container"><h3>Simple</h3><div class="chart-row"><div class="chart-label">GLM-4.7</div><div class="chart-bar-container"><div class="bar" style="width: 11.962779407302518%; background: var(--red); height: 20px;"></div><span class="bar-value">29,569 tokens (3696/issue)</span></div></div><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 10.196824112470921%; background: var(--purple); height: 20px;"></div><span class="bar-value">25,204 tokens (3150/issue)</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 6.796803883887933%; background: var(--orange); height: 20px;"></div><span class="bar-value">16,800 tokens (2100/issue)</span></div></div><h3>Medium</h3><div class="chart-row"><div class="chart-label">GLM-4.7</div><div class="chart-bar-container"><div class="bar" style="width: 11.346616769495297%; background: var(--red); height: 20px;"></div><span class="bar-value">28,046 tokens (935/issue)</span></div></div><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 29.804389602508348%; background: var(--purple); height: 20px;"></div><span class="bar-value">73,669 tokens (2456/issue)</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 25.471022554870032%; background: var(--orange); height: 20px;"></div><span class="bar-value">62,958 tokens (2099/issue)</span></div></div><h3>Large</h3><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 100.0%; background: var(--purple); height: 20px;"></div><span class="bar-value">247,175 tokens (2131/issue)</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 53.825427328815614%; background: var(--orange); height: 20px;"></div><span class="bar-value">133,043 tokens (1147/issue)</span></div></div><h3>Multipkg</h3><div class="chart-row"><div class="chart-label">GLM-5.1</div><div class="chart-bar-container"><div class="bar" style="width: 43.363204207545266%; background: var(--purple); height: 20px;"></div><span class="bar-value">107,183 tokens (3696/issue)</span></div></div><div class="chart-row"><div class="chart-label">GLM-5-Turbo</div><div class="chart-bar-container"><div class="bar" style="width: 31.47972084555477%; background: var(--orange); height: 20px;"></div><span class="bar-value">77,810 tokens (2683/issue)</span></div></div></div><h2>Tool Usage Breakdown</h2><div class="analysis-grid"><div class="analysis-panel"><div class="analysis-header"><h4><code>simple-glm-4-7</code> <span class="model-tag model-4-7">GLM-4.7</span></h4><span class="pass">8→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--green);"></div></div><div class="tool-count">8</div></div><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 75.0%; background: var(--accent);"></div></div><div class="tool-count">6</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 50.0%; background: #79c0ff;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 50.0%; background: #8b949e;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 37.5%; background: var(--orange);"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 12.5%; background: var(--purple);"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>simple-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">8→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--green);"></div></div><div class="tool-count">9</div></div><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 66.66666666666666%; background: var(--accent);"></div></div><div class="tool-count">6</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 44.44444444444444%; background: #8b949e;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 33.33333333333333%; background: #79c0ff;"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">todowrite</div><div style="flex:1;"><div class="tool-bar" style="width: 33.33333333333333%; background: #7ee787;"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 11.11111111111111%; background: var(--purple);"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>simple-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">8→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--accent);"></div></div><div class="tool-count">6</div></div><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--green);"></div></div><div class="tool-count">6</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--orange);"></div></div><div class="tool-count">6</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 66.66666666666666%; background: #8b949e;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">todowrite</div><div style="flex:1;"><div class="tool-bar" style="width: 50.0%; background: #7ee787;"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 16.666666666666664%; background: var(--purple);"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 16.666666666666664%; background: #79c0ff;"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">write</div><div style="flex:1;"><div class="tool-bar" style="width: 16.666666666666664%; background: var(--yellow);"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>medium-glm-4-7</code> <span class="model-tag model-4-7">GLM-4.7</span></h4><span class="pass">30→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--green);"></div></div><div class="tool-count">45</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 24.444444444444443%; background: var(--orange);"></div></div><div class="tool-count">11</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 20.0%; background: #8b949e;"></div></div><div class="tool-count">9</div></div><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 13.333333333333334%; background: var(--accent);"></div></div><div class="tool-count">6</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 2.2222222222222223%; background: var(--purple);"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 2.2222222222222223%; background: #79c0ff;"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>medium-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">30→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--green);"></div></div><div class="tool-count">9</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 77.77777777777779%; background: var(--orange);"></div></div><div class="tool-count">7</div></div><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 55.55555555555556%; background: var(--accent);"></div></div><div class="tool-count">5</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 55.55555555555556%; background: #8b949e;"></div></div><div class="tool-count">5</div></div><div class="tool-bar-row"><div class="tool-name">todowrite</div><div style="flex:1;"><div class="tool-bar" style="width: 44.44444444444444%; background: #7ee787;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">write</div><div style="flex:1;"><div class="tool-bar" style="width: 44.44444444444444%; background: var(--yellow);"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 33.33333333333333%; background: #79c0ff;"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 11.11111111111111%; background: var(--purple);"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>medium-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">30→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--green);"></div></div><div class="tool-count">7</div></div><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 71.42857142857143%; background: var(--accent);"></div></div><div class="tool-count">5</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 71.42857142857143%; background: #8b949e;"></div></div><div class="tool-count">5</div></div><div class="tool-bar-row"><div class="tool-name">write</div><div style="flex:1;"><div class="tool-bar" style="width: 71.42857142857143%; background: var(--yellow);"></div></div><div class="tool-count">5</div></div><div class="tool-bar-row"><div class="tool-name">todowrite</div><div style="flex:1;"><div class="tool-bar" style="width: 42.857142857142854%; background: #7ee787;"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 42.857142857142854%; background: #79c0ff;"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 28.57142857142857%; background: var(--orange);"></div></div><div class="tool-count">2</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 14.285714285714285%; background: var(--purple);"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>large-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">116→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">task</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: #f778ba;"></div></div><div class="tool-count">8</div></div><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 62.5%; background: var(--accent);"></div></div><div class="tool-count">5</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 37.5%; background: var(--orange);"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 12.5%; background: var(--purple);"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 12.5%; background: #8b949e;"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 12.5%; background: var(--green);"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>large-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">116→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">golangci_lint_guide</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: #d2a8ff;"></div></div><div class="tool-count">18</div></div><div class="tool-bar-row"><div class="tool-name">write</div><div style="flex:1;"><div class="tool-bar" style="width: 55.55555555555556%; background: var(--yellow);"></div></div><div class="tool-count">10</div></div><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 50.0%; background: var(--green);"></div></div><div class="tool-count">9</div></div><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 44.44444444444444%; background: var(--accent);"></div></div><div class="tool-count">8</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 44.44444444444444%; background: #8b949e;"></div></div><div class="tool-count">8</div></div><div class="tool-bar-row"><div class="tool-name">todowrite</div><div style="flex:1;"><div class="tool-bar" style="width: 22.22222222222222%; background: #7ee787;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 22.22222222222222%; background: var(--orange);"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 11.11111111111111%; background: #79c0ff;"></div></div><div class="tool-count">2</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 5.555555555555555%; background: var(--purple);"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>multipkg-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">29→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--accent);"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">task</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: #f778ba;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 75.0%; background: var(--green);"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">todowrite</div><div style="flex:1;"><div class="tool-bar" style="width: 50.0%; background: #7ee787;"></div></div><div class="tool-count">2</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 25.0%; background: var(--purple);"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 25.0%; background: #79c0ff;"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 25.0%; background: #8b949e;"></div></div><div class="tool-count">1</div></div></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>multipkg-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">29→0 issues</span></div><div class="analysis-body"><div class="tool-bar-row"><div class="tool-name">golangci_lint_run</div><div style="flex:1;"><div class="tool-bar" style="width: 100.0%; background: var(--accent);"></div></div><div class="tool-count">6</div></div><div class="tool-bar-row"><div class="tool-name">task</div><div style="flex:1;"><div class="tool-bar" style="width: 66.66666666666666%; background: #f778ba;"></div></div><div class="tool-count">4</div></div><div class="tool-bar-row"><div class="tool-name">edit</div><div style="flex:1;"><div class="tool-bar" style="width: 50.0%; background: var(--green);"></div></div><div class="tool-count">3</div></div><div class="tool-bar-row"><div class="tool-name">read</div><div style="flex:1;"><div class="tool-bar" style="width: 33.33333333333333%; background: #8b949e;"></div></div><div class="tool-count">2</div></div><div class="tool-bar-row"><div class="tool-name">skill</div><div style="flex:1;"><div class="tool-bar" style="width: 16.666666666666664%; background: var(--purple);"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">glob</div><div style="flex:1;"><div class="tool-bar" style="width: 16.666666666666664%; background: #79c0ff;"></div></div><div class="tool-count">1</div></div><div class="tool-bar-row"><div class="tool-name">bash</div><div style="flex:1;"><div class="tool-bar" style="width: 16.666666666666664%; background: var(--orange);"></div></div><div class="tool-count">1</div></div></div></div></div><h2>Per-Trace Analysis</h2><div class="analysis-grid"><div class="analysis-panel"><div class="analysis-header"><h4><code>simple-glm-4-7</code> <span class="model-tag model-4-7">GLM-4.7</span></h4><span class="pass">Simple / 140s / 3696 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-4.7</li><li>Test Case: Simple</li><li>Duration: 140.4s (2.3 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: single-agent (≤8 issues across 1 packages — single-agent flow)</li><li>Subagent count: 0</li><li>Strategy compliance: Compliant — used single-agent flow as recommended for small issue counts.</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 26</li><li>Total subagent tool calls: 0</li><li>Combined tool calls: 26</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 6,</p><p>"skill": 1,</p><p>"glob": 4,</p><p>"read": 4,</p><p>"edit": 8,</p><p>"bash": 3</p><p>}</p><li>Tool usage efficiency: Efficient — 1.0 edits per issue, minimal wasted effort. Ran linter 6 times (0.75 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 8 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 8 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 24,982 / Output: 1,570 / Reasoning: 3,017</li><li>Cache reads: 441,338</li><li>Total tokens: 29,569</li><li>Efficiency: Moderate overhead at 3696 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Build verification: ran 3 bash commands for build/lint checks</li><li>Edit-focused: made 8 targeted edits to fix issues</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>simple-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">Simple / 226s / 3150 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5.1</li><li>Test Case: Simple</li><li>Duration: 226.3s (3.8 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: single-agent (≤8 issues across 1 packages — single-agent flow)</li><li>Subagent count: 0</li><li>Strategy compliance: Compliant — used single-agent flow as recommended for small issue counts.</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 26</li><li>Total subagent tool calls: 0</li><li>Combined tool calls: 26</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 6,</p><p>"skill": 1,</p><p>"glob": 3,</p><p>"read": 4,</p><p>"todowrite": 3,</p><p>"edit": 9</p><p>}</p><li>Tool usage efficiency: Efficient — 1.1 edits per issue, minimal wasted effort. Ran linter 6 times (0.75 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 8 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 8 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 19,305 / Output: 2,058 / Reasoning: 3,841</li><li>Cache reads: 459,200</li><li>Total tokens: 25,204</li><li>Efficiency: Moderate overhead at 3150 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Task tracking: used todowrite 3 times to track progress</li><li>Edit-focused: made 9 targeted edits to fix issues</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>simple-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">Simple / 118s / 2100 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5-Turbo</li><li>Test Case: Simple</li><li>Duration: 118.4s (2.0 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: single-agent (≤8 issues across 1 packages — single-agent flow)</li><li>Subagent count: 0</li><li>Strategy compliance: Compliant — used single-agent flow as recommended for small issue counts.</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 28</li><li>Total subagent tool calls: 0</li><li>Combined tool calls: 28</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 6,</p><p>"skill": 1,</p><p>"glob": 1,</p><p>"read": 4,</p><p>"todowrite": 3,</p><p>"write": 1,</p><p>"edit": 6,</p><p>"bash": 6</p><p>}</p><li>Tool usage efficiency: Efficient — 0.9 edits per issue, minimal wasted effort. Ran linter 6 times (0.75 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 8 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 8 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 13,227 / Output: 1,912 / Reasoning: 1,661</li><li>Cache reads: 485,019</li><li>Total tokens: 16,800</li><li>Efficiency: Reasonable efficiency at 2100 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Task tracking: used todowrite 3 times to track progress</li><li>Build verification: ran 6 bash commands for build/lint checks</li><li>Edit-focused: made 6 targeted edits to fix issues</li><li>File rewrite: used write tool 1 times (full file rewrites)</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>medium-glm-4-7</code> <span class="model-tag model-4-7">GLM-4.7</span></h4><span class="pass">Medium / 263s / 935 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-4.7</li><li>Test Case: Medium</li><li>Duration: 262.8s (4.4 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: ** MCP tools auto-detect strategy and include `<strategy_instructions>` block in their response. Always follow the instructions in that block. Do NOT attempt to fix >30 issues without subagents.</li><li>Subagent count: 0</li><li>Strategy compliance: Non-compliant — strategy recommended subagents but none were spawned (GLM-5-Turbo chose to work solo).</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 73</li><li>Total subagent tool calls: 0</li><li>Combined tool calls: 73</li><li>Tool breakdown: {</li><p>"skill": 1,</p><p>"golangci_lint_run": 6,</p><p>"glob": 1,</p><p>"read": 9,</p><p>"edit": 45,</p><p>"bash": 11</p><p>}</p><li>Tool usage efficiency: Verbose — 1.5 edits per issue, may be over-editing. Ran linter 6 times (0.20 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 30 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 30 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 19,039 / Output: 5,205 / Reasoning: 3,802</li><li>Cache reads: 744,828</li><li>Total tokens: 28,046</li><li>Efficiency: Very efficient at 935 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Build verification: ran 11 bash commands for build/lint checks</li><li>Edit-focused: made 45 targeted edits to fix issues</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>medium-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">Medium / 851s / 2456 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5.1</li><li>Test Case: Medium</li><li>Duration: 850.8s (14.2 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: single-agent (≤30 issues across 1 packages — single-agent flow)</li><li>Subagent count: 0</li><li>Strategy compliance: Compliant — used single-agent flow as recommended for small issue counts.</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 38</li><li>Total subagent tool calls: 0</li><li>Combined tool calls: 38</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 5,</p><p>"skill": 1,</p><p>"todowrite": 4,</p><p>"glob": 3,</p><p>"read": 5,</p><p>"write": 4,</p><p>"bash": 7,</p><p>"edit": 9</p><p>}</p><li>Tool usage efficiency: Efficient — 0.4 edits per issue (subagents doing the heavy lifting). Ran linter 5 times (0.17 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 30 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 30 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 46,091 / Output: 3,401 / Reasoning: 24,177</li><li>Cache reads: 1,273,088</li><li>Total tokens: 73,669</li><li>Efficiency: Reasonable efficiency at 2456 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Task tracking: used todowrite 4 times to track progress</li><li>Build verification: ran 7 bash commands for build/lint checks</li><li>Edit-focused: made 9 targeted edits to fix issues</li><li>File rewrite: used write tool 4 times (full file rewrites)</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>medium-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">Medium / 357s / 2099 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5-Turbo</li><li>Test Case: Medium</li><li>Duration: 356.5s (5.9 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: ** MCP tools auto-detect strategy and include `<strategy_instructions>` block in their response. Always follow the instructions in that block. Do NOT attempt to fix >30 issues without subagents.</li><li>Subagent count: 0</li><li>Strategy compliance: Non-compliant — strategy recommended subagents but none were spawned (GLM-5-Turbo chose to work solo).</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 31</li><li>Total subagent tool calls: 0</li><li>Combined tool calls: 31</li><li>Tool breakdown: {</li><p>"skill": 1,</p><p>"golangci_lint_run": 5,</p><p>"todowrite": 3,</p><p>"glob": 3,</p><p>"read": 5,</p><p>"write": 5,</p><p>"bash": 2,</p><p>"edit": 7</p><p>}</p><li>Tool usage efficiency: Efficient — 0.4 edits per issue (subagents doing the heavy lifting). Ran linter 5 times (0.17 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 30 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 30 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 38,924 / Output: 3,077 / Reasoning: 20,957</li><li>Cache reads: 931,396</li><li>Total tokens: 62,958</li><li>Efficiency: Reasonable efficiency at 2099 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Task tracking: used todowrite 3 times to track progress</li><li>Build verification: ran 2 bash commands for build/lint checks</li><li>Edit-focused: made 7 targeted edits to fix issues</li><li>File rewrite: used write tool 5 times (full file rewrites)</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>large-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">Large / 1144s / 2131 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5.1</li><li>Test Case: Large</li><li>Duration: 1144.0s (19.1 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: subagent-per-file (>116 issues in 1 packages — use subagent-per-file strategy)</li><li>Subagent count: 8</li><li>Strategy compliance: Compliant — correctly used subagent strategy as recommended.</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 19</li><li>Total subagent tool calls: 148</li><li>Combined tool calls: 167</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 5,</p><p>"skill": 1,</p><p>"task": 8,</p><p>"bash": 3,</p><p>"read": 1,</p><p>"edit": 1</p><p>}</p><li>Tool usage efficiency: Efficient — 0.0 edits per issue (subagents doing the heavy lifting). Ran linter 5 times (0.04 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 116 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 116 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 179,894 / Output: 14,690 / Reasoning: 52,591</li><li>Cache reads: 2,330,240</li><li>Total tokens: 247,175</li><li>Efficiency: Reasonable efficiency at 2131 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Subagent delegation: spawned 8 subagents to handle issues in parallel</li><li>Build verification: ran 3 bash commands for build/lint checks</li><li>Edit-focused: made 1 targeted edits to fix issues</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>large-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">Large / 534s / 1147 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5-Turbo</li><li>Test Case: Large</li><li>Duration: 534.1s (8.9 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: subagent-per-file (>116 issues in 1 packages — use subagent-per-file strategy)</li><li>Subagent count: 0</li><li>Strategy compliance: Non-compliant — strategy recommended subagents but none were spawned (GLM-5-Turbo chose to work solo).</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 64</li><li>Total subagent tool calls: 0</li><li>Combined tool calls: 64</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 8,</p><p>"skill": 1,</p><p>"todowrite": 4,</p><p>"golangci_lint_guide": 18,</p><p>"glob": 2,</p><p>"read": 8,</p><p>"write": 10,</p><p>"bash": 4,</p><p>"edit": 9</p><p>}</p><li>Tool usage efficiency: Efficient — 0.2 edits per issue (subagents doing the heavy lifting). Ran linter 8 times (0.07 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 116 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 116 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 80,378 / Output: 6,565 / Reasoning: 46,100</li><li>Cache reads: 1,425,704</li><li>Total tokens: 133,043</li><li>Efficiency: Very efficient at 1147 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Task tracking: used todowrite 4 times to track progress</li><li>Guidance lookup: consulted golangci_lint_guide 18 times for linter-specific help</li><li>Build verification: ran 4 bash commands for build/lint checks</li><li>Edit-focused: made 9 targeted edits to fix issues</li><li>File rewrite: used write tool 10 times (full file rewrites)</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>multipkg-glm-5-1</code> <span class="model-tag model-5-1">GLM-5.1</span></h4><span class="pass">Multipkg / 323s / 3696 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5.1</li><li>Test Case: Multipkg</li><li>Duration: 322.7s (5.4 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: subagent-per-package (29 issues across 4 packages — use subagent-per-package strategy)</li><li>Subagent count: 4</li><li>Strategy compliance: Compliant — correctly used subagent strategy as recommended.</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 16</li><li>Total subagent tool calls: 70</li><li>Combined tool calls: 86</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 4,</p><p>"skill": 1,</p><p>"todowrite": 2,</p><p>"task": 4,</p><p>"glob": 1,</p><p>"read": 1,</p><p>"edit": 3</p><p>}</p><li>Tool usage efficiency: Efficient — 0.1 edits per issue (subagents doing the heavy lifting). Ran linter 4 times (0.14 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 29 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 29 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 82,440 / Output: 6,927 / Reasoning: 17,816</li><li>Cache reads: 1,051,712</li><li>Total tokens: 107,183</li><li>Efficiency: Moderate overhead at 3696 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Subagent delegation: spawned 4 subagents to handle issues in parallel</li><li>Task tracking: used todowrite 2 times to track progress</li><li>Edit-focused: made 3 targeted edits to fix issues</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div><div class="analysis-panel"><div class="analysis-header"><h4><code>multipkg-glm-5-turbo</code> <span class="model-tag model-5-turbo">GLM-5-Turbo</span></h4><span class="pass">Multipkg / 153s / 2683 tok/issue</span></div><div class="analysis-body"><h3>Session Info</h3><ul><li>Model: GLM-5-Turbo</li><li>Test Case: Multipkg</li><li>Duration: 153.1s (2.6 minutes)</li><li>Pass/Fail: PASS</li></ul><h3>Strategy</h3><ul><li>Strategy used: subagent-per-package (29 issues across 4 packages — use subagent-per-package strategy)</li><li>Subagent count: 4</li><li>Strategy compliance: Compliant — correctly used subagent strategy as recommended.</li></ul><h3>Tool Usage</h3><ul><li>Total main-agent tool calls: 18</li><li>Total subagent tool calls: 75</li><li>Combined tool calls: 93</li><li>Tool breakdown: {</li><p>"golangci_lint_run": 6,</p><p>"skill": 1,</p><p>"task": 4,</p><p>"glob": 1,</p><p>"read": 2,</p><p>"edit": 3,</p><p>"bash": 1</p><p>}</p><li>Tool usage efficiency: Efficient — 0.1 edits per issue (subagents doing the heavy lifting). Ran linter 6 times (0.21 runs per issue).</li></ul><h3>Issue Progression</h3><ul><li>Before: 29 → After: 0 (100% reduction)</li><li>Assessment: Perfect — resolved all 29 issues to 0. Agent was fully effective.</li></ul><h3>Token Consumption</h3><ul><li>Input: 61,039 / Output: 7,002 / Reasoning: 9,769</li><li>Cache reads: 1,290,847</li><li>Total tokens: 77,810</li><li>Efficiency: Reasonable efficiency at 2683 tokens per issue fixed.</li></ul><h3>Patterns Observed</h3><ul><li>Subagent delegation: spawned 4 subagents to handle issues in parallel</li><li>Build verification: ran 1 bash commands for build/lint checks</li><li>Edit-focused: made 3 targeted edits to fix issues</li></ul><h3>PUML Validation</h3><ul><li>Render status: PASS (validated with plantuml/plantuml:latest Docker image)</li><li>Fixes applied: None needed</li></ul></div></div></div>
-<h2>Key Findings</h2>
-<div class="cards">
-  <div class="card" style="border-left: 3px solid var(--green);">
-    <div class="card-title">Best Overall</div>
-    <div class="card-value" style="color: var(--orange);">GLM-5-Turbo</div>
-    <div class="card-detail">Fastest, most token-efficient, 100% pass rate</div>
-  </div>
-  <div class="card" style="border-left: 3px solid var(--purple);">
-    <div class="card-title">Best Delegator</div>
-    <div class="card-value" style="color: var(--purple);">GLM-5.1</div>
-    <div class="card-detail">Correctly uses subagents for large/multipkg tasks</div>
-  </div>
-  <div class="card" style="border-left: 3px solid var(--red);">
-    <div class="card-title">Small Tasks Only</div>
-    <div class="card-value" style="color: var(--red);">GLM-4.7</div>
-    <div class="card-detail">Handles Simple/Medium, fails on Large/Multipkg</div>
-  </div>
-  <div class="card" style="border-left: 3px solid var(--accent);">
-    <div class="card-title">Zero Edit Failures</div>
-    <div class="card-value" style="color: var(--green);">All Models</div>
-    <div class="card-detail">MCP tool guidance prevents oldString mismatches</div>
-  </div>
-</div>
+    <h1>Integration Test Report</h1>
+    <p style="color:#64748b">Generated: 2026-05-06 00:05:14</p>
 
-<h2>Model Comparison Summary</h2>
-<table>
-<tr><th>Dimension</th><th>GLM-4.7</th><th>GLM-5.1</th><th>GLM-5-Turbo</th></tr>
-<tr><td>Pass Rate</td><td class="fail">2/4 (50%)</td><td class="pass">4/4 (100%)</td><td class="pass">4/4 (100%)</td></tr>
-<tr><td>Avg Duration</td><td>201s</td><td>636s</td><td>290s</td></tr>
-<tr><td>Avg Tokens/Issue</td><td>2,316</td><td>2,858</td><td>1,925</td></tr>
-<tr><td>Subagent Usage</td><td>None</td><td>Correct delegation</td><td>Ignores recommendation</td></tr>
-<tr><td>Strategy Compliance</td><td>Partial</td><td>Full</td><td>Partial (improvises)</td></tr>
-<tr><td>Reasoning Tokens</td><td>Low (3,410 avg)</td><td>High (21,506 avg)</td><td>Medium (19,622 avg)</td></tr>
-<tr><td>Edit Failures</td><td>0</td><td>0</td><td>0</td></tr>
-<tr><td>Best Use Case</td><td>Quick small fixes</td><td>Complex multi-file tasks</td><td>Speed-critical fixes</td></tr>
-</table>
+    <div class="summary">
+        <div class="card">
+            <h3>Pass Rate</h3>
+            <div class="value">100%</div>
+            <div style="color:#64748b;margin-top:4px">15/15 tests</div>
+            <div class="bar" style="margin-top:8px"><div class="bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="card">
+            <h3>Models Tested</h3>
+            <div style="margin-top:8px"><div style="padding:2px 0">GLM-4.7</div><div style="padding:2px 0">GLM-5.1</div><div style="padding:2px 0">GLM-5-Turbo</div></div>
+        </div>
+        <div class="card">
+            <h3>Fixtures</h3>
+            <div style="margin-top:8px"><div style="padding:2px 0">Large</div><div style="padding:2px 0">Medium</div><div style="padding:2px 0">Multipkg</div><div style="padding:2px 0">Simple</div><div style="padding:2px 0">Autofix</div></div>
+        </div>
+        <div class="card">
+            <h3>Avg Issue Reduction</h3>
+            <div class="value">100%</div>
+        </div>
+    </div>
 
-<h2>Generated Artifacts</h2>
-<div class="analysis-body">
-<ul>
-  <li><strong>PlantUML Diagrams:</strong> 10 per-trace .puml files + 1 comparison overview (all validated)</li>
-  <li><strong>Context JSON:</strong> 10 structured per-trace context files</li>
-  <li><strong>Analysis Markdown:</strong> 10 per-trace analysis files</li>
-  <li><strong>Model Comparison:</strong> model-comparison.md</li>
-  <li><strong>This Report:</strong> e2e-report.html</li>
-</ul>
-</div>
-</div>
+    <h2>Model Comparison</h2>
+    <table>
+        <tr>
+            <th>Fixture</th>
+            <th>Model</th>
+            <th>Before</th>
+            <th>After</th>
+            <th>Reduction</th>
+            <th>Builds</th>
+            <th>nolint</th>
+            <th>Tool Calls</th>
+            <th>Tokens</th>
+            <th>Cost</th>
+            <th>Retries</th>
+            <th>Status</th>
+        </tr>
+        
+        <tr>
+            <td><strong>Autofix</strong></td>
+            <td>GLM-4.7</td>
+            <td>4</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>3</td>
+            <td>37.9k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Autofix</strong></td>
+            <td>GLM-5.1</td>
+            <td>4</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>3</td>
+            <td>37k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Autofix</strong></td>
+            <td>GLM-5-Turbo</td>
+            <td>4</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>2</td>
+            <td>24.2k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Large</strong></td>
+            <td>GLM-4.7</td>
+            <td>116</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>112</td>
+            <td>915.4k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Large</strong></td>
+            <td>GLM-5.1</td>
+            <td>116</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>54</td>
+            <td>1.6M</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Large</strong></td>
+            <td>GLM-5-Turbo</td>
+            <td>116</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>46 (119 via 6 subagents)</td>
+            <td>2.9M</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Medium</strong></td>
+            <td>GLM-4.7</td>
+            <td>30</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>82</td>
+            <td>2.4M</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Medium</strong></td>
+            <td>GLM-5.1</td>
+            <td>30</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>29</td>
+            <td>717.6k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Medium</strong></td>
+            <td>GLM-5-Turbo</td>
+            <td>30</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>30</td>
+            <td>1M</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Multipkg</strong></td>
+            <td>GLM-4.7</td>
+            <td>29</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>18 (74 via 4 subagents)</td>
+            <td>1.2M</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Multipkg</strong></td>
+            <td>GLM-5.1</td>
+            <td>29</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>7 (69 via 4 subagents)</td>
+            <td>999.2k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Multipkg</strong></td>
+            <td>GLM-5-Turbo</td>
+            <td>29</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>15 (64 via 4 subagents)</td>
+            <td>1.1M</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Simple</strong></td>
+            <td>GLM-4.7</td>
+            <td>8</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>33</td>
+            <td>532.6k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Simple</strong></td>
+            <td>GLM-5.1</td>
+            <td>8</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>25</td>
+            <td>581.9k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+        <tr>
+            <td><strong>Simple</strong></td>
+            <td>GLM-5-Turbo</td>
+            <td>8</td>
+            <td>0</td>
+            <td>100.0%</td>
+            <td><span class="pass">✓</span></td>
+            <td>0</td>
+            <td>32</td>
+            <td>642.2k</td>
+            <td>$0.00</td>
+            <td>0</td>
+            <td><span class="pass">PASS</span></td>
+        </tr>
+        
+    </table>
+
+    
 </body>
 </html>

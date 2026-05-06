@@ -39,6 +39,8 @@
         .badge-medium { background: #d97706; }
         .badge-large { background: #dc2626; }
         .badge-model { background: #2563eb; }
+        .badge-multipkg { background: #7c3aed; }
+        .badge-autofix { background: #0d9488; }
 
         /* Clickable images */
         .diagram-card label { cursor: pointer; display: block; }
@@ -182,6 +184,123 @@
     <input type="checkbox" id="dia-8" class="lightbox-toggle">
     <label for="dia-8"><img src="diagrams/large-glm-5-turbo.png" alt="Large Fixture GLM-5-Turbo"></label>
     <div class="lightbox"><label for="dia-8"><img src="diagrams/large-glm-5-turbo.png" alt="Large Fixture GLM-5-Turbo"></label></div>
+</div>
+
+<!-- 9. Multipkg — GLM-5.1 -->
+<div class="card diagram-card">
+    <h3>Multipkg Fixture — GLM-5.1</h3>
+    <div class="badges">
+        <span class="badge badge-multipkg">Multipkg</span>
+        <span class="badge badge-model">GLM-5.1</span>
+    </div>
+    <p class="description">Multi-package fixture showing cross-package linter issue resolution. Agent navigates imports across package boundaries.</p>
+    <input type="checkbox" id="dia-9" class="lightbox-toggle">
+    <label for="dia-9"><img src="diagrams/multipkg-glm-5-1.png" alt="Multipkg Fixture GLM-5.1"></label>
+    <div class="lightbox"><label for="dia-9"><img src="diagrams/multipkg-glm-5-1.png" alt="Multipkg Fixture GLM-5.1"></label></div>
+</div>
+
+<!-- 10. Multipkg — GLM-5-Turbo -->
+<div class="card diagram-card">
+    <h3>Multipkg Fixture — GLM-5-Turbo</h3>
+    <div class="badges">
+        <span class="badge badge-multipkg">Multipkg</span>
+        <span class="badge badge-model">GLM-5-Turbo</span>
+    </div>
+    <p class="description">Multi-package fixture with GLM-5-Turbo. Faster cross-package resolution with higher tool call efficiency.</p>
+    <input type="checkbox" id="dia-10" class="lightbox-toggle">
+    <label for="dia-10"><img src="diagrams/multipkg-glm-5-turbo.png" alt="Multipkg Fixture GLM-5-Turbo"></label>
+    <div class="lightbox"><label for="dia-10"><img src="diagrams/multipkg-glm-5-turbo.png" alt="Multipkg Fixture GLM-5-Turbo"></label></div>
+</div>
+
+<!-- 11. Simple — GLM-4-7 -->
+<div class="card diagram-card">
+    <h3>Simple Fixture — GLM-4-7</h3>
+    <div class="badges">
+        <span class="badge badge-simple">Simple</span>
+        <span class="badge badge-model">GLM-4-7</span>
+    </div>
+    <p class="description">Simple fixture test with GLM-4-7 model. Demonstrates baseline issue resolution capability.</p>
+    <input type="checkbox" id="dia-11" class="lightbox-toggle">
+    <label for="dia-11"><img src="diagrams/simple-glm-4-7.png" alt="Simple Fixture GLM-4-7"></label>
+    <div class="lightbox"><label for="dia-11"><img src="diagrams/simple-glm-4-7.png" alt="Simple Fixture GLM-4-7"></label></div>
+</div>
+
+<!-- 12. Medium — GLM-4-7 -->
+<div class="card diagram-card">
+    <h3>Medium Fixture — GLM-4-7</h3>
+    <div class="badges">
+        <span class="badge badge-medium">Medium</span>
+        <span class="badge badge-model">GLM-4-7</span>
+    </div>
+    <p class="description">Medium fixture test with GLM-4-7 model. Shows sustained multi-pass fixing strategy on moderately complex codebase.</p>
+    <input type="checkbox" id="dia-12" class="lightbox-toggle">
+    <label for="dia-12"><img src="diagrams/medium-glm-4-7.png" alt="Medium Fixture GLM-4-7"></label>
+    <div class="lightbox"><label for="dia-12"><img src="diagrams/medium-glm-4-7.png" alt="Medium Fixture GLM-4-7"></label></div>
+</div>
+
+<!-- 13. Large — GLM-4.7 -->
+<div class="card diagram-card">
+    <h3>Large Fixture — GLM-4.7</h3>
+    <div class="badges">
+        <span class="badge badge-large">Large</span>
+        <span class="badge badge-model">GLM-4.7</span>
+    </div>
+    <p class="description">Large fixture test with GLM-4.7 model. Demonstrates issue resolution capability on complex multi-file codebases.</p>
+    <input type="checkbox" id="dia-13" class="lightbox-toggle">
+    <label for="dia-13"><img src="diagrams/large-glm-4-7.png" alt="Large Fixture GLM-4.7"></label>
+    <div class="lightbox"><label for="dia-13"><img src="diagrams/large-glm-4-7.png" alt="Large Fixture GLM-4.7"></label></div>
+</div>
+
+<!-- 14. Multipkg — GLM-4.7 -->
+<div class="card diagram-card">
+    <h3>Multipkg Fixture — GLM-4.7</h3>
+    <div class="badges">
+        <span class="badge badge-multipkg">Multipkg</span>
+        <span class="badge badge-model">GLM-4.7</span>
+    </div>
+    <p class="description">Multi-package fixture with GLM-4.7 model. Cross-package linter issue resolution across package boundaries.</p>
+    <input type="checkbox" id="dia-14" class="lightbox-toggle">
+    <label for="dia-14"><img src="diagrams/multipkg-glm-4-7.png" alt="Multipkg Fixture GLM-4.7"></label>
+    <div class="lightbox"><label for="dia-14"><img src="diagrams/multipkg-glm-4-7.png" alt="Multipkg Fixture GLM-4.7"></label></div>
+</div>
+
+<!-- 15. Autofix — GLM-5-Turbo -->
+<div class="card diagram-card">
+    <h3>Autofix Fixture — GLM-5-Turbo</h3>
+    <div class="badges">
+        <span class="badge badge-autofix">Autofix</span>
+        <span class="badge badge-model">GLM-5-Turbo</span>
+    </div>
+    <p class="description">Autofix-only fixture with GLM-5-Turbo. Agent resolves perfsprint and whitespace issues that golangci-lint --fix can handle automatically.</p>
+    <input type="checkbox" id="dia-15" class="lightbox-toggle">
+    <label for="dia-15"><img src="diagrams/autofix-glm-5-turbo.png" alt="Autofix Fixture GLM-5-Turbo"></label>
+    <div class="lightbox"><label for="dia-15"><img src="diagrams/autofix-glm-5-turbo.png" alt="Autofix Fixture GLM-5-Turbo"></label></div>
+</div>
+
+<!-- 16. Autofix — GLM-5.1 -->
+<div class="card diagram-card">
+    <h3>Autofix Fixture — GLM-5.1</h3>
+    <div class="badges">
+        <span class="badge badge-autofix">Autofix</span>
+        <span class="badge badge-model">GLM-5.1</span>
+    </div>
+    <p class="description">Autofix-only fixture with GLM-5.1. Demonstrates agent handling of automatically-fixable perfsprint and whitespace diagnostics.</p>
+    <input type="checkbox" id="dia-16" class="lightbox-toggle">
+    <label for="dia-16"><img src="diagrams/autofix-glm-5-1.png" alt="Autofix Fixture GLM-5.1"></label>
+    <div class="lightbox"><label for="dia-16"><img src="diagrams/autofix-glm-5-1.png" alt="Autofix Fixture GLM-5.1"></label></div>
+</div>
+
+<!-- 17. Autofix — GLM-4.7 -->
+<div class="card diagram-card">
+    <h3>Autofix Fixture — GLM-4.7</h3>
+    <div class="badges">
+        <span class="badge badge-autofix">Autofix</span>
+        <span class="badge badge-model">GLM-4.7</span>
+    </div>
+    <p class="description">Autofix-only fixture with GLM-4.7. Tests baseline model capability on simple autofixable issues.</p>
+    <input type="checkbox" id="dia-17" class="lightbox-toggle">
+    <label for="dia-17"><img src="diagrams/autofix-glm-4-7.png" alt="Autofix Fixture GLM-4.7"></label>
+    <div class="lightbox"><label for="dia-17"><img src="diagrams/autofix-glm-4-7.png" alt="Autofix Fixture GLM-4.7"></label></div>
 </div>
 </div>
 

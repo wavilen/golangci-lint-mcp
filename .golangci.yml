@@ -29,9 +29,10 @@ formatters:
     - golines # checks if code is formatted, and fixes long lines
 
   exclusions:
-    # Exclude node_modules/ from formatter processing (vendored npm packages with Go source)
+    # Exclude node_modules/ and tmp/ from formatter processing
     paths:
       - node_modules/
+      - tmp/
 
     ## you may want to enable
     #- gci # checks if code and import statements are formatted, with additional rules
@@ -455,6 +456,7 @@ linters:
     # Exclude entire paths from all linters (v2 path-level exclusion).
     paths:
       - node_modules/
+      - tmp/
     # Excluding configuration per-path, per-linter, per-text and per-source.
     rules:
       - source: 'TODO'

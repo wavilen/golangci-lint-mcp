@@ -10,23 +10,9 @@ When AI coding agents encounter golangci-lint diagnostics, they don't just fail 
 
 **For opencode users (recommended):**
 
-1. **Install the skill:** `npx @wavilen/golangci-lint-guide` — installs the opencode skill, hooks, plugin, and shared modules
-2. **Install the MCP binary:** `go install github.com/wavilen/golangci-lint-mcp@latest`
-3. **Configure** — add to your project's `opencode.json`:
-
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "golangci-lint": {
-      "type": "local",
-      "command": ["golangci-lint-mcp"]
-    }
-  }
-}
-```
-
-4. **Run:** Call `golangci_lint_run(path="./...")` — get fix guidance in one response.
+1. **Install everything:** `npx @wavilen/golangci-lint-guide` — installs the skill, plugin, hooks, rules, and configures MCP
+2. **Install the binary:** `go install github.com/wavilen/golangci-lint-mcp@latest`
+3. **Run:** Call `golangci_lint_run(path="./...")` — get fix guidance in one response.
 
 **For other MCP clients (Claude Desktop, Cursor):**
 
@@ -61,7 +47,7 @@ For build-from-source instructions see [Installation](docs/installation.md).
 
 ### Configuration
 
-- **opencode:** See the Quick Start config snippet above
+- **opencode:** Auto-configured by `npx @wavilen/golangci-lint-guide` (see Quick Start above)
 - **Claude Desktop, Cursor:** See [Configuration](docs/configuration.md)
 
 ## MCP Tools
@@ -135,22 +121,29 @@ Query `errchek` → server suggests "Did you mean \"errcheck\"?" using fuzzy mat
 The `intercept` subcommand runs golangci-lint directly from the terminal — no MCP client needed.
 
 ```bash
-golangci-lint-mcp intercept <path>
+golangci-lint-mcp intercept [--raw] <path>
 ```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--raw` | Output raw golangci-lint JSON to stdout without parsing or summarization |
+
+Auto-fix is always enabled — intercept runs golangci-lint with `--fix`, so auto-fixable issues are resolved automatically and don't appear in output. When all issues are auto-fixed: `Auto-fix applied. No issues remain.`
 
 **Examples:**
 
 ```bash
-# Single package
+# Get enriched fix guidance for a package
 golangci-lint-mcp intercept ./pkg/auth/...
 
-# Full project
+# Full project scan
 golangci-lint-mcp intercept ./...
+
+# Raw JSON output (pipe to jq, other tools)
+golangci-lint-mcp intercept --raw ./...
 ```
-
-Runs golangci-lint, enriches diagnostics with embedded guide content, and outputs structured fix guidance to stdout. Uses the same unified pipeline as MCP tools.
-
-If golangci-lint is configured with `--fix`, issues resolved automatically are reported as: `Auto-fix applied. No issues remain.`
 
 Reports binary-not-found, timeout, panic, and JSON parse errors to stderr.
 

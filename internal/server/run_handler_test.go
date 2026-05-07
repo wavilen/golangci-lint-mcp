@@ -27,7 +27,8 @@ func chdirProjectRoot(t *testing.T) {
 	dir, err := os.Getwd()
 	require.NoError(t, err)
 	for {
-		if _, statErr := os.Stat(filepath.Join(dir, "go.mod")); statErr == nil {
+		_, statErr := os.Stat(filepath.Join(dir, "go.mod"))
+		if statErr == nil {
 			t.Chdir(dir)
 			return
 		}
@@ -593,7 +594,7 @@ func TestExecuteLint_ExternalModule(t *testing.T) {
 
 	assert.False(t, result.NotPath, "golangci-lint binary should be found")
 	assert.False(t, result.TimedOut, "should not time out")
-	assert.NoError(t, result.JSONErr, "JSON parse should succeed: %v", result.JSONErr)
+	require.NoError(t, result.JSONErr, "JSON parse should succeed: %v", result.JSONErr)
 	// The large fixture has known issues — verify some were found
 	assert.NotEmpty(t, result.Parsed.Issues, "expected issues in large fixture")
 }

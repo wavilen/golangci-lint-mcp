@@ -272,6 +272,40 @@ type ResponseConfig struct {
 	AutoFixApplied  bool
 }
 
+// ResponseConfigOption configures a ResponseConfig.
+type ResponseConfigOption func(*ResponseConfig)
+
+// newResponseConfig creates a ResponseConfig with the provided options.
+//
+//nolint:exhaustruct // Constructor initializes zero-value then applies options — fields set via option funcs.
+func newResponseConfig(opts ...ResponseConfigOption) ResponseConfig {
+	cfg := ResponseConfig{}
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+	return cfg
+}
+
+func withPath(path string) ResponseConfigOption {
+	return func(c *ResponseConfig) { c.Path = path }
+}
+
+func withStore(store *guides.Store) ResponseConfigOption {
+	return func(c *ResponseConfig) { c.Store = store }
+}
+
+func withOpts(opts Options) ResponseConfigOption {
+	return func(c *ResponseConfig) { c.Opts = opts }
+}
+
+func withIncludeGuidance(include bool) ResponseConfigOption {
+	return func(c *ResponseConfig) { c.IncludeGuidance = include }
+}
+
+func withAutoFixApplied(applied bool) ResponseConfigOption {
+	return func(c *ResponseConfig) { c.AutoFixApplied = applied }
+}
+
 // BuildResponse is the unified response builder that handles all strategy routing.
 // Per D-08: replaces BuildFullProjectResponse and BuildPerPackageResponse.
 // Per D-09: produces the appropriate response based on StrategyResult:
@@ -413,9 +447,9 @@ func makeRunHandler(
 		// Unified pipeline: analyze → build response (D-03)
 		strategyResult := AnalyzeStrategy(result.Parsed.Issues)
 		return mcp.NewToolResultText(
-			BuildResponse(strategyResult, ResponseConfig{
-				Path: path, Store: store, Opts: opts,
-				IncludeGuidance: true, AutoFixApplied: true,
-			})), nil
+			BuildResponse(strategyResult, newResponseConfig(
+				withPath(path), withStore(store), withOpts(opts),
+				withIncludeGuidance(true), withAutoFixApplied(true),
+			))), nil
 	}
 }

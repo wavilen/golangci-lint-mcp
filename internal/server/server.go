@@ -35,6 +35,19 @@ func NewServer(store *guides.Store, opts ...Options) *server.MCPServer {
 		server.WithRecovery(),
 	)
 
+	registerGuideTool(mcpServer, store, opt)
+	registerParseTool(mcpServer, store, opt)
+	registerListTool(mcpServer, store)
+	registerSummarizeTool(mcpServer, store)
+	registerRunTool(mcpServer, store, opt)
+	if opt.GosecAIConfigured() {
+		registerGosecAutofixTool(mcpServer, opt)
+	}
+
+	return mcpServer
+}
+
+func registerGuideTool(mcpServer *server.MCPServer, store *guides.Store, opt Options) {
 	tool := mcp.NewTool("golangci_lint_guide",
 		mcp.WithDescription(
 			"Get concise, actionable guidance for fixing multiple golangci-lint diagnostics at once. "+
@@ -67,8 +80,10 @@ func NewServer(store *guides.Store, opts ...Options) *server.MCPServer {
 	)
 
 	mcpServer.AddTool(tool, makeHandler(store, opt))
+}
 
-	parseTool := mcp.NewTool("golangci_lint_parse",
+func registerParseTool(mcpServer *server.MCPServer, store *guides.Store, opt Options) {
+	tool := mcp.NewTool("golangci_lint_parse",
 		mcp.WithDescription(
 			"Parse raw golangci-lint JSON output and return fix guidance for all diagnostics at once. "+
 				"Call this when you have golangci-lint JSON output (from `golangci-lint run --output.json.path stdout`). "+
@@ -79,17 +94,21 @@ func NewServer(store *guides.Store, opts ...Options) *server.MCPServer {
 		),
 	)
 
-	mcpServer.AddTool(parseTool, makeParseHandler(store, opt))
+	mcpServer.AddTool(tool, makeParseHandler(store, opt))
+}
 
-	listTool := mcp.NewTool("golangci_lint_list",
+func registerListTool(mcpServer *server.MCPServer, store *guides.Store) {
+	tool := mcp.NewTool("golangci_lint_list",
 		mcp.WithDescription(
 			"List all supported linters, their rules, and compound/simple classification. "+
 				"Call this to discover available linters and determine which require a rule parameter. "+
 				"Returns compound linters with rule counts and simple linter names."),
 	)
-	mcpServer.AddTool(listTool, makeListHandler(store))
+	mcpServer.AddTool(tool, makeListHandler(store))
+}
 
-	summarizeTool := mcp.NewTool("golangci_lint_summarize",
+func registerSummarizeTool(mcpServer *server.MCPServer, store *guides.Store) {
+	tool := mcp.NewTool("golangci_lint_summarize",
 		mcp.WithDescription(
 			"Summarize raw golangci-lint JSON output with package-level breakdown and strategy recommendation. "+
 				"Call this when you need issue distribution data without full fix guidance. "+
@@ -99,9 +118,11 @@ func NewServer(store *guides.Store, opts ...Options) *server.MCPServer {
 			mcp.Description("The raw golangci-lint JSON output string"),
 		),
 	)
-	mcpServer.AddTool(summarizeTool, makeSummarizeHandler(store))
+	mcpServer.AddTool(tool, makeSummarizeHandler(store))
+}
 
-	runTool := mcp.NewTool("golangci_lint_run",
+func registerRunTool(mcpServer *server.MCPServer, store *guides.Store, opt Options) {
+	tool := mcp.NewTool("golangci_lint_run",
 		mcp.WithDescription(
 			"Run golangci-lint on a path and return parsed results with fix guidance. "+
 				"For per-package paths (e.g., './pkg/auth/...'), returns full guidance with fix directions. "+
@@ -112,24 +133,22 @@ func NewServer(store *guides.Store, opts ...Options) *server.MCPServer {
 			mcp.Description("File or directory path to scan (e.g., './pkg/auth/...', './cmd/main.go', './...')"),
 		),
 	)
-	mcpServer.AddTool(runTool, makeRunHandler(store, opt))
+	mcpServer.AddTool(tool, makeRunHandler(store, opt))
+}
 
-	if opt.GosecAIConfigured() {
-		autofixTool := mcp.NewTool("gosec_ai_autofix",
-			mcp.WithDescription(
-				"Run gosec with AI-powered autofix on a file or directory. "+
-					"Returns AI-generated fix suggestions for gosec findings. "+
-					"The API key is handled server-side — do not pass credentials."),
-			mcp.WithString(
-				"path",
-				mcp.Required(),
-				mcp.Description(
-					"File or directory path to scan with gosec per-package (e.g., './pkg/auth/...', 'main.go'). Do NOT pass './...' — use individual package paths for correct type resolution.",
-				),
+func registerGosecAutofixTool(mcpServer *server.MCPServer, opt Options) {
+	tool := mcp.NewTool("gosec_ai_autofix",
+		mcp.WithDescription(
+			"Run gosec with AI-powered autofix on a file or directory. "+
+				"Returns AI-generated fix suggestions for gosec findings. "+
+				"The API key is handled server-side — do not pass credentials."),
+		mcp.WithString(
+			"path",
+			mcp.Required(),
+			mcp.Description(
+				"File or directory path to scan with gosec per-package (e.g., './pkg/auth/...', 'main.go'). Do NOT pass './...' — use individual package paths for correct type resolution.",
 			),
-		)
-		mcpServer.AddTool(autofixTool, makeGosecAutofixHandler(opt))
-	}
-
-	return mcpServer
+		),
+	)
+	mcpServer.AddTool(tool, makeGosecAutofixHandler(opt))
 }

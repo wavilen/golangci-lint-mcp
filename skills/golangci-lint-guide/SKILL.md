@@ -100,3 +100,20 @@ Call `golangci_lint_run(path="./...")`. Report any remaining issues.
 **Response format:** All tools use XML tags — `<summary>`, `<guidance>`, `<related_context>`. Markdown content (tables, lists, code blocks) appears inside these tags.
 
 </quick_reference>
+
+<cli>
+
+## CLI: intercept
+
+The `intercept` subcommand runs golangci-lint from the terminal without an MCP client:
+
+```bash
+golangci-lint-mcp intercept [--raw] <path>
+```
+
+- **`--raw`**: Output raw golangci-lint JSON without parsing or summarization
+- Auto-fix is always enabled (runs golangci-lint with `--fix`)
+
+Use intercept when you need terminal-based output or want to pipe results to other tools. Uses the same guide-enrichment pipeline as MCP tools.
+
+</cli>

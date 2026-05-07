@@ -39,28 +39,40 @@ func filterStderrNoise(stderr string) string {
 //nolint:gochecknoglobals // Package-level function variable for testability — same pattern as main.go serveFunc.
 var lintRunFunc = server.ExecuteLint
 
+// parseRawFlag removes --raw/-raw flags from args and reports whether --raw was present.
+func parseRawFlag(args []string) ([]string, bool) {
+	raw := false
+	cleaned := make([]string, 0, len(args))
+	for _, arg := range args {
+		if arg == "--raw" || arg == "-raw" {
+			raw = true
+		} else {
+			cleaned = append(cleaned, arg)
+		}
+	}
+	return cleaned, raw
+}
+
+// writeUsage prints the intercept subcommand usage to stderr.
+func writeUsage(stderr io.Writer) {
+	fmt.Fprintln(stderr, "Usage: golangci-lint-mcp intercept [--raw] <path>")
+	fmt.Fprintln(stderr, "")
+	fmt.Fprintln(stderr, "Run golangci-lint and output enriched guidance.")
+	fmt.Fprintln(stderr, "Flags:")
+	fmt.Fprintln(stderr, "  --raw   Output raw golangci-lint JSON to stdout without parsing or summarization")
+	fmt.Fprintln(stderr, "Example: golangci-lint-mcp intercept ./...")
+	fmt.Fprintln(stderr, "Error: missing required argument: path")
+}
+
 // RunIntercept executes the intercept subcommand: runs golangci-lint on the
 // given path, enriches output with guide content, and writes structured
 // guidance to stdout. Stderr from golangci-lint passes through to stderr.
 func RunIntercept(fsys fs.FS, args []string, stdout, stderr io.Writer) error {
 	// Parse --raw flag from args before processing path
-	raw := false
-	for i := 0; i < len(args); i++ {
-		if args[i] == "--raw" || args[i] == "-raw" {
-			raw = true
-			args = append(args[:i], args[i+1:]...)
-			i--
-		}
-	}
+	args, raw := parseRawFlag(args)
 
 	if len(args) == 0 {
-		fmt.Fprintln(stderr, "Usage: golangci-lint-mcp intercept [--raw] <path>")
-		fmt.Fprintln(stderr, "")
-		fmt.Fprintln(stderr, "Run golangci-lint and output enriched guidance.")
-		fmt.Fprintln(stderr, "Flags:")
-		fmt.Fprintln(stderr, "  --raw   Output raw golangci-lint JSON to stdout without parsing or summarization")
-		fmt.Fprintln(stderr, "Example: golangci-lint-mcp intercept ./...")
-		fmt.Fprintln(stderr, "Error: missing required argument: path")
+		writeUsage(stderr)
 		return errors.New("missing required argument: path")
 	}
 
@@ -140,8 +152,18 @@ func RunIntercept(fsys fs.FS, args []string, stdout, stderr io.Writer) error {
 	// Unified pipeline: analyze → build response (D-03)
 	strategyResult := server.AnalyzeStrategy(result.Parsed.Issues)
 	response := server.BuildResponse(strategyResult, server.ResponseConfig{
-		Path: cleaned, Store: store,
-		IncludeGuidance: true, AutoFixApplied: true,
+		Path:  cleaned,
+		Store: store,
+		Opts: server.Options{
+			GosecAI:         false,
+			GosecAIProvider: "",
+			GosecAIKey:      "",
+			GosecAIBaseURL:  "",
+			GosecAISkipSSL:  false,
+			Timeout:         0,
+		},
+		IncludeGuidance: true,
+		AutoFixApplied:  true,
 	})
 
 	fmt.Fprintln(stdout, response)

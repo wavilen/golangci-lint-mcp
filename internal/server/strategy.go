@@ -339,7 +339,7 @@ func buildSubagentPerPackageInstructions(result StrategyResult) string {
 // buildEscalatedPackageEntry produces one task() block per file in an escalated package (D-06).
 // Escalated packages exceed the file threshold and get per-file task blocks.
 func buildEscalatedPackageEntry(
-	result StrategyResult,
+	_ StrategyResult,
 	pkg PackageEntry,
 	fileRefs map[string][]GuideRef,
 	pkgList *strings.Builder,

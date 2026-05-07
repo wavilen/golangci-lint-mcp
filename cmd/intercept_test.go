@@ -264,7 +264,7 @@ func TestIntercept_RawMode_OutputsRawJSON(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 	err := RunIntercept(testInterceptFS(), []string{"--raw", "./..."}, &stdout, &stderr)
 	require.NoError(t, err)
-	assert.Equal(t, rawJSON, stdout.String())
+	assert.JSONEq(t, rawJSON, stdout.String())
 	assert.NotContains(t, stdout.String(), "<summary>")
 	assert.NotContains(t, stdout.String(), "<guidance>")
 }
@@ -299,7 +299,7 @@ func TestIntercept_RawFlag_AfterPath(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 	err := RunIntercept(testInterceptFS(), []string{"./...", "--raw"}, &stdout, &stderr)
 	require.NoError(t, err)
-	assert.Equal(t, rawJSON, stdout.String())
+	assert.JSONEq(t, rawJSON, stdout.String())
 }
 
 func TestIntercept_StderrPassthrough(t *testing.T) {

@@ -12,8 +12,10 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
-// Type aliases — single source of truth in internal/linttypes.
+// LintIssue is a type alias — single source of truth in internal/linttypes.
 type LintIssue = linttypes.LintIssue
+
+// LintJSONResult is a type alias — single source of truth in internal/linttypes.
 type LintJSONResult = linttypes.LintJSONResult
 
 // Function redirects — delegate to linttypes implementations.
@@ -87,9 +89,11 @@ func makeParseHandler(
 		// Unified pipeline: analyze → build response (D-03)
 		strategyResult := AnalyzeStrategy(result.Issues)
 		return mcp.NewToolResultText(
-			BuildResponse(strategyResult, ResponseConfig{
-				Store: store, Opts: opts, IncludeGuidance: true,
-			})), nil
+			BuildResponse(
+				strategyResult,
+				newResponseConfig(withStore(store), withOpts(opts), withIncludeGuidance(true)),
+			),
+		), nil
 	}
 }
 

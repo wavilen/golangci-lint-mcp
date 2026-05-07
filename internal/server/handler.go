@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -53,6 +54,30 @@ type guideResult struct {
 	IsError bool     // true when the query failed (unknown linter, bad rule, etc.)
 }
 
+// guideResultOption configures a guideResult.
+type guideResultOption func(*guideResult)
+
+// newGuideResult creates a guideResult with the provided options.
+func newGuideResult(opts ...guideResultOption) guideResult {
+	r := guideResult{Body: "", Related: nil, IsError: false}
+	for _, opt := range opts {
+		opt(&r)
+	}
+	return r
+}
+
+func withBody(body string) guideResultOption {
+	return func(r *guideResult) { r.Body = body }
+}
+
+func withRelated(related []string) guideResultOption {
+	return func(r *guideResult) { r.Related = related }
+}
+
+func withError() guideResultOption {
+	return func(r *guideResult) { r.IsError = true }
+}
+
 // batchMaxFromEnv returns the maximum batch size from GOLANGCI_LINT_BATCH_MAX
 // env var, defaulting to defaultBatchMax. Invalid values are silently ignored.
 func batchMaxFromEnv() int {
@@ -74,48 +99,41 @@ func resolveGuideBody(store *guides.Store, opts Options, linter, rule string) gu
 		guide, found := store.Lookup(linter, rule)
 		if found {
 			body := stripRelatedTag(maybeAppendGosecAI(guide.RawBody, opts, linter))
-			return guideResult{Body: body, Related: guide.Related}
+			return newGuideResult(withBody(body), withRelated(guide.Related))
 		}
 		_, linterExists := store.Lookup(linter, "")
 		if !linterExists && len(store.ListRules(linter)) == 0 {
-			return guideResult{Body: unknownLinterMessage(linter, store), IsError: true}
+			return newGuideResult(withBody(unknownLinterMessage(linter, store)), withError())
 		}
 		rules := store.ListRules(linter)
 		if len(rules) > 0 {
-			return guideResult{
-				Body: fmt.Sprintf(
-					"No rule %q found for linter %q. Available rules: %s",
-					rule,
-					linter,
-					strings.Join(rules, ", "),
-				),
-				IsError: true,
-			}
+			return newGuideResult(withBody(fmt.Sprintf(
+				"No rule %q found for linter %q. Available rules: %s",
+				rule,
+				linter,
+				strings.Join(rules, ", "),
+			)), withError())
 		}
-		return guideResult{
-			Body:    fmt.Sprintf("Linter %q does not have sub-rules. Query it without the 'rule' parameter.", linter),
-			IsError: true,
-		}
+		return newGuideResult(withBody(
+			fmt.Sprintf("Linter %q does not have sub-rules. Query it without the 'rule' parameter.", linter),
+		), withError())
 	}
 	// No rule provided
 	guide, found := store.Lookup(linter, "")
 	if found {
 		body := stripRelatedTag(maybeAppendGosecAI(guide.RawBody, opts, linter))
-		return guideResult{Body: body, Related: guide.Related}
+		return newGuideResult(withBody(body), withRelated(guide.Related))
 	}
 	rules := store.ListRules(linter)
 	if len(rules) > 0 {
-		return guideResult{
-			Body: fmt.Sprintf(
-				"Linter %q has %d rules. Specify a rule to get specific guidance. Available rules: %s",
-				linter,
-				len(rules),
-				strings.Join(rules, ", "),
-			),
-			IsError: true,
-		}
+		return newGuideResult(withBody(fmt.Sprintf(
+			"Linter %q has %d rules. Specify a rule to get specific guidance. Available rules: %s",
+			linter,
+			len(rules),
+			strings.Join(rules, ", "),
+		)), withError())
 	}
-	return guideResult{Body: unknownLinterMessage(linter, store), IsError: true}
+	return newGuideResult(withBody(unknownLinterMessage(linter, store)), withError())
 }
 
 // stripRelatedTag removes <related>...</related> from body and cleans up
@@ -222,6 +240,59 @@ func buildBatchRelatedContext(allRelated []string, store *guides.Store) string {
 	return section
 }
 
+// parseGuideQueries extracts, validates, and deduplicates guide queries from raw MCP arguments.
+func parseGuideQueries(queriesRaw []any, batchMax int) ([]guideQuery, error) {
+	if len(queriesRaw) > batchMax {
+		return nil, fmt.Errorf("batch size %d exceeds maximum of %d; "+
+			"use golangci_lint_parse or golangci_lint_run for bulk analysis",
+			len(queriesRaw), batchMax)
+	}
+
+	var queries []guideQuery
+	seen := make(map[guideQuery]bool)
+	for _, raw := range queriesRaw {
+		rawMap, ok := raw.(map[string]any)
+		if !ok {
+			continue
+		}
+		linter, _ := rawMap["linter"].(string)
+		linter = strings.TrimSpace(linter)
+		if linter == "" {
+			continue
+		}
+		rule, _ := rawMap["rule"].(string)
+		rule = strings.TrimSpace(rule)
+		gq := guideQuery{Linter: linter, Rule: rule}
+		if !seen[gq] {
+			seen[gq] = true
+			queries = append(queries, gq)
+		}
+	}
+
+	if len(queries) == 0 {
+		return nil, errors.New("no valid queries after parsing")
+	}
+	return queries, nil
+}
+
+// formatGuideSection formats a single query result into a guide or error section string.
+func formatGuideSection(query guideQuery, result guideResult) string {
+	if result.IsError {
+		if query.Rule != "" {
+			return fmt.Sprintf("<error linter=%q rule=%q>%s</error>",
+				query.Linter, query.Rule, result.Body)
+		}
+		return fmt.Sprintf("<error linter=%q>%s</error>",
+			query.Linter, result.Body)
+	}
+	if query.Rule != "" {
+		return fmt.Sprintf("<guide linter=%q rule=%q>\n%s\n</guide>",
+			query.Linter, query.Rule, result.Body)
+	}
+	return fmt.Sprintf("<guide linter=%q>\n%s\n</guide>",
+		query.Linter, result.Body)
+}
+
 func makeHandler(
 	store *guides.Store,
 	opts Options,
@@ -235,76 +306,29 @@ func makeHandler(
 					"Use golangci_lint_list to discover available linters."), nil
 		}
 
-		batchMax := batchMaxFromEnv()
-		if len(queriesRaw) > batchMax {
-			return mcp.NewToolResultError(
-				fmt.Sprintf("batch size %d exceeds maximum of %d. "+
-					"Use golangci_lint_parse or golangci_lint_run for bulk analysis.",
-					len(queriesRaw), batchMax)), nil
+		queries, err := parseGuideQueries(queriesRaw, batchMaxFromEnv())
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
 		}
 
-		// Parse and deduplicate queries
-		var queries []guideQuery
-		seen := make(map[guideQuery]bool)
-		for _, q := range queriesRaw {
-			qMap, ok := q.(map[string]any)
-			if !ok {
-				continue
-			}
-			linter, _ := qMap["linter"].(string)
-			linter = strings.TrimSpace(linter)
-			if linter == "" {
-				continue
-			}
-			rule, _ := qMap["rule"].(string)
-			rule = strings.TrimSpace(rule)
-			gq := guideQuery{Linter: linter, Rule: rule}
-			if !seen[gq] {
-				seen[gq] = true
-				queries = append(queries, gq)
-			}
-		}
-
-		if len(queries) == 0 {
-			return mcp.NewToolResultError("no valid queries after parsing"), nil
-		}
-
-		// Process each query
 		var sections []string
 		var allRelated []string
 		allFailed := true
 
-		for _, q := range queries {
-			result := resolveGuideBody(store, opts, q.Linter, q.Rule)
-			if result.IsError {
-				if q.Rule != "" {
-					sections = append(sections, fmt.Sprintf("<error linter=%q rule=%q>%s</error>",
-						q.Linter, q.Rule, result.Body))
-				} else {
-					sections = append(sections, fmt.Sprintf("<error linter=%q>%s</error>",
-						q.Linter, result.Body))
-				}
-			} else {
+		for _, query := range queries {
+			result := resolveGuideBody(store, opts, query.Linter, query.Rule)
+			sections = append(sections, formatGuideSection(query, result))
+			if !result.IsError {
 				allFailed = false
-				if q.Rule != "" {
-					sections = append(sections, fmt.Sprintf("<guide linter=%q rule=%q>\n%s\n</guide>",
-						q.Linter, q.Rule, result.Body))
-				} else {
-					sections = append(sections, fmt.Sprintf("<guide linter=%q>\n%s\n</guide>",
-						q.Linter, result.Body))
-				}
 				allRelated = append(allRelated, result.Related...)
 			}
 		}
 
-		// If ALL queries failed, return MCP error result
 		if allFailed {
 			return mcp.NewToolResultError(strings.Join(sections, "\n\n")), nil
 		}
 
-		// Batch-level related context deduplication
 		relatedSection := buildBatchRelatedContext(allRelated, store)
-
 		response := strings.Join(sections, "\n\n")
 		if relatedSection != "" {
 			response += "\n\n" + relatedSection

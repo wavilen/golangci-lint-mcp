@@ -42,6 +42,6 @@ func makeSummarizeHandler(
 		// includeGuidance=false: summarize never shows guidance (D-09)
 		strategyResult := AnalyzeStrategy(result.Issues)
 		return mcp.NewToolResultText(
-			BuildResponse(strategyResult, ResponseConfig{})), nil
+			BuildResponse(strategyResult, newResponseConfig())), nil
 	}
 }

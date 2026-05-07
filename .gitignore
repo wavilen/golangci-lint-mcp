@@ -1,6 +1,7 @@
 # Go build artifacts
 /golangci-lint-mcp
 /crosscheck
+/bin/
 *.out
 *.test
 

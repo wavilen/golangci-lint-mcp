@@ -1,4 +1,4 @@
-.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint-js lint-py generate-diagrams deploy-pages push-e2e-artifacts integration-test
+.PHONY: build install install-skill install-commands install-rules install-hook install-claude-shared install-all install-agent test clean npm-pack npm-publish update-golden-config crosscheck crosscheck-clean install-plugin verify-plugin verify-shared sync-deployed sync-version lint lint-js lint-py install-linter generate-diagrams deploy-pages push-e2e-artifacts integration-test
 
 BINARY := golangci-lint-mcp
 VERSION := $(shell git describe --tags --always 2>/dev/null | sed 's/^v//')
@@ -127,6 +127,19 @@ sync-version: ## Update package.json version from git tag
 	@V=$$(git describe --tags --always 2>/dev/null | sed 's/^v//'); \
 	sed -i '0,/"version": "[^"]*"/s//"version": "'$$V'"/' package.json && \
 	echo "✓ package.json version updated to $$V"
+
+install-linter: ## Install golangci-lint v2.11.4 to ./bin/
+	@bash scripts/install-lint.sh
+
+lint: install-linter ## Run golangci-lint with project config (matches CI)
+	@INSTALLED_VERSION=$$(./bin/golangci-lint version 2>&1 | grep -oP 'version \K[0-9]+\.[0-9]+\.[0-9]+') && \
+	REQUIRED_VERSION="2.11.4" && \
+	if [ "$$INSTALLED_VERSION" != "$$REQUIRED_VERSION" ]; then \
+		echo "ERROR: golangci-lint version mismatch. Required: v$$REQUIRED_VERSION, Installed: v$$INSTALLED_VERSION"; \
+		echo "Run 'make install-linter' to install the correct version."; \
+		exit 1; \
+	fi && \
+	./bin/golangci-lint run ./...
 
 lint-js: ## Run ESLint on JavaScript source files
 	npx eslint plugins/ shared/ hooks/ bin/install.js
